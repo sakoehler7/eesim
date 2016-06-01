@@ -1,0 +1,11 @@
+---
+title: "DraftOne"
+author: "Sarah Koehler"
+date: "June 1, 2016"
+output: html_document
+---
+
+###First draft of eesim.
+```{r}
+sum(1:4)
+```
