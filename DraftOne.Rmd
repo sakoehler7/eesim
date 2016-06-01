@@ -5,7 +5,806 @@ date: "June 1, 2016"
 output: html_document
 ---
 
-###First draft of eesim.
-```{r}
-sum(1:4)
+```{r echo = FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(dplyr)
+library(splines)
 ```
+
+# Methods
+
+## Generating the simulated data
+
+### Exposure data
+
+There are several different possible ways to generate the simulated exposure data (or to pull in observed data to use for this). 
+
+For all of the simulated exposure series, this starts by specifying the number of days to simulate, `n`:
+
+```{r}
+n <- 1000
+```
+
+#### Binary exposure
+
+For a binary exposure, then it's necessary to specify the probability of exposure, `p_exp`. Then it's pretty straightforward to generate the series of exposures:
+
+```{r}
+# Generate a binary exposure
+p_exp <- 0.1
+x <- sample(c(0, 1), size = n, replace = TRUE, prob = c(1-p_exp, p_exp))
+head(x)
+```
+
+Here's a function that takes arguments of `n` and `p_exp` and returns a generated series (I'm also adding in a part to put in dates-- unless I specify otherwise, this will default to start at Jan. 1, 2000):
+
+```{r}
+# Function to generate a binary exposure
+binary_exposure <- function(n, p_exp, start.date = "2000-01-01", ...){
+        start.date <- as.Date(start.date)
+        date <- seq(from = start.date, by = 1, length.out = n)
+        x <- sample(c(0, 1), size = n, replace = TRUE,
+                    prob = c(1-p_exp, p_exp))
+        df <- data.frame(date, x)
+        return(df)
+}
+binary_exposure(n = 5, p_exp = 0.25)
+```
+
+#### Continuous exposure
+
+For a continuous exposure (which I'll assume it's okay to assume is normally distributed), it's necessary to specify the mean, `mu`, and standard deviation, `sd`, of the distribution of the exposure. Then it's possible to simulate the data:
+
+```{r}
+# Generate a continuous exposure
+mu <- 10 # These values are both from the Chicago NMMAPS values for 
+sd <- 10 # temperature in degrees Celcius
+x <- rnorm(n, mean = mu, sd = sd)
+head(x)
+```
+
+```{r}
+# Function to generate a continuous exposure
+continuous_exposure <- function(n, mu, sd, start.date = "2000-01-01", ...){
+        start.date <- as.Date(start.date)
+        date <- seq(from = start.date, by = 1, length.out = n)
+        x <- rnorm(n, mean = mu, sd = sd)
+        df <- data.frame(date, x)
+        return(df)
+}
+continuous_exposure(n = 5, mu = 10, sd = 10)
+```
+
+#### Generate exposure data with seasonal pattern
+
+```{r}
+# Get Chicago NMMAPS data and use CVD
+library(dlnm)
+data(chicagoNMMAPS)
+chic <- chicagoNMMAPS
+names(chic)
+cvd <- chic$cvd
+
+```
+
+#### Pull real data
+
+```{r}
+# Pull exposure with a seasonal pattern
+library(dlnm)
+data(chicagoNMMAPS)
+chic <- chicagoNMMAPS
+
+if(n < nrow(chic)){
+        start <- sample(1:(nrow(chic) - n), 1) # randomly choose a starting point
+        x <- chic$temp[start:(start + n -1)]
+}
+head(x)
+```
+
+```{r}
+# Function to pull exposure with a seasonal pattern
+# Note: Your `data` must have a column called `date` as well as one with the 
+# measure you specify, with that column name.
+pull_exposure <- function(n, data = "chicagoNMMAPS", measure = "temp", ...){
+        if(data == "chicagoNMMAPS"){
+                require(dlnm)
+                data(chicagoNMMAPS)
+                data <- chicagoNMMAPS
+        }
+        
+        data$measure <- data[ , measure]
+        
+        if(n < nrow(data)){
+                # randomly choose a starting point
+                start <- sample(1:(nrow(data) - n), 1) 
+                df <- data[start:(start + n - 1), c("date", measure)]
+        } else{
+                stop("You asked for too many simulated observations given the dataset you're pulling the data from. Try a smaller value of n.")
+        }
+        
+        return(df)
+}
+
+pull_exposure(n = 3)
+pull_exposure(n = 3)
+pull_exposure(n = 3, measure = "pm10")
+```
+
+### Expected mean baseline for outcome data
+
+#### Constant baseline hazard rate
+
+To generate the expected mean baseline for an outcome with a constant baseline hazard rate over time, you just need to specify the $\lambda$ value for the distribution of the outcome (if you're using a Poisson distribution):
+
+```{r}
+# Contant baseline of outcome
+lambda <- 100 # Approximate mean value of daily deaths for chicagoNMMAPS
+exp_base_y <- rep(lambda, n)
+```
+
+```{r}
+constant_baseline <- function(n, lambda, start.date = "2000-01-01", ...){
+        start.date <- as.Date(start.date)
+        date <- seq(from = start.date, by = 1, length.out = n)
+        exp_base_y <- rep(lambda, n)
+        df <- data.frame(date = date,
+                         exp_base_y = exp_base_y)
+        return(df)
+}
+constant_baseline(n = 3, lambda = 100)
+```
+
+#### Baseline hazard rate varies by season
+
+First, we need to generate the explanatory exposure variable.  Here is a function for binary exposure in which the probability varies by season.  Later we will add a function for continuous exposure which varies by season (~Normal(mu, sigma)). 
+
+```{r}
+# A function for binary exposure which varies by season:
+season_binexp <- function(n, p){
+  p <- p #Change this later to reflect probability varying by season using trends
+  binexp <- sample(c(0,1), size = n, replace = T, prob = c(1-p, p))
+  return(binexp)
+}
+```
+
+Now a function to calculate the trend variable. Choices for trend are cvd, cos1, cos2, cos3, linear, curvilinear, cos1linear.
+
+```{r}
+calc_t <- function(n, trend){
+  day <- c(1:n)
+  if (trend == "cos1"){
+    seasont <- 1+.6*cos(2*pi*(day/365))
+  }
+  if (trend == "cos2"){
+    seasont <- 1+.6*cos(2*pi*(day/365)) + ifelse(day<639 & day>274, .4*cos(2*(pi*(day/365))), 0)
+  }
+  if (trend == "cos3"){
+    seasont <- 1+.75^(day/365)*.6*cos(2*pi*(day/365))
+  }
+  if (trend == "linear"){
+    seasont <- 1+ (day/n)
+  }
+  if (trend == "curvilinear"){
+    seasont <- 1+day*(2/n)+day^2*(-1/n^2)
+  }
+  if (trend == "cos1linear"){
+    seasont <- (1+(day/n)) *(1+.6*cos(2*pi*(day/365)))
+  }
+  if (trend == "cvd"){ #Figure this out later.
+  } #else{
+    #stop("Specify a trend variable from cos1, cos2, cos3, linear, curvilinear, cos1linear, or cvd."
+    #)}
+  return(seasont)
+}
+```
+
+```{r}
+#Make a sweet plot of these with n=1500 (just for fun, not working yet):
+trendname <- c(rep("cos1", 1500), rep("cos2",1500), rep("cos3",1500), rep("linear",1500),  rep("curvilinear",1500), rep("cos1linear",1500))
+trendtests <- c(calc_t(1500, trend = "cos1"), calc_t(1500, trend = "cos2"), calc_t(1500, trend = "cos3"), calc_t(1500, trend = "linear"), calc_t(1500, trend = "curvilinear"), calc_t(1500, trend = "cos1linear"))
+trendframe <- data.frame(trendname, trendtests)
+```
+
+Next, a function to simulate the outcomes.
+
+```{r}
+#Here, exposure would be the output from the season_binexp function and t would be the output from the calc_t function. 
+sim_outcome <- function(n, mean_out, t, exposure, rr){
+  day <- c(1:n)
+  rr <- ifelse(exposure == 1, rr, 1)
+  mean_outcome <- mean_out*t*rr
+  sim_outcome <- rpois(n, mean_outcome)
+  return(sim_outcome)
+}
+```
+
+Putting it all together, here is a function for data with seasonal trends. This function will return a vector of simulated outcomes.  
+
+```{r}
+#Make this function output a dataframe with date, x, etc.
+sim_seasdata <- function(n, rr, trend, x_type="binary", p, mean_out){
+  if(x_type == "binary"){
+    x <- season_binexp(n, p)
+  } 
+  else if(x_type == "continuous"){
+    
+  }
+  t <- calc_t(n, trend)
+  outcomes <- sim_outcome(n, mean_out, t, x, rr)
+  return(outcomes)
+}
+```
+
+Here are some examples of this function:
+
+```{r}
+sim_seasdata(n = 3, rr = 1.2, trend="cos2", x_type="binary", p=.2, mean_out = 100)
+```
+
+```{r}
+# Outcome with mortality displacement
+
+# Outcome with delayed, slightly elevated risk
+```
+
+### Simulated outcome data
+
+Moving from the expected value of the baseline outcome to simulated outcome data requires a few things. First, it's necessary to specify the true effect associated with the exposure:
+
+```{r}
+# Specify true effect
+rr <- 1.2
+```
+
+Then, it's necessary to combine the exposure, `x`, and expected baseline outcome values, `exp_base_y`, in a dataframe:
+
+```{r}
+n <- 1000
+p_exp <- 0.25
+lambda <- 100
+
+x <- binary_exposure(n = n, p_exp = p_exp)
+exp_base_y <- constant_baseline(n = n, lambda = lambda)
+df <- full_join(x, exp_base_y, by = "date")
+```
+
+Then you can generate the `exp_y` using the equation:
+
+$$
+E(log(\mu_t)) = \beta_0 + \beta_1X_1
+$$
+
+(For this, it will be important that the relative risk is specified for a **one-unit** increase in the exposure value.)
+
+```{r}
+df <- mutate(df, exp_y = exp(log(exp_base_y) + log(rr) * x))
+```
+
+Now, you need to decide on how the outcome data is distributed around the expected value. This is simulating outcome values from a Poisson distribution using `rpois`. 
+
+```{r}
+# Simulate outcome data
+df$y <- sapply(df$exp_y, FUN = function(x) rpois(1, x))
+head(df, 3)
+```
+
+```{r fig.width = 2.5, fig.height = 2}
+to_plot <- mutate(df, x = as.factor(x))
+ggplot(to_plot, aes(x = x, y = y)) + 
+        geom_point(position = position_jitter(), alpha = 0.1) + 
+        geom_boxplot( fill = NA) + 
+        theme_bw()
+```
+
+```{r}
+group_by(df, exp_y) %>% summarize(mean_y = mean(y))
+```
+
+Here is a function to do all this:
+
+```{r}
+sim_data <- function(n, rr, x_type = "binary", baseline = "constant",
+                     start.date = "2000-01-01", ...){
+        
+        require(dplyr)
+        
+        if(x_type == "binary"){
+                x <- binary_exposure(n = n, ...)
+        } else if(x_type == "continuous"){
+                x <- continuous_exposure(n = n, ...)
+        }
+        
+        if(baseline == "constant"){
+                exp_base_y <- constant_baseline(n = n, ...)
+        }
+        
+        df <- full_join(x, exp_base_y, by = "date") %>%
+                mutate(exp_y = exp(log(exp_base_y) + log(rr) * x))
+        df$y <- sapply(df$exp_y, FUN = function(x) rpois(1, x))
+        
+        return(df)
+        
+}
+```
+
+Here are some examples of this function:
+
+```{r}
+sim_data(n = 3, rr = 1.2, p_exp = .2, lambda = 100)
+sim_data(n = 3, rr = 1.02, x_type = "continuous", mu = 10, sd = 10, lambda = 100)
+```
+
+## Fitting the models
+
+### Generalized linear model
+
+The formula for the generalized linear model (GLM) is:
+
+$$
+E(log(\mu_t)) = \beta_0 + \beta_1X_t + \mbox{ns(time, d.f.)}
+$$
+
+where: 
+
+- $\mu_t$: Count of outcomes on day $t$, dispersed as a quasi-Poisson distribution
+- $\beta_0$: Intercept (expected log count of health outcome when $X_t$ equals 0 and for middle of the timeframe [so `time` = 0])
+- $\beta_1$: log relative risk for a 1-unit increase in exposure $X_t$
+- $X_t$: Exposure on day $t$
+- $\mbox{ns(time, d.f.)}$: Spline of time for $\mbox{d.f.}$ degrees of freedom per year
+
+```{r}
+# Fit a generalized linear model
+spline_mod <- function(df, df_year = 7){
+        require(splines)
+        
+        dgrs_free <- df_year * as.numeric(diff(df[c(1, nrow(df)), "date"])) / 365.4
+        df$time <- scale(df$date, center = TRUE, scale = FALSE)
+        mod <- glm(y ~ x + ns(time, round(dgrs_free)),
+                   data = df,
+                   family = quasipoisson(link = "log"))
+        
+        out_1 <- summary(mod)$coef[2, ]
+        out_2 <- confint.default(mod)[2, ]
+        out <- c(out_1, out_2)
+        return(out)
+}
+```
+
+Here are some examples of fitting this model:
+
+```{r}
+df <- sim_data(n = 5 * 365, rr = 1.2, p_exp = .2, lambda = 100)
+spline_mod(df)
+exp(spline_mod(df)[1])
+
+df <- sim_data(n = 5 * 365, rr = 1.02, x_type = "continuous",
+               mu = 10, sd = 10, lambda = 100)
+spline_mod(df)
+exp(spline_mod(df)[1])
+```
+
+
+### Case-crossover model
+
+Here is the formula for the case-crossover model. It's actually using a quasi-Poisson GLM with a factor included identifying stratum (month and year):
+
+$$
+E(log(\mu_t)) = \beta_0 + \beta_1X_t + \beta_2S_t
+$$
+
+where: 
+
+- $\mu_t$: Count of outcomes on day $t$, assuming these outcomes follow a quasi-Poisson distribution
+- $\beta_0$: Intercept (expected log count of health outcome when $X_t$ equals 0 and for the baseline level of the time strata
+- $\beta_1$: log relative risk for a 1-unit increase in exposure $X_t$
+- $X_t$: Exposure on day $t$
+- $\beta_2$: offset for log baseline counts for each stratum 
+- $S_t$: Time stratum (month and year)
+
+```{r}
+# Fit a case-crossover model
+casecross_mod <- function(df){
+        df$stratum <- factor(format(df$date, "%Y.%m"))
+
+        if (sum(df$x == 0 | df$x == 1) == length(df$x)){
+                event.check <- as.matrix(table(df$stratum, df$x))
+                informative.strata <- rownames(event.check)[apply(event.check,
+                                                          1, prod) > 0]
+                df <- subset(df, stratum %in% informative.strata)
+                
+                if(length(informative.strata) > 1){
+                        mod <- glm(y ~ x + stratum,
+                                   data = df,
+                                   family = quasipoisson(link = "log"))
+                } else {
+                        mod <- glm(y ~ x,
+                                   data = df,
+                                   family = quasipoisson(link = "log"))
+                        }
+        } else {
+                mod <- glm(y ~ x + stratum,
+                                   data = df,
+                                   family = quasipoisson(link = "log"))
+        }
+        
+        out_1 <- summary(mod)$coef[2, ]
+        out_2 <- confint.default(mod)[2, ]
+        out <- c(out_1, out_2)
+        return(out)
+}
+```
+
+Here are some examples of fitting this model:
+
+```{r}
+df <- sim_data(n = 5 * 365, rr = 1.2, p_exp = .2, lambda = 100)
+casecross_mod(df)
+exp(casecross_mod(df)[1])
+
+df <- sim_data(n = 5 * 365, rr = 1.02, x_type = "continuous",
+               mu = 10, sd = 10, lambda = 100)
+casecross_mod(df)
+exp(casecross_mod(df)[1])
+```
+
+### Cross-year model
+
+$$
+E(log(\mu_t)) = \beta_0 + \beta_1X_t + \beta_2D_t + \beta_3Y_t
+$$
+
+```{r}
+# Fit a cross-year model
+# Fit a case-crossover model
+crossyear_mod <- function(df){
+        df$stratum <- factor(format(df$date, "%j"))
+        df$year <- factor(format(df$date, "%Y"))
+
+        if (sum(df$x == 0 | df$x == 1) == length(df$x)){
+                event.check <- as.matrix(table(df$stratum, df$x))
+                informative.strata <- rownames(event.check)[apply(event.check,
+                                                          1, prod) > 0]
+                df <- subset(df, stratum %in% informative.strata)
+                
+                if(length(informative.strata) > 1){
+                        mod <- glm(y ~ x + stratum,
+                                   data = df,
+                                   family = quasipoisson(link = "log"))
+                } else {
+                        mod <- glm(y ~ x,
+                                   data = df,
+                                   family = quasipoisson(link = "log"))
+                        }
+        } else {
+                mod <- glm(y ~ x + stratum,
+                                   data = df,
+                                   family = quasipoisson(link = "log"))
+        }
+        
+        out_1 <- summary(mod)$coef[2, ]
+        out_2 <- confint.default(mod)[2, ]
+        out <- c(out_1, out_2)
+        return(out)
+}
+```
+
+Here are some examples of applying this model:
+
+```{r}
+df <- sim_data(n = 5 * 365, rr = 1.2, p_exp = .2, lambda = 100)
+crossyear_mod(df)
+exp(crossyear_mod(df)[1])
+
+df <- sim_data(n = 5 * 365, rr = 1.02, x_type = "continuous",
+               mu = 10, sd = 10, lambda = 100)
+crossyear_mod(df)
+exp(crossyear_mod(df)[1])
+```
+
+## Run lots of simulations
+
+Now it's pretty easy to run lots of simulations using `replicate`:
+
+```{r cache = TRUE, fig.width = 10, fig.height = 4}
+n_sim <- 50
+ex_spline <- replicate(n_sim, exp(spline_mod(sim_data(n = 5 * 365,
+                                          rr = 1.02, x_type = "continuous",
+                                          mu = 10, sd = 10, lambda = 100))[1]))
+
+ex_casecross <- replicate(n_sim, exp(casecross_mod(sim_data(n = 5 * 365,
+                                          rr = 1.02, x_type = "continuous",
+                                          mu = 10, sd = 10, lambda = 100))[1]))
+
+ex_crossyear <- replicate(n_sim, exp(crossyear_mod(sim_data(n = 5 * 365,
+                                          rr = 1.02, x_type = "continuous",
+                                          mu = 10, sd = 10, lambda = 100))[1]))
+
+ex <- data.frame(beta_hat = c(ex_spline, ex_casecross, ex_crossyear),
+                 model = rep(c("spline", "casecross", "crossyear"),
+                             each = n_sim)) %>%
+        mutate(model = factor(model))
+
+ggplot(ex, aes(x = beta_hat)) + 
+        geom_histogram(fill = "lightgray", color = "white") + 
+        facet_wrap(~ model, ncol = 3) + 
+        theme_bw()
+
+group_by(ex, model) %>% 
+        summarize(mean_beta = mean(beta_hat), sd_beta = sd(beta_hat))
+```
+
+Here is a function that will run a lot of simulations for a given dataset and model and will output a dataframe with the $\hat{\beta}$, $sd(\hat\beta)$, and p-values for the $\beta$ for each replication:
+
+```{r}
+rep_sims <- function(n_sims, model, n = 5 * 365, rr = 1.01, 
+                     x_type = "continuous", mu = 10, sd = 2, lambda = 100){
+        library(dplyr)
+        out <- replicate(n_sims, eval(call(model, 
+                                           sim_data(n = n, rr = rr, 
+                                                    x_type = x_type,
+                                                    mu = mu, sd = sd,
+                                                    lambda = lambda))))
+        out <- as.data.frame(t(out))
+        names(out) <- c("est", "se", "t", "p", "lower_ci", "upper_ci")
+        return(out)
+}
+```
+
+Here are some examples of using this function:
+
+```{r}
+rep_sims(n_sims = 3, model = "spline_mod")
+rep_sims(n_sims = 3, model = "casecross_mod")
+rep_sims(n_sims = 3, model = "crossyear_mod")
+```
+
+## Assess performance based on simulations
+
+All of these functions will take, as input, a dataframe of replicated simulations:
+
+```{r}
+rep_df <- rep_sims(n_sims = 50, model = "spline_mod", rr = 1.02)
+head(rep_df, 4)
+```
+
+### Average estimate coefficient
+
+This is the mean value of all the $\hat{\beta}$s over $n$ simulations [@figueiras2005analysis]. I'm also having this function calculate the mean of the $\hat{RR}$ values calculated by all the simulations. 
+
+```{r}
+# Measure mean of estimated coefficient
+mean_beta <- function(df){
+        beta_hat <- mean(df$est)
+        rr_hat <- mean(exp(df$est))
+        out <- data.frame(beta_hat, rr_hat)
+        return(out)
+}
+mean_beta(rep_df)
+```
+
+### Standard deviation of estimated coefficients
+
+This is the standard deviation of all the $\hat{\beta}$s over $n$ simulations [@figueiras2005analysis]. (In other words, I think they took all the $\hat\beta$s and took the standard deviation of all those point estimates.)
+
+Bateson and Schwartz measure the *variance* of the estimated coefficients, instead, and they took the mean value of the variance of each of the estimated coefficients (rather than the variance across all the point estimates) [-@bateson1999control]. In other words, I think they measured:
+
+$$
+\mbox{Variance} = E(Var(\hat\beta))
+$$
+
+I'll write a function that will estimate both, `var_across_betas` to correspond with Figueiras and `mean_beta_var` to correspond with Bateson and Schwartz:
+
+```{r}
+# Measure standard deviation across estimated coefficient
+beta_var <- function(df){
+        var_across_betas <- var(df$est)
+        mean_beta_var <- mean(df$se^2)
+        out <- data.frame(var_across_betas, mean_beta_var)
+        return(out)
+}
+beta_var(rep_df)
+```
+
+### % bias in estimated coefficient
+
+Based on Figueiras and coauthors, this is measured as [-@figueiras2005analysis]:
+
+$$
+\mbox{% bias} = 100 \frac{(\hat{\beta} - \beta)}{\beta}
+$$
+
+where $\hat{\beta}$ is the mean estimated coefficient (e.g., log relative risk) over $n$ simulations. 
+
+Wang and co-authors measure *relative bias* instead [-@wang2011potential]:
+
+$$
+\mbox{% bias} = 100 \frac{(\beta - \hat{\beta})}{\beta}
+$$
+
+I'll write a function that measures both (`fig_bias` and `wang_bias`):
+
+```{r}
+# Measure percent bias
+beta_bias <- function(df, true_rr){
+        fig_bias <- 100 * (mean(df$est) - true_rr) / true_rr
+        wang_bias <- 100 * (true_rr - mean(df$est)) / true_rr
+        out <- data.frame(fig_bias, wang_bias)
+        return(out)
+}
+beta_bias(rep_df, true_rr = 1.02)
+```
+
+As a note, one of these will just be the negative of the other... Does it make more sense to just take the absolute value of the difference between the two estimates and divide it by $\beta$?
+
+### % coverage of estimated coefficients
+
+$$
+\mbox{% coverage} = \mbox{% of simulations with 95% CIs that cover }\beta
+$$
+
+where $\beta$ is the true value of the coefficient (e.g., log relative risk) [@figueiras2005analysis].
+
+From Butland and coauthors [@butland2013measurement]:
+
+> "An estimate of coverage probability records the percentage of simulations where the 95% confidence interval contains the 'true' value of $\beta$."
+
+From Bateson and Schwartz [@bateson1999control]:
+
+> "Coverage probabilities are the percentages of the 1,000 confidence intervals that included the true relative risk of exposure."
+
+These all seem to be saying the same thing.
+
+```{r}
+# Measure coverage
+coverage_beta <- function(df, true_rr){
+        true_beta <- log(true_rr)
+        coverage <- df$lower_ci <= true_beta & df$upper_ci >= true_beta
+        out <- data.frame(coverage = sum(coverage) / nrow(df))
+        return(out)
+}
+
+coverage_beta(rep_df, true_rr = 1.02)
+```
+
+### Power
+
+This is the percent of all estimated coefficients for the $n$ simulations where the lower 95% confidence interval is above 0 [@figueiras2005analysis]. This is a metric of statistical efficiency.
+
+From Butland and coauthors [@butland2013measurement]:
+
+> "An estimate of power records the percentage of simulations that would have detected the health effect estimate as statistically significant at the 5% significance level."
+
+These also seem to be saying the same thing.
+
+```{r}
+# Measure power
+power_beta <- function(df){
+        no_zero <- df$lower_ci >= 0 | df$upper_ci <= 0
+        out <- data.frame(power = sum(no_zero) / nrow(df))
+        return(out)
+}
+
+power_beta(rep_df)
+```
+
+### Relative efficiency
+
+From Bateson and Schwartz [@bateson1999control]:
+
+> "Relative efficiency is the ratio of the $V_{Poi}$ to the $V_{SBI}$." 
+
+Where $V_{Poi}$ is the means of 1,000 parameter variances from the regressions of simulated values and $V_{SBI}$ is the means of 1,000 parameter variances from a case-crossover model.
+
+This looks like it is a comparative metric. I have already measured the mean variance of the $\hat{\beta}$s with the `beta_var` function I defined above. 
+
+### Combined function to assess performance
+
+I created a function that will perform all these checks:
+
+```{r}
+check_sims <- function(df, true_rr){
+        a <- mean_beta(df)
+        b <- beta_var(df)
+        c <- beta_bias(df, true_rr = true_rr)
+        d <- coverage_beta(df, true_rr = true_rr)
+        e <- power_beta(df)
+        
+        out <- cbind(a, b, c, d, e)
+        return(out)
+}
+check_sims(rep_df, true_rr = 1.02)
+```
+
+## Power calculations
+
+Power can vary with the following elements of the analysis:
+
+- Size of the dataset
+- Effect size
+- Baseline mortality rate (here, $\lambda$)
+- Patterns in exposure (variance for continuous exposure, percent of exposed days for binary exposure)
+
+```{r}
+power_calc <- function(varying, values, plot = FALSE, ...){
+        out <- data.frame(x = values, power = NA)
+        if(varying == "n"){
+                for(i in 1:nrow(out)){
+                        rep_df <- rep_sims(n = out$x[i], ...)
+                        out$power[i] <- power_beta(rep_df)[1,1]
+                }
+        } else if(varying == "rr"){
+                for(i in 1:nrow(out)){
+                        rep_df <- rep_sims(rr = out$x[i], ...)
+                        out$power[i] <- power_beta(rep_df)[1,1]
+                }
+        } else if(varying == "lambda"){
+                for(i in 1:nrow(out)){
+                        rep_df <- rep_sims(lambda = out$x[i], ...)
+                        out$power[i] <- power_beta(rep_df)[1,1]
+                }
+        }
+        
+        if(plot == TRUE){
+                        library(ggplot2)
+                        my_plot <- ggplot(out, aes(x = x, y = power)) + 
+                                geom_line() + theme_minimal() + 
+                                xlab(varying)
+                        print(my_plot)
+        }
+        
+        colnames(out)[1] <- varying
+        return(out)
+}
+```
+
+Here are some examples of varying the sample size, `n`:
+
+```{r fig.height = 3, fig.width = 3, cache = TRUE}
+power_calc(varying = "n", values = c(50 * (1:5)),
+           n_sims = 50, model = "spline_mod", rr = 1.02)
+power_calc(varying = "n", values = c(365 * (1:5)),
+           n_sims = 100, model = "spline_mod", rr = 1.003, plot = TRUE)
+```
+
+Here are some examples of varying the relative risk, `r`:
+
+```{r fig.height = 3, fig.width = 3, cache = TRUE}
+power_calc(varying = "rr", values = c(1.002, 1.005, 1.01, 1.02, 1.03, 1.05, 1.1),
+           n_sims = 50, model = "spline_mod", n = 365 * 5)
+power_calc(varying = "rr", values = c(1.002, 1.005, 1.01, 1.02, 1.03, 1.05, 1.1),
+           n_sims = 100, model = "spline_mod", n = 365, plot = TRUE)
+```
+
+Here are some examples of varying the baseline mortality rate, `lambda`:
+
+```{r fig.height = 3, fig.width = 3, cache = TRUE}
+power_calc(varying = "lambda", values = c(1, 5, 10, 25, 50, 75, 100),
+           n_sims = 50, model = "spline_mod", n = 365 * 5, rr = 1.02)
+power_calc(varying = "lambda", values = c(1, 5, 10, 25, 50, 75, 100),
+           n_sims = 100, model = "spline_mod", n = 365 * 5, rr = 1.005, plot = TRUE)
+```
+
+I can compare power from different models using the same data parameters (i.e., sample size, relative risk, etc.) for these:
+
+```{r, fig.width = 5, fig.height = 3, cache = TRUE}
+for(model in c("spline_mod", "casecross_mod", "crossyear_mod")){
+        df_mod <- power_calc(varying = "n", values = c(365 * (1:5)),
+                             n_sims = 100, model = "spline_mod", rr = 1.005)
+        df_mod$model <- model
+        if(model == "spline_mod"){
+                df <- df_mod
+        } else {
+                df <- rbind(df, df_mod)
+        }
+}
+df$model <- factor(df$model)
+
+ggplot(df, aes(x = n, y = power, color = model)) +
+        geom_line() + 
+        theme_minimal() +
+        geom_hline(aes(yintercept = 0.8), linetype = 2)
+```
+
+
+## References
