@@ -166,6 +166,35 @@ season_binexp <- function(n, p){
   binexp <- sample(c(0,1), size = n, replace = T, prob = c(1-p, p))
   return(binexp)
 }
+
+# A function for continuous exposure which varies by season:
+season_contexp <- function(n, mu, sd, trend){
+  day <- c(1:n)
+  if (trend=="cos1"){
+    mu <- mu*(1+.6*cos(2*pi*(day/365)))
+  }
+  if (trend == "cos2"){
+    mu <- mu*(1+.6*cos(2*pi*(day/365)) + ifelse(day<639 & day>274, .4*cos(2*(pi*(day/365))), 0))
+  }
+  if (trend == "cos3"){
+    mu <- mu*(1+.75^(day/365)*.6*cos(2*pi*(day/365)))
+  }
+  if (trend == "linear"){
+    mu <- mu* (1+ (day/n))
+  }
+  if (trend == "curvilinear"){
+    mu <- mu*(1+day*(2/n)+day^2*(-1/n^2))
+  }
+  if (trend == "cos1linear"){
+    mu <- mu*((1+(day/n)) *(1+.6*cos(2*pi*(day/365))))
+  }
+  if (trend == "cvd"){ #Figure this out later.
+  } #else{
+    #stop("Specify a trend variable from cos1, cos2, cos3, linear, curvilinear, cos1linear, or cvd."
+    #)}
+  contexp <- rnorm(n, mean=mu, sd=sd)
+  return(contexp)
+}
 ```
 
 Now a function to calculate the trend variable. Choices for trend are cvd, cos1, cos2, cos3, linear, curvilinear, cos1linear.
@@ -210,29 +239,42 @@ Next, a function to simulate the outcomes.
 
 ```{r}
 #Here, exposure would be the output from the season_binexp function and t would be the output from the calc_t function. 
-sim_outcome <- function(n, mean_out, t, exposure, rr){
+sim_binout <- function(n, mean_out, t, exposure, rr){
   day <- c(1:n)
   rr <- ifelse(exposure == 1, rr, 1)
-  mean_outcome <- mean_out*t*rr
-  sim_outcome <- rpois(n, mean_outcome)
-  return(sim_outcome)
+  exp_base_y <- mean_out*t
+  exp_y <- mean_out*t*rr
+  y <- rpois(n, exp_y)
+  df <- data.frame(exp_base_y=exp_base_y, exp_y=exp_y, y=y)
+  return(df)
+}
+
+#Here, exposure would be the output from the season_contexp function and t is from calc_t.
+sim_contout<- function(n, mu, t, exposure, rr){
+  day <- c(1:n)
+  exp_y <- mu*t*rr*(exposure/sd(exposure))
+  y <- rpois(n, exp_y)
+  df <- data.frame( exp_y=exp_y, y=y)
+  return(df)
 }
 ```
 
 Putting it all together, here is a function for data with seasonal trends. This function will return a vector of simulated outcomes.  
 
 ```{r}
-#Make this function output a dataframe with date, x, etc.
-sim_seasdata <- function(n, rr, trend, x_type="binary", p, mean_out){
+#Put "date" in the data frame like the others? 
+sim_seasdata <- function(n, rr, trend, x_type="binary", p, mu, sd, mean_out){
   if(x_type == "binary"){
     x <- season_binexp(n, p)
+    t <- calc_t(n, trend)
+    simdata <- data.frame(x, sim_binout(n, mean_out, t, x, rr))
   } 
   else if(x_type == "continuous"){
-    
+    x <- season_contexp(n, mu, sd, trend)
+    t <- calc_t(n, trend)
+    simdata <- sim_contout(n, mu, t, x, rr)
   }
-  t <- calc_t(n, trend)
-  outcomes <- sim_outcome(n, mean_out, t, x, rr)
-  return(outcomes)
+ return(simdata)
 }
 ```
 
