@@ -19,4 +19,11 @@ Here's an example of simulating binary exposure data:
 season_binexp(5, 0.25)
 ```
 
+Here's an example of simulating continuous exposure data:
+
+```{r}
+season_contexp(n = 5, mu = 100, sd = 10, trend = "cos1")
+```
+
+
 

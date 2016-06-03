@@ -9,6 +9,7 @@ output: html_document
 library(ggplot2)
 library(dplyr)
 library(splines)
+library(eesim)
 ```
 
 # Methods
@@ -161,11 +162,7 @@ First, we need to generate the explanatory exposure variable.  Here is a functio
 
 ```{r}
 # A function for binary exposure which varies by season:
-season_binexp <- function(n, p){
-  p <- p #Change this later to reflect probability varying by season using trends
-  binexp <- sample(c(0,1), size = n, replace = T, prob = c(1-p, p))
-  return(binexp)
-}
+season_binexp
 
 # A function for continuous exposure which varies by season:
 season_contexp <- function(n, mu, sd, trend){
