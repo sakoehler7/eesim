@@ -11,3 +11,6 @@ LazyData: TRUE
 URL: http://github.com/sakoehler7/eesim
 BugReports: http://github.com/sakoehler7/eesim/issues
 RoxygenNote: 5.0.1
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr

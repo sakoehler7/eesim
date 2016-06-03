@@ -1,0 +1,22 @@
+---
+title: "Using `eesim`"
+author: "Sarah Koehler and Brooke Anderson"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r}
+library(eesim)
+```
+
+Here's an example of simulating binary exposure data: 
+
+```{r}
+season_binexp(5, 0.25)
+```
+
+
