@@ -2,7 +2,7 @@
 % Please edit documentation in R/sim_exposure.R
 \name{season_binexp}
 \alias{season_binexp}
-\title{Simulate binary exposure data}
+\title{This function simulates binary exposure data.}
 \usage{
 season_binexp(n, p)
 }
@@ -16,7 +16,7 @@ a binary exposure.}
 A numeric vector with simulated exposure of length n.
 }
 \description{
-This function simulated binary exposure data.
+This function simulates binary exposure data.
 }
 \examples{
 season_binexp(5, 0.25)

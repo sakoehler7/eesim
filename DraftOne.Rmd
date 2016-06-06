@@ -158,7 +158,13 @@ constant_baseline(n = 3, lambda = 100)
 
 #### Baseline hazard rate varies by season
 
-First, we need to generate the explanatory exposure variable.  Here is a function for binary exposure in which the probability varies by season.  Later we will add a function for continuous exposure which varies by season (~Normal(mu, sigma)). 
+A function to calculate the trend variable. Choices for trend are cvd, cos1, cos2, cos3, linear, curvilinear, cos1linear.
+
+```{r}
+calc_t 
+```
+
+We need to generate the explanatory exposure variable.  Here are functions for binary and continuous exposure which varies by season.   
 
 ```{r}
 # A function for binary exposure which varies by season:
@@ -168,36 +174,6 @@ season_binexp
 season_contexp
 ```
 
-Now a function to calculate the trend variable. Choices for trend are cvd, cos1, cos2, cos3, linear, curvilinear, cos1linear.
-
-```{r}
-calc_t <- function(n, trend){
-  day <- c(1:n)
-  if (trend == "cos1"){
-    seasont <- 1+.6*cos(2*pi*(day/365))
-  }
-  if (trend == "cos2"){
-    seasont <- 1+.6*cos(2*pi*(day/365)) + ifelse(day<639 & day>274, .4*cos(2*(pi*(day/365))), 0)
-  }
-  if (trend == "cos3"){
-    seasont <- 1+.75^(day/365)*.6*cos(2*pi*(day/365))
-  }
-  if (trend == "linear"){
-    seasont <- 1+ (day/n)
-  }
-  if (trend == "curvilinear"){
-    seasont <- 1+day*(2/n)+day^2*(-1/n^2)
-  }
-  if (trend == "cos1linear"){
-    seasont <- (1+(day/n)) *(1+.6*cos(2*pi*(day/365)))
-  }
-  if (trend == "cvd"){ #Figure this out later.
-  } #else{
-    #stop("Specify a trend variable from cos1, cos2, cos3, linear, curvilinear, cos1linear, or cvd."
-    #)}
-  return(seasont)
-}
-```
 
 ```{r}
 #Make a sweet plot of these with n=1500 (just for fun, not working yet):

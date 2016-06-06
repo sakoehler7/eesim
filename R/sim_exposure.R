@@ -1,5 +1,45 @@
 #' Simulate binary exposure data
 #'
+#' This function creates a trend variable.
+#'
+#' @param n A numeric value giving the number of days to simulate.
+#' @param trend A character string that gives the trend function to use.  Options include
+#'    cos1, cos2, cos3, linear, curvilinear, cos1linear, and no trend.
+#'
+#' @return A numeric vector used to generate data with seasonal trends.
+#'
+#' @examples
+#' calc_t(5, "cos3")
+#'
+calc_t <- function(n, trend = "no trend"){
+day <- c(1:n)
+if (trend == "cos1"){
+  seasont <- 1+.6*cos(2*pi*(day/365))
+}
+if (trend == "cos2"){
+  seasont <- 1+.6*cos(2*pi*(day/365)) + ifelse(day<639 & day>274, .4*cos(2*(pi*(day/365))), 0)
+}
+if (trend == "cos3"){
+  seasont <- 1+.75^(day/365)*.6*cos(2*pi*(day/365))
+}
+if (trend == "linear"){
+  seasont <- 1+ (day/n)
+}
+if (trend == "curvilinear"){
+  seasont <- 1+day*(2/n)+day^2*(-1/n^2)
+}
+if (trend == "cos1linear"){
+  seasont <- (1+(day/n)) *(1+.6*cos(2*pi*(day/365)))
+}
+if (trend == "no trend"){
+  seasont <- 1
+}
+else{
+}
+return(seasont)
+}
+
+#'
 #' This function simulates binary exposure data.
 #'
 #' @param n A numeric value giving the number of days to simulate.
