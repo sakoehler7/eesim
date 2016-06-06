@@ -1,6 +1,6 @@
 #' Simulate binary exposure data
 #'
-#' This function simulated binary exposure data.
+#' This function simulates binary exposure data.
 #'
 #' @param n A numeric value giving the number of days to simulate.
 #' @param p A numeric value giving the baseline probability of exposure for
@@ -37,28 +37,8 @@ season_binexp <- function(n, p){
 #' @export
 season_contexp <- function(n, mu, sd, trend){
   day <- c(1:n)
-  if (trend=="cos1"){
-    mu <- mu*(1+.6*cos(2*pi*(day/365)))
-  }
-  if (trend == "cos2"){
-    mu <- mu*(1+.6*cos(2*pi*(day/365)) + ifelse(day<639 & day>274, .4*cos(2*(pi*(day/365))), 0))
-  }
-  if (trend == "cos3"){
-    mu <- mu*(1+.75^(day/365)*.6*cos(2*pi*(day/365)))
-  }
-  if (trend == "linear"){
-    mu <- mu* (1+ (day/n))
-  }
-  if (trend == "curvilinear"){
-    mu <- mu*(1+day*(2/n)+day^2*(-1/n^2))
-  }
-  if (trend == "cos1linear"){
-    mu <- mu*((1+(day/n)) *(1+.6*cos(2*pi*(day/365))))
-  }
-  if (trend == "cvd"){ #Figure this out later.
-  } #else{
-  #stop("Specify a trend variable from cos1, cos2, cos3, linear, curvilinear, cos1linear, or cvd."
-  #)}
+  t <- calc_t(n, trend)
+  mu <- mu*t
   contexp <- rnorm(n, mean=mu, sd=sd)
   return(contexp)
 }
