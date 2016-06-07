@@ -1,4 +1,50 @@
-#' Simulate binary exposure data
+#' Simulate binary exposure data without a seasonal trend
+#'
+#' This function generates binary exposure data without a seasonal trend.
+#'
+#' @inheritParams season_binexp
+#' @param p A numeric value between 0 and 1 specifying the probability of exposure.
+#' @param start.date A date in the format "yyyy-mm-dd" specifying the first day of simulated measurements.
+#'
+#' @return A data frame with the date and a 0 or 1 exposure value for each day.
+#'
+#' @examples
+#' binary_exposure(n = 5, p_exp = 0.25)
+#'
+#' @export
+binary_exposure <- function(n, p, start.date = "2000-01-01", ...){
+  start.date <- as.Date(start.date)
+  date <- seq(from = start.date, by = 1, length.out = n)
+  x <- sample(c(0, 1), size = n, replace = TRUE,
+              prob = c(1-p, p))
+  df <- data.frame(date, x)
+  return(df)
+}
+#'
+#' Simulate continuous exposure data without a seasonal trend
+#'
+#' This function simulates continuous exposure data without a seasonal trend.
+#'
+#' @inheritParams season_binexp
+#' @inheritParams binary_exposure
+#' @inheritParams season_contexp
+#'
+#' @return A data frame with date and exposure value for each day.
+#'
+#' @examples
+#' continuous_exposure(n = 5, mu = 10, sd = 10)
+#'
+#' @export
+#'
+continuous_exposure <- function(n, mu, sd, start.date = "2000-01-01", ...){
+  start.date <- as.Date(start.date)
+  date <- seq(from = start.date, by = 1, length.out = n)
+  x <- rnorm(n, mean = mu, sd = sd)
+  df <- data.frame(date, x)
+  return(df)
+}
+#'
+#' Create a trend variable
 #'
 #' This function creates a trend variable.
 #'
@@ -40,7 +86,9 @@ return(seasont)
 }
 
 #'
-#' This function simulates binary exposure data.
+#' Simulate binary exposure data with a seasonal trend
+#'
+#' This function simulates binary exposure data with a seasonal trend.
 #'
 #' @param n A numeric value giving the number of days to simulate.
 #' @param p A numeric value giving the baseline probability of exposure for
@@ -58,9 +106,9 @@ season_binexp <- function(n, p){
   return(binexp)
 }
 
-#' Simulate continuous exposure data
+#' Simulate continuous exposure data with a seasonal trend
 #'
-#' This function simulates a time series of continuous exposure data.
+#' This function simulates a time series of continuous exposure data with a seasonal trend.
 #'
 #' @param mu A numeric vector giving the average of the exposure distribution.
 #' @param sd A numeric vector giving the standard deviation of the exposure
