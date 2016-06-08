@@ -2,7 +2,7 @@
 % Please edit documentation in R/sim_exposure.R
 \name{calc_t}
 \alias{calc_t}
-\title{Simulate binary exposure data}
+\title{Create a trend variable}
 \usage{
 calc_t(n, trend = "no trend")
 }

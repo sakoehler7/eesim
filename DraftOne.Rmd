@@ -42,7 +42,6 @@ Here's a function that takes arguments of `n` and `p_exp` and returns a generate
 ```{r}
 # Function to generate a binary exposure
 binary_exposure 
-
 binary_exposure(n = 5, p_exp = 0.25)
 ```
 
@@ -61,7 +60,6 @@ head(x)
 ```{r}
 # Function to generate a continuous exposure
 continuous_exposure 
-
 continuous_exposure(n = 5, mu = 10, sd = 10)
 ```
 
@@ -74,7 +72,6 @@ data(chicagoNMMAPS)
 chic <- chicagoNMMAPS
 names(chic)
 cvd <- chic$cvd
-
 ```
 
 #### Pull real data
@@ -121,7 +118,7 @@ pull_exposure(n = 3)
 pull_exposure(n = 3, measure = "pm10")
 ```
 
-### Expected mean baseline for outcome data
+### Expected values for outcome data
 
 #### Constant baseline hazard rate
 
@@ -282,18 +279,27 @@ group_by(df, exp_y) %>% summarize(mean_y = mean(y))
 Here is a function to do all this:
 
 ```{r}
-sim_data <- function(n, rr, x_type = "binary", baseline = "constant",
+sim_data <- function(n, rr, x_type = "binary", trend = "constant",
                      start.date = "2000-01-01", ...){
         
         require(dplyr)
-        
-        if(x_type == "binary"){
+        t <- calc_t(n, trend)
+        if(x_type == "binary" & trend = "constant"){
                 x <- binary_exposure(n = n, ...)
-        } else if(x_type == "continuous"){
+                simdata <- data.frame(x, sim_binout(n=n, ...))
+        } else if(x_type == "continuous" & trend=="constant"){
                 x <- continuous_exposure(n = n, ...)
+                simdata <- data.frame(x, sim_contout(n=n, ...))
+        } else if(x_type == "binary" & trend != "constant"){
+                x <- season_binexp(n = n, ...)
+                simdata <- data.frame(x, sim_binout(n=n, ...))
+        } else if(x_type == "continuous" & trend != "constant"){
+                x <- season_contexp(n = n, ...)
+                simdata <- data.frame(x, sim_contout(n=n, ...))
         }
         
-        if(baseline == "constant"){
+        
+        if(trend == "constant"){
                 exp_base_y <- constant_baseline(n = n, ...)
         }
         

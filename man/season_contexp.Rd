@@ -2,7 +2,7 @@
 % Please edit documentation in R/sim_exposure.R
 \name{season_contexp}
 \alias{season_contexp}
-\title{Simulate continuous exposure data}
+\title{Simulate continuous exposure data with a seasonal trend}
 \usage{
 season_contexp(n, mu, sd, trend)
 }
@@ -21,7 +21,7 @@ include ...}
 A numeric vector with simulated exposure of length n.
 }
 \description{
-This function simulates a time series of continuous exposure data.
+This function simulates a time series of continuous exposure data with a seasonal trend.
 }
 \examples{
 season_contexp(n = 5, mu = 100, sd = 10, trend = "cos1")
