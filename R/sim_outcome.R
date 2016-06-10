@@ -28,7 +28,7 @@ constant_baseline(n = 3, lambda = 100)
 #' This function simulates outcome counts for binary exposure with a seasonal trend.
 #'
 #' @inheritParams constant_baseline
-#' @param mean_out A numeric value specifying the mean outcome count per day
+#' @param lambda A numeric value specifying the mean outcome count per day
 #' @param t A numeric vector for the trend variable resulting from the calc_t function
 #' @param exposure A numeric vector of exposure values
 #' @param rr A numeric value specifying the relative risk
@@ -38,10 +38,10 @@ constant_baseline(n = 3, lambda = 100)
 #' @example
 #' sim_binout(n=5, mean_out=22, t=t, exposure = exposure, rr=1.1)
 #'
-sim_binout <- function(n, mean_out, t, exposure, rr){
+sim_binout <- function(n, lambda, t, exposure, rr){
   day <- c(1:n)
   rr <- ifelse(exposure == 1, rr, 1)
-  exp_y <- log(mean_out)*log(t)*log(rr)
+  exp_y <- log(lambda)*log(t)*log(rr)
   y <- rpois(n, exp_y)
   df <- data.frame(exp_y=exp_y, y=y)
   return(df)
