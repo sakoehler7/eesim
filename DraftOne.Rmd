@@ -160,6 +160,17 @@ season_binexp
 season_contexp
 ```
 
+```{r}
+#Seasonal baseline
+seasonal_baseline <- function(n, lambda, trend, start.date="2000-01-01", ...){
+  start.date <- as.Date(start.date)
+  date <- seq(from = start.date, by=1, length.out=n)
+  t <- calc_t(n=n, ...)
+  exp_base_y <- lambda*t
+  df <- data.frame(date=date, exp_base_y=exp_base_y)
+  return(df)
+}
+```
 
 ```{r}
 #Make a sweet plot of these with n=1500 (just for fun, not working yet):
@@ -297,32 +308,21 @@ sim_data <- function(n, rr, x_type = "binary", trend = "constant",
           df$y <- sapply(df$exp_y, FUN = function(x) rpois(1,x))
         }
         else if(trend != "constant"){
+          t <- calc_t(n=n, ...)
           if(x_type == "binary"){
             x <- season_binexp(n = n,...)
           }
           else if(x_type == "continuous"){
             x <- season_contexp(n = n, ...)
           }
-          
+          exp_base_y <- 
         }
   return(df)
 }
 
 #????
   
-        if(x_type == "binary" & trend == "constant"){
-                x <- binary_exposure(n = n, ...)
-                exp_base_y <- constant_baseline(n=n, ...)
-                df <- full_join(x, exp_base_y, by="date")
-                df <- mutate(df, exp_y=exp(log(exp_base_y)+log(rr)*x))
-                df$y <- sapply(df$exp_y, FUN = function(x) rpois(1,x))
-        } else if(x_type == "continuous" & trend=="constant"){
-                x <- continuous_exposure(n = n, ...)
-                exp_base_y <- constant_baseline(n=n, ...)
-                df <- full_join(x, exp_base_y, by="date")
-                df <- mutate(df, exp_y=exp(log(exp_base_y)+log(rr)*x))
-                df$y <- sapply(df$exp_y, FUN=function(x) rpois(1,x))
-                
+        
                 
         } else if(x_type == "binary" & trend != "constant"){
                 x <- season_binexp(n = n, ...)
@@ -333,7 +333,7 @@ sim_data <- function(n, rr, x_type = "binary", trend = "constant",
         }
         return(df)
         
-}
+
 ```
 
 Here are some examples of this function:

@@ -21,7 +21,27 @@ constant_baseline <- function(n, lambda, start.date = "2000-01-01", ...){
                    exp_base_y = exp_base_y)
   return(df)
 }
-constant_baseline(n = 3, lambda = 100)
+#'
+#' Expected baseline outcomes for seasonal hazard rate
+#'
+#' This function generates expected baseline outcomes when the hazard rate for exposure is seasonal.
+#'
+#' @inheritParams constant_baseline
+#' @param trend A character string specifying the desired seasonal trend
+#'
+#' @return A data frame with the date and expected baseline outcomes for each day of simulated data
+#'
+#' @example
+#' seasonal_baseline(n=3, lambda=100, trend="cos1")
+#'
+seasonal_baseline <- function(n, lambda, trend, start.date="2000-01-01", ...){
+  start.date <- as.Date(start.date)
+  date <- seq(from = start.date, by=1, length.out=n)
+  t <- calc_t(n=n, ...)
+  exp_base_y <- lambda*t
+  df <- data.frame(date=date, exp_base_y=exp_base_y)
+  return(df)
+}
 #'
 #' Simulate outcome data for binary exposure with a seasonal trend
 #'
@@ -41,7 +61,8 @@ constant_baseline(n = 3, lambda = 100)
 sim_binout <- function(n, lambda, t, exposure, rr){
   day <- c(1:n)
   rr <- ifelse(exposure == 1, rr, 1)
-  exp_y <- log(lambda)*log(t)*log(rr)
+  exp_base_y <-
+  exp_y <- log(lambda*t)+log(rr)*exposure
   y <- rpois(n, exp_y)
   df <- data.frame(exp_y=exp_y, y=y)
   return(df)
