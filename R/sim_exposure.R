@@ -20,7 +20,7 @@ binary_exposure <- function(n, p, start.date = "2000-01-01", ...){
   df <- data.frame(date, x)
   return(df)
 }
-#'
+
 #' Simulate continuous exposure data without a seasonal trend
 #'
 #' This function simulates continuous exposure data without a seasonal trend.
@@ -43,7 +43,7 @@ continuous_exposure <- function(n, mu, sd, start.date = "2000-01-01", ...){
   df <- data.frame(date, x)
   return(df)
 }
-#'
+
 #' Create a trend variable
 #'
 #' This function creates a trend variable.
@@ -58,34 +58,31 @@ continuous_exposure <- function(n, mu, sd, start.date = "2000-01-01", ...){
 #' calc_t(5, "cos3")
 #'
 calc_t <- function(n, trend = "no trend"){
-day <- c(1:n)
-if (trend == "cos1"){
-  seasont <- 1+.6*cos(2*pi*(day/365))
-}
-if (trend == "cos2"){
-  seasont <- 1+.6*cos(2*pi*(day/365)) + ifelse(day<639 & day>274, .4*cos(2*(pi*(day/365))), 0)
-}
-if (trend == "cos3"){
-  seasont <- 1+.75^(day/365)*.6*cos(2*pi*(day/365))
-}
-if (trend == "linear"){
-  seasont <- 1+ (day/n)
-}
-if (trend == "curvilinear"){
-  seasont <- 1+day*(2/n)+day^2*(-1/n^2)
-}
-if (trend == "cos1linear"){
-  seasont <- (1+(day/n)) *(1+.6*cos(2*pi*(day/365)))
-}
-if (trend == "no trend"){
-  seasont <- 1
-}
-else{
-}
-return(seasont)
+  day <- c(1:n)
+  if (trend == "cos1"){
+    seasont <- 1 + .6 * cos(2 * pi * (day / 365))
+    }
+
+  if (trend == "cos2"){
+    seasont <- 1 + .6 * cos(2 * pi * (day / 365)) +
+      ifelse(day < 639 & day > 274, .4 * cos(2 * (pi * (day / 365))), 0)
+    } else if (trend == "cos3"){
+      seasont <- 1 + .75 ^ (day / 365) * .6 * cos(2 * pi * (day / 365))
+    } else if (trend == "linear"){
+      seasont <- 1 + (day / n)
+    } else if (trend == "curvilinear"){
+      seasont <- 1+ day * (2 / n) + day^2 * (-1 / n^2)
+    } else if (trend == "cos1linear"){
+      seasont <- (1 + (day / n)) * (1 + .6 * cos(2 * pi * (day / 365)))
+    } else if (trend == "no trend"){
+      seasont <- 1
+    } else{
+      stop(paste0("`trend` value is not a valid choice. Please check the",
+                  " function documentation to select a valid option."))
+    }
+  return(seasont)
 }
 
-#'
 #' Simulate binary exposure data with a seasonal trend
 #'
 #' This function simulates binary exposure data with a seasonal trend.
@@ -102,7 +99,7 @@ return(seasont)
 #' @export
 season_binexp <- function(n, p){
   p <- p #Change this later to reflect probability varying by season using trends
-  binexp <- sample(c(0,1), size = n, replace = T, prob = c(1-p, p))
+  binexp <- sample(c(0, 1), size = n, replace = T, prob = c(1 - p, p))
   return(binexp)
 }
 
@@ -126,7 +123,7 @@ season_binexp <- function(n, p){
 season_contexp <- function(n, mu, sd, trend){
   day <- c(1:n)
   t <- calc_t(n, trend)
-  mu <- mu*t
-  contexp <- rnorm(n, mean=mu, sd=sd)
+  mu <- mu * t
+  contexp <- rnorm(n, mean = mu, sd = sd)
   return(contexp)
 }

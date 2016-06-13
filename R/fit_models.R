@@ -26,7 +26,7 @@ spline_mod <- function(df, df_year = 7){
   out <- c(out_1, out_2)
   return(out)
 }
-#'
+
 #' Fit a case-crossover model
 #'
 #' This function fits a case-crossover model to your data.
@@ -69,7 +69,7 @@ casecross_mod <- function(df){
   out <- c(out_1, out_2)
   return(out)
 }
-#'
+
 #' Fit a cross-year model
 #'
 #' This function fits a cross-year model to your data.
@@ -113,7 +113,7 @@ crossyear_mod <- function(df){
   out <- c(out_1, out_2)
   return(out)
 }
-#'
+
 #' Run simulations
 #'
 #' This function runs many simulations for a given dataset and model.
@@ -145,23 +145,3 @@ rep_sims <- function(n_sims, model, n = 5 * 365, rr = 1.01,
   names(out) <- c("est", "se", "t", "p", "lower_ci", "upper_ci")
   return(out)
 }
-#'
-#'
-#'
-#'
-#'
-#'
-#'
-#'
-#'
-#'
-#'
-#'
-#'
-#'
-#'
-#'
-#'
-#'
-#'
-#'
