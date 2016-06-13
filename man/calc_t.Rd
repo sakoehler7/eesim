@@ -9,8 +9,17 @@ calc_t(n, trend = "no trend")
 \arguments{
 \item{n}{A numeric value giving the number of days to simulate.}
 
-\item{trend}{A character string that gives the trend function to use.  Options include
-cos1, cos2, cos3, linear, curvilinear, cos1linear, and no trend.}
+\item{trend}{A character string that gives the trend function to use. Options
+include:
+\itemize{
+  \item{"cos1"}
+  \item{"cos2"}
+  \item{"cos3"}
+  \item{"linear"}
+  \item{"curvilinear"}
+  \item{"cos1linear"}
+  \item{"no trend"}
+}}
 }
 \value{
 A numeric vector used to generate data with seasonal trends.

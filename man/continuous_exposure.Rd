@@ -14,7 +14,8 @@ continuous_exposure(n, mu, sd, start.date = "2000-01-01", ...)
 \item{sd}{A numeric vector giving the standard deviation of the exposure
 distribution.}
 
-\item{start.date}{A date in the format "yyyy-mm-dd" specifying the first day of simulated measurements.}
+\item{start.date}{A date in the format "yyyy-mm-dd" specifying the first day
+of simulated measurements.}
 }
 \value{
 A data frame with date and exposure value for each day.

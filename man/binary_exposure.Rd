@@ -9,9 +9,11 @@ binary_exposure(n, p, start.date = "2000-01-01", ...)
 \arguments{
 \item{n}{A numeric value giving the number of days to simulate.}
 
-\item{p}{A numeric value between 0 and 1 specifying the probability of exposure.}
+\item{p}{A numeric value between 0 and 1 specifying the probability of
+exposure.}
 
-\item{start.date}{A date in the format "yyyy-mm-dd" specifying the first day of simulated measurements.}
+\item{start.date}{A date in the format "yyyy-mm-dd" specifying the first day
+of simulated measurements.}
 }
 \value{
 A data frame with the date and a 0 or 1 exposure value for each day.

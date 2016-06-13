@@ -5,9 +5,11 @@
 #' @param df A data frame with exposure and outcome data
 #' @param df_year A numeric value specifying the degrees of freedom per year
 #'
-#' @return Summary of the estimated log relative risk for a 1-unit increase in exposure
+#' @return Summary of the estimated log relative risk for a 1-unit increase in
+#'    exposure
 #'
-#' @example
+#' @examples
+#' df <- constant_baseline(n = 600, lambda = 100)
 #' spline_mod(df)
 #'
 #' @export
@@ -31,9 +33,10 @@ spline_mod <- function(df, df_year = 7){
 #'
 #' @inheritParams spline_mod
 #'
-#' @return Summary of the estimated log relative risk for a 1-unit increase in exposure
+#' @return Summary of the estimated log relative risk for a 1-unit increase in
+#'    exposure
 #'
-#' @example
+#' @examples
 #' casecross_mod(df)
 #'
 #' @export
@@ -74,9 +77,10 @@ casecross_mod <- function(df){
 #'
 #' @inheritParams spline_mod
 #'
-#' @return Summary of the estimated log relative risk for a 1-unit increase in exposure
+#' @return Summary of the estimated log relative risk for a 1-unit increase in
+#'    exposure
 #'
-#' @example
+#' @examples
 #' crossyear_mod(df)
 #'
 #' @export
@@ -116,17 +120,23 @@ crossyear_mod <- function(df){
 #'
 #' This function runs many simulations for a given dataset and model.
 #'
-#' @param n_sims A numeric value specifying the number of repetitions of the simulation to run
-#' @param model A character string specifying which model to use.  Options include "spline_mod" and "casecross_mod"
-#' @param n A numeric value specifying the number of days for which to simulate data
-#' @param rr A numeric value specifying the relative risk for each 1-unit increase in exposure
-#' @param x_type A character string specifying the type of exposure data.  Options are "binary" and "continuous".
+#' @param n_sims A numeric value specifying the number of repetitions of the
+#'    simulation to run
+#' @param model A character string specifying which model to use.  Options
+#'    include "spline_mod" and "casecross_mod"
+#' @param n A numeric value specifying the number of days for which to simulate
+#'    data
+#' @param rr A numeric value specifying the relative risk for each 1-unit
+#'    increase in exposure
+#' @param x_type A character string specifying the type of exposure data.
+#'    Options are "binary" and "continuous".
 #' @inheritParams continuous_exposure
 #' @inheritParams binary_exposure
 #'
-#' @return A data frame with the summaries of the estimate of the log relative risk for each simulation run
+#' @return A data frame with the summaries of the estimate of the log relative
+#'    risk for each simulation run
 #'
-#' @example
+#' @examples
 #' rep_sims(n_sims = 3, model = "spline_mod")
 #'
 #' @export

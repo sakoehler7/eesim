@@ -3,8 +3,10 @@
 #' This function generates binary exposure data without a seasonal trend.
 #'
 #' @inheritParams season_binexp
-#' @param p A numeric value between 0 and 1 specifying the probability of exposure.
-#' @param start.date A date in the format "yyyy-mm-dd" specifying the first day of simulated measurements.
+#' @param p A numeric value between 0 and 1 specifying the probability of
+#'    exposure.
+#' @param start.date A date in the format "yyyy-mm-dd" specifying the first day
+#'    of simulated measurements.
 #'
 #' @return A data frame with the date and a 0 or 1 exposure value for each day.
 #'
@@ -49,8 +51,17 @@ continuous_exposure <- function(n, mu, sd, start.date = "2000-01-01", ...){
 #' This function creates a trend variable.
 #'
 #' @param n A numeric value giving the number of days to simulate.
-#' @param trend A character string that gives the trend function to use.  Options include
-#'    cos1, cos2, cos3, linear, curvilinear, cos1linear, and no trend.
+#' @param trend A character string that gives the trend function to use. Options
+#'    include:
+#'    \itemize{
+#'      \item{"cos1"}
+#'      \item{"cos2"}
+#'      \item{"cos3"}
+#'      \item{"linear"}
+#'      \item{"curvilinear"}
+#'      \item{"cos1linear"}
+#'      \item{"no trend"}
+#'    }
 #'
 #' @return A numeric vector used to generate data with seasonal trends.
 #'
@@ -105,13 +116,13 @@ season_binexp <- function(n, p){
 
 #' Simulate continuous exposure data with a seasonal trend
 #'
-#' This function simulates a time series of continuous exposure data with a seasonal trend.
+#' This function simulates a time series of continuous exposure data with a
+#' seasonal trend.
 #'
 #' @param mu A numeric vector giving the average of the exposure distribution.
 #' @param sd A numeric vector giving the standard deviation of the exposure
 #'    distribution.
-#' @param trend A character string that gives the trend function to use. Options
-#'    include ...
+#' @inheritParams calc_t
 #' @inheritParams season_binexp
 #'
 #' @return A numeric vector with simulated exposure of length n.

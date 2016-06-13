@@ -15,13 +15,23 @@ season_contexp(n, mu, sd, trend)
 distribution.}
 
 \item{trend}{A character string that gives the trend function to use. Options
-include ...}
+include:
+\itemize{
+  \item{"cos1"}
+  \item{"cos2"}
+  \item{"cos3"}
+  \item{"linear"}
+  \item{"curvilinear"}
+  \item{"cos1linear"}
+  \item{"no trend"}
+}}
 }
 \value{
 A numeric vector with simulated exposure of length n.
 }
 \description{
-This function simulates a time series of continuous exposure data with a seasonal trend.
+This function simulates a time series of continuous exposure data with a
+seasonal trend.
 }
 \examples{
 season_contexp(n = 5, mu = 100, sd = 10, trend = "cos1")
