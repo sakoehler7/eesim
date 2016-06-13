@@ -13,8 +13,6 @@
 #' @export
 #'
 spline_mod <- function(df, df_year = 7){
-  require(splines)
-
   dgrs_free <- df_year * as.numeric(diff(df[c(1, nrow(df)), "date"])) / 365.4
   df$time <- scale(df$date, center = TRUE, scale = FALSE)
   mod <- glm(y ~ x + ns(time, round(dgrs_free)),
@@ -135,7 +133,6 @@ crossyear_mod <- function(df){
 #'
 rep_sims <- function(n_sims, model, n = 5 * 365, rr = 1.01,
                      x_type = "continuous", mu = 10, sd = 2, lambda = 100){
-  library(dplyr)
   out <- replicate(n_sims, eval(call(model,
                                      sim_data(n = n, rr = rr,
                                               x_type = x_type,
