@@ -11,7 +11,7 @@
 #' @return A data frame with the date and a 0 or 1 exposure value for each day.
 #'
 #' @examples
-#' binary_exposure(n = 5, p_exp = 0.25)
+#' binary_exposure(n = 5, p = 0.25)
 #'
 #' @export
 binary_exposure <- function(n, p, start.date = "2000-01-01", ...){
@@ -72,9 +72,7 @@ calc_t <- function(n, trend = "no trend"){
   day <- c(1:n)
   if (trend == "cos1"){
     seasont <- 1 + .6 * cos(2 * pi * (day / 365))
-    }
-
-  if (trend == "cos2"){
+    } else if (trend == "cos2"){
     seasont <- 1 + .6 * cos(2 * pi * (day / 365)) +
       ifelse(day < 639 & day > 274, .4 * cos(2 * (pi * (day / 365))), 0)
     } else if (trend == "cos3"){
@@ -105,7 +103,7 @@ calc_t <- function(n, trend = "no trend"){
 #' @return A numeric vector with simulated exposure of length n.
 #'
 #' @examples
-#' season_binexp(5, 0.25)
+#' season_binexp(n = 5, p = 0.25)
 #'
 #' @export
 season_binexp <- function(n, p){

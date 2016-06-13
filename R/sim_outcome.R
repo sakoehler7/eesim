@@ -65,13 +65,14 @@ seasonal_baseline <- function(n, lambda, trend, start.date = "2000-01-01", ...){
 #'    each day
 #'
 #' @examples
-#' sim_binout(n = 5, mean_out = 22, t = t, exposure = exposure, rr = 1.1)
+#' exposure <- season_contexp(n = 5, mu = 100, sd = 10, trend = "cos1")
+#' t <- calc_t(n = 5, trend = "no trend")
+#' sim_binout(n = 5, lambda = 22, t = t, exposure = exposure, rr = 1.1)
 #'
 sim_binout <- function(n, lambda, t, exposure, rr){
   day <- c(1:n)
   rr <- ifelse(exposure == 1, rr, 1)
-  exp_base_y <-
-  exp_y <- log(lambda * t)+log(rr) * exposure
+  exp_y <- log(lambda * t) + log(rr) * exposure
   y <- rpois(n, exp_y)
   df <- data.frame(exp_y = exp_y, y = y)
   return(df)
