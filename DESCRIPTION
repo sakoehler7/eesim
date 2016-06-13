@@ -1,12 +1,19 @@
 Package: eesim
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1
+Title: Simulate and Evaluate Time Series for Environmental Epidemiology
+Version: 0.1.0.9000
 Date: 2016-05-31
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Authors@R: c(person("Sarah", "Koehler", email = "sakoehler7@gmail.com",
+    role = c("aut")),
+    person("Brooke", "Anderson", email = "brooke.anderson@colostate.edu",
+    role = c("aut", "cre")))
+Description: Provides functions to create simulated time series of environmental
+    exposures (e.g., temperature, air pollution) and health outcomes for use in
+    power analysis and simulation studies in environmental epidemiology. This
+    package also provides functions to evaluate the results of simulation studies
+    based on these simulated time series. This work was supported by a grant
+    from the National Institute of Environmental Health Sciences (R00ES022631).
+License: GPL-2
 LazyData: TRUE
 URL: http://github.com/sakoehler7/eesim
 BugReports: http://github.com/sakoehler7/eesim/issues
