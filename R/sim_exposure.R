@@ -68,6 +68,7 @@ continuous_exposure <- function(n, mu, sd, start.date = "2000-01-01", ...){
 #' @examples
 #' calc_t(5, "cos3")
 #'
+#' @export
 calc_t <- function(n, trend = "no trend"){
   day <- c(1:n)
   if (trend == "cos1"){

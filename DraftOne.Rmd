@@ -42,7 +42,7 @@ Here's a function that takes arguments of `n` and `p_exp` and returns a generate
 ```{r}
 # Function to generate a binary exposure
 binary_exposure 
-binary_exposure(n = 5, p_exp = 0.25)
+binary_exposure(n = 5, p = 0.25)
 ```
 
 #### Continuous exposure
@@ -247,10 +247,10 @@ Then, it's necessary to combine the exposure, `x`, and expected baseline outcome
 
 ```{r}
 n <- 1000
-p_exp <- 0.25
+p <- 0.25
 lambda <- 100
 
-x <- binary_exposure(n = n, p_exp = p_exp)
+x <- binary_exposure(n = n, p = p)
 exp_base_y <- constant_baseline(n = n, lambda = lambda)
 df <- full_join(x, exp_base_y, by = "date")
 ```
