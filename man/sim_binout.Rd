@@ -28,7 +28,9 @@ This function simulates outcome counts for binary exposure with a seasonal
 trend.
 }
 \examples{
-sim_binout(n = 5, mean_out = 22, t = t, exposure = exposure, rr = 1.1)
+exposure <- season_contexp(n = 5, mu = 100, sd = 10, trend = "cos1")
+t <- calc_t(n = 5, trend = "no trend")
+sim_binout(n = 5, lambda = 22, t = t, exposure = exposure, rr = 1.1)
 
 }
 

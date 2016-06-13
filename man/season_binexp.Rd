@@ -19,7 +19,7 @@ A numeric vector with simulated exposure of length n.
 This function simulates binary exposure data with a seasonal trend.
 }
 \examples{
-season_binexp(5, 0.25)
+season_binexp(n = 5, p = 0.25)
 
 }
 

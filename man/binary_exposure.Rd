@@ -22,7 +22,7 @@ A data frame with the date and a 0 or 1 exposure value for each day.
 This function generates binary exposure data without a seasonal trend.
 }
 \examples{
-binary_exposure(n = 5, p_exp = 0.25)
+binary_exposure(n = 5, p = 0.25)
 
 }
 

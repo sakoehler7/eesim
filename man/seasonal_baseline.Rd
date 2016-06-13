@@ -4,7 +4,7 @@
 \alias{seasonal_baseline}
 \title{Expected baseline outcomes for seasonal hazard rate}
 \usage{
-seasonal_baseline(n, lambda, trend, start.date = "2000-01-01", ...)
+seasonal_baseline(n, lambda, start.date = "2000-01-01", trend = "no trend")
 }
 \arguments{
 \item{n}{A numeric vector specifying the number of days for which to simulate
@@ -12,10 +12,20 @@ data}
 
 \item{lambda}{A numeric value specifying the mean for the expected outcomes}
 
-\item{trend}{A character string specifying the desired seasonal trend}
-
 \item{start.date}{A date in the format "yyyy-mm-dd" specifying the first day
 for which to simulate data}
+
+\item{trend}{A character string that gives the trend function to use. Options
+include:
+\itemize{
+  \item{"cos1"}
+  \item{"cos2"}
+  \item{"cos3"}
+  \item{"linear"}
+  \item{"curvilinear"}
+  \item{"cos1linear"}
+  \item{"no trend"}
+}}
 }
 \value{
 A data frame with the date and expected baseline outcomes for each

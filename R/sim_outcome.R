@@ -32,7 +32,7 @@ constant_baseline <- function(n, lambda, start.date = "2000-01-01", ...){
 #' exposure is seasonal.
 #'
 #' @inheritParams constant_baseline
-#' @param trend A character string specifying the desired seasonal trend
+#' @inheritParams calc_t
 #'
 #' @return A data frame with the date and expected baseline outcomes for each
 #'    day of simulated data
@@ -40,10 +40,11 @@ constant_baseline <- function(n, lambda, start.date = "2000-01-01", ...){
 #' @examples
 #' seasonal_baseline(n = 3, lambda = 100, trend = "cos1")
 #'
-seasonal_baseline <- function(n, lambda, trend, start.date = "2000-01-01", ...){
+seasonal_baseline <- function(n, lambda, start.date = "2000-01-01",
+                              trend = "no trend"){
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
-  t <- calc_t(n = n, ...)
+  t <- calc_t(n = n, trend = trend)
   exp_base_y <- lambda * t
   df <- data.frame(date = date, exp_base_y = exp_base_y)
   return(df)
