@@ -107,10 +107,13 @@ calc_t <- function(n, trend = "no trend"){
 #' season_binexp(n = 5, p = 0.25)
 #'
 #' @export
-season_binexp <- function(n, p){
+season_binexp <- function(n, p, start.date = "2000-01-01", ...){
+  start.date <- as.Date(start.date)
+  date <- seq(from = start.date, by = 1, length.out = n)
   p <- p #Change this later to reflect probability varying by season using trends
-  binexp <- sample(c(0, 1), size = n, replace = T, prob = c(1 - p, p))
-  return(binexp)
+  x <- sample(c(0, 1), size = n, replace = T, prob = c(1 - p, p))
+  df <- data.frame(date, x)
+  return(df)
 }
 
 #' Simulate continuous exposure data with a seasonal trend
@@ -130,10 +133,13 @@ season_binexp <- function(n, p){
 #' season_contexp(n = 5, mu = 100, sd = 10, trend = "cos1")
 #'
 #' @export
-season_contexp <- function(n, mu, sd, trend){
+season_contexp <- function(n, mu, sd, trend, start.date = "2000-01-01", ...){
   day <- c(1:n)
   t <- calc_t(n, trend)
+  start.date <- as.Date(start.date)
+  date <- seq(from = start.date, by = 1, length.out = n)
   mu <- mu * t
-  contexp <- rnorm(n, mean = mu, sd = sd)
-  return(contexp)
+  x <- rnorm(n, mean = mu, sd = sd)
+  df <- data.frame(date, x)
+  return(df)
 }

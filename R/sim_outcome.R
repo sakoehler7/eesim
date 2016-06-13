@@ -49,51 +49,65 @@ seasonal_baseline <- function(n, lambda, start.date = "2000-01-01",
   df <- data.frame(date = date, exp_base_y = exp_base_y)
   return(df)
 }
-
-#' Simulate outcome data for binary exposure with a seasonal trend
 #'
-#' This function simulates outcome counts for binary exposure with a seasonal
-#' trend.
+#' Simulated Exposure and Outcome Data
+#'
+#' This function simulates data for exposure levels and health outcomes by date.
 #'
 #' @inheritParams constant_baseline
-#' @param lambda A numeric value specifying the mean outcome count per day
-#' @param t A numeric vector for the trend variable resulting from the
-#'    \code{calc_t} function
-#' @param exposure A numeric vector of exposure values
-#' @param rr A numeric value specifying the relative risk
+#' @inheritParams calc_t
+#' @inheritParams season_binexp
+#' @inheritParams season_contexp
+#' @param rr A numeric value specifying the relative risk of the outcome for each 1-unit increase in exposure
+#' @param x_type A character string specifying the type of exposure data.  Options are "binary" and "continuous".
 #'
-#' @return A data frame with the expected outcomes and simulated outcomes for
-#'    each day
+#' @return A data frame with the date, exposure value, expected baseline outcome,
+#' expected outcome, and simulated outcome for each day of simulated data.
 #'
-#' @examples
-#' exposure <- season_contexp(n = 5, mu = 100, sd = 10, trend = "cos1")
-#' t <- calc_t(n = 5, trend = "no trend")
-#' sim_binout(n = 5, lambda = 22, t = t, exposure = exposure, rr = 1.1)
+#' @example
+#' sim_data(n=10, rr = 1.1, lambda = 100, p = .5)
 #'
-sim_binout <- function(n, lambda, t, exposure, rr){
-  day <- c(1:n)
-  rr <- ifelse(exposure == 1, rr, 1)
-  exp_y <- log(lambda * t) + log(rr) * exposure
-  y <- rpois(n, exp_y)
-  df <- data.frame(exp_y = exp_y, y = y)
+#' @export
+#'
+sim_data <- function(n, rr, lambda, x_type = "binary", trend = "constant",
+                     start.date = "2000-01-01", ...){
+
+  require(dplyr)
+
+  if(trend=="constant"){
+    if(x_type == "binary"){
+      x <- binary_exposure(n=n, ...)
+    }
+    else if(x_type == "continuous"){
+      x <- continuous_exposure(n=n, ...)
+    }
+    exp_base_y <- constant_baseline(n=n, lambda = lambda, start.date = start.date)
+    df <- full_join(x, exp_base_y, by="date") %>% mutate(exp_y =
+                                                           exp(log(exp_base_y)+log(rr)*x))
+    df$y <- sapply(df$exp_y, FUN = function(x) rpois(1,x))
+  }
+
+  else if(trend != "constant"){
+    if(x_type == "binary"){
+      x <- season_binexp(n = n, ...)
+    }
+    else if(x_type == "continuous"){
+      x <- season_contexp(n = n, trend = trend, ...)
+    }
+    exp_base_y <- seasonal_baseline(n = n, lambda = lambda, start.date = start.date,
+                                    trend = trend)
+    df <- full_join(x, exp_base_y, by="date") %>% mutate(exp_y =
+                                                           exp(log(exp_base_y)+log(rr)*x))
+    df$y <- sapply(df$exp_y, FUN = function(x) rpois(1,x))
+  }
   return(df)
 }
 
-#' Simulate outcomes for continuous exposure with a seasonal trend
 #'
-#' This function simulates outcome counts for continuous exposure with a
-#' seasonal trend.
 #'
-#' @inheritParams sim_binout
-#' @param mu A numeric value specifying the mean
 #'
-#' @return A data frame with the expected outcome and simulated outcome for each
-#'    day of simulated data
 #'
-sim_contout<- function(n, mu, t, exposure, rr){
-  day <- c(1:n)
-  exp_y <- mu * t * rr * (exposure / sd(exposure))
-  y <- rpois(n, exp_y)
-  df <- data.frame(exp_y = exp_y, y = åy)
-  return(df)
-}
+#'
+#'
+#'
+#'
