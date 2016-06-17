@@ -7,7 +7,7 @@
 #'
 #' @return A data frame with the mean estimated coefficient and mean estimated relative risk
 #'
-#' @example
+#' @examples
 #' mean_beta(df)
 #'
 #' @export
@@ -28,7 +28,7 @@ mean_beta <- function(df){
 #'
 #' @return A data frame of the variance across $\hat{\beta}$s and the mean variance of the $\hat{\beta}$s
 #'
-#' @example
+#' @examples
 #' beta_var(df)
 #'
 #' @export

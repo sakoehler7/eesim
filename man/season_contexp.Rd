@@ -4,7 +4,7 @@
 \alias{season_contexp}
 \title{Simulate continuous exposure data with a seasonal trend}
 \usage{
-season_contexp(n, mu, sd, trend)
+season_contexp(n, mu, sd, trend, start.date = "2000-01-01", ...)
 }
 \arguments{
 \item{n}{A numeric value giving the number of days to simulate.}

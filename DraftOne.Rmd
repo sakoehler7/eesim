@@ -296,8 +296,9 @@ sim_data
 Here are some examples of this function:
 
 ```{r}
-sim_data(n = 3, rr = 1.2, p_exp = .2, lambda = 100)
-sim_data(n = 3, rr = 1.02, x_type = "continuous", mu = 10, sd = 10, lambda = 100)
+sim_data(n = 3, rr = 1.2, p = .2, lambda = 100)
+sim_data(n = 3, rr = 1.02, x_type = "continuous", mu = 10, sd = 10,
+         lambda = 100)
 ```
 
 ## Fitting the models
@@ -326,7 +327,7 @@ spline_mod
 Here are some examples of fitting this model:
 
 ```{r}
-df <- sim_data(n = 5 * 365, rr = 1.2, p_exp = .2, lambda = 100)
+df <- sim_data(n = 5 * 365, rr = 1.2, p = .2, lambda = 100)
 spline_mod(df)
 exp(spline_mod(df)[1])
 
@@ -362,7 +363,7 @@ casecross_mod
 Here are some examples of fitting this model:
 
 ```{r}
-df <- sim_data(n = 5 * 365, rr = 1.2, p_exp = .2, lambda = 100)
+df <- sim_data(n = 5 * 365, rr = 1.2, p = .2, lambda = 100)
 casecross_mod(df)
 exp(casecross_mod(df)[1])
 
@@ -386,7 +387,7 @@ crossyear_mod
 Here are some examples of applying this model:
 
 ```{r}
-df <- sim_data(n = 5 * 365, rr = 1.2, p_exp = .2, lambda = 100)
+df <- sim_data(n = 5 * 365, rr = 1.2, p = .2, lambda = 100)
 crossyear_mod(df)
 exp(crossyear_mod(df)[1])
 
