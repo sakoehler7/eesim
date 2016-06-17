@@ -46,7 +46,7 @@ custom_baseline <- function(n, average_outcome = NA, trend = NA,
                             outcome_type = "cvd"){
   df <- dlnm::chicagoNMMAPS
   df$outcome <- df[ , outcome_type]
-  smooth_mod <- glm(outcome ~ ns(time, 7 * 14), data = df)
+  smooth_mod <- glm(outcome ~ splines::ns(time, 7 * 14), data = df)
   baseline <- predict(smooth_mod)[1:n]
   return(baseline)
 }
@@ -64,8 +64,8 @@ create_baseline <- function(n, average_outcome, trend, custom_func = NULL, ...){
   } else {
     arguments <- list(...)
     arguments$n <- n
-    arguments$average_outcome <- n
-    arguments$trend <- n
+    arguments$average_outcome <- average_outcome
+    arguments$trend <- trend
     baseline <- do.call(custom_func, arguments)
   }
   return(baseline)
@@ -98,7 +98,7 @@ sim_random_outcome <- function(lambda, custom_func = NULL, ...){
 
 sim_df <- function(n, central, exposure_type, average_outcome, trend, rr){
   df <- data.frame(day = 1:n) %>%
-    mutate(exposure = sim_random_exposure(n = n, central = central,
+    dplyr::mutate(exposure = sim_random_exposure(n = n, central = central,
                                           exposure_type = exposure_type),
            baseline = create_baseline(n = n, average_outcome = average_outcome,
                                       trend = trend),

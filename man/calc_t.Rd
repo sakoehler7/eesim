@@ -4,7 +4,7 @@
 \alias{calc_t}
 \title{Create a trend variable}
 \usage{
-calc_t(n, trend = "no trend")
+calc_t(n, trend = "no trend", custom_func = NULL, ...)
 }
 \arguments{
 \item{n}{A numeric value giving the number of days to simulate.}
