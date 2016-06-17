@@ -93,6 +93,7 @@ calc_t <- function(n, trend = "no trend", custom_func = NULL, ...){
       stop(paste0("`trend` value is not a valid choice. Please check the",
                   " function documentation to select a valid option."))
     }
+  seasont <- seasont / mean(seasont)
   return(seasont)
 }
 
