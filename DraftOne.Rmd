@@ -172,11 +172,25 @@ seasonal_baseline <- function(n, lambda, trend, start.date="2000-01-01", ...){
 }
 ```
 
-```{r}
-#Make a sweet plot of these with n=1500 (just for fun, not working yet):
-trendname <- c(rep("cos1", 1500), rep("cos2",1500), rep("cos3",1500), rep("linear",1500),  rep("curvilinear",1500), rep("cos1linear",1500))
-trendtests <- c(calc_t(1500, trend = "cos1"), calc_t(1500, trend = "cos2"), calc_t(1500, trend = "cos3"), calc_t(1500, trend = "linear"), calc_t(1500, trend = "curvilinear"), calc_t(1500, trend = "cos1linear"))
-trendframe <- data.frame(trendname, trendtests)
+Here's a plot of the trends:
+
+```{r fig.width = 7, fig.height = 4}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+data.frame(day = 1:1000) %>%
+  mutate(none = calc_t(n = 1000, trend = "no trend"),
+         cos1 = calc_t(n = 1000, trend = "cos1"),
+         cos2 = calc_t(n = 1000, trend = "cos2"),
+         cos3 = calc_t(n = 1000, trend = "cos3"),
+         linear = calc_t(n = 1000, trend = "linear"),
+         curvilinear = calc_t(n = 1000, trend = "curvilinear"),
+         cos1linear = calc_t(n = 1000, trend = "cos1linear")) %>%
+  gather(trend_method, trend_value, -day) %>%
+  ggplot(aes(x = day, y = trend_value)) + 
+  geom_line() + facet_wrap(~ trend_method, ncol = 4) + 
+  theme_bw()
 ```
 
 Next, a function to simulate the outcomes.
