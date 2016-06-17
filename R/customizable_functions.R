@@ -1,9 +1,29 @@
+#' Pulls exposure series from Chicago NMMAPS data set
+#'
+#' @examples
+#' custom_exposure(n = 5, metric = "temp")
+custom_exposure <- function(n, central = NA, metric = "temp"){
+  df <- dlnm::chicagoNMMAPS
+  exposure <- df[1:n, metric]
+  return(exposure)
+}
+
+#' Simulate random series of exposure values
+#'
+#' @examples
+#' sim_random_exposure(n = 5, central = 0.25, exposure_type = "binary")
+#' sim_random_exposure(n = 5, central = 100, sd = 10,
+#'                     exposure_type = "continuous")
+#' sim_random_exposure(n = 5, central = NA, custom_func = "custom_exposure",
+#'                     metric = "temp")
+#'
+#' @export
 sim_random_exposure <- function(n, central, custom_func = NULL,
-                         exposure_type, ...){
+                         exposure_type = NA, ...){
   if(is.null(custom_func) & exposure_type == "binary"){
     exposure <- stats::rbinom(n = n, size = 1, prob = central)
   } else if (is.null(custom_func) & exposure_type == "continuous"){
-    x <- stats::rnorm(n = n, mean = central, ...)
+    exposure <- stats::rnorm(n = n, mean = central, ...)
   } else if (!(is.null(custom_func))){
     arguments <- list(...)
     arguments$n <- n
@@ -17,9 +37,37 @@ sim_random_exposure <- function(n, central, custom_func = NULL,
   return(exposure)
 }
 
+#' Pull smoothed Chicago NMMAPS mortality data
+#'
+#' @examples
+#' custom_baseline(n = 5)
+#' custom_baseline(n = 5, outcome_type = "death")
+custom_baseline <- function(n, average_outcome = NA, trend = NA,
+                            outcome_type = "cvd"){
+  df <- dlnm::chicagoNMMAPS
+  df$outcome <- df[ , outcome_type]
+  smooth_mod <- glm(outcome ~ ns(time, 7 * 14), data = df)
+  baseline <- predict(smooth_mod)[1:n]
+  return(baseline)
+}
+
+#' Create a series of baseline outcomes
+#'
+#' @examples
+#' create_baseline(n = 5, average_outcome = 22, trend = "linear")
+#' create_baseline(n = 5, average_outcome = NA, trend = NA,
+#'                 custom_func = "custom_baseline", outcome_type = "death")
 create_baseline <- function(n, average_outcome, trend, custom_func = NULL, ...){
-  season_t <- calc_t(n = n, trend = trend, ...)
-  baseline <- rep(average_outcome, n) * season_t
+  if(is.null(custom_func)){
+    season_t <- calc_t(n = n, trend = trend, ...)
+    baseline <- rep(average_outcome, n) * season_t
+  } else {
+    arguments <- list(...)
+    arguments$n <- n
+    arguments$average_outcome <- n
+    arguments$trend <- n
+    baseline <- do.call(custom_func, arguments)
+  }
   return(baseline)
 }
 
