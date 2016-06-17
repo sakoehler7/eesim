@@ -17,8 +17,7 @@
 binary_exposure <- function(n, p, start.date = "2000-01-01", ...){
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
-  x <- sample(c(0, 1), size = n, replace = TRUE,
-              prob = c(1-p, p))
+  x <- rbinom(n, 1, p)
   df <- data.frame(date, x)
   return(df)
 }
