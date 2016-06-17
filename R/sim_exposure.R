@@ -86,7 +86,9 @@ calc_t <- function(n, trend = "no trend", custom_func = NULL, ...){
     } else if (trend == "no trend"){
       seasont <- 1
     } else if (trend == "custom" & !is.null(custom_func)) {
-      seasont <- do.call(custom_func, n = n, ...)
+      arguments <- list(...)
+      arguments$n <- n
+      seasont <- do.call(custom_func, arguments)
     } else {
       stop(paste0("`trend` value is not a valid choice. Please check the",
                   " function documentation to select a valid option."))
