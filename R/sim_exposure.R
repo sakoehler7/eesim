@@ -17,8 +17,7 @@
 binary_exposure <- function(n, p, start.date = "2000-01-01", ...){
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
-  x <- sample(c(0, 1), size = n, replace = TRUE,
-              prob = c(1-p, p))
+  x <- rbinom(n, 1, p)
   df <- data.frame(date, x)
   return(df)
 }
@@ -69,7 +68,7 @@ continuous_exposure <- function(n, mu, sd, start.date = "2000-01-01", ...){
 #' calc_t(5, "cos3")
 #'
 #' @export
-calc_t <- function(n, trend = "no trend"){
+calc_t <- function(n, trend = "no trend", custom_func = NULL, ...){
   day <- c(1:n)
   if (trend == "cos1"){
     seasont <- 1 + .6 * cos(2 * pi * (day / 365))
@@ -86,10 +85,15 @@ calc_t <- function(n, trend = "no trend"){
       seasont <- (1 + (day / n)) * (1 + .6 * cos(2 * pi * (day / 365)))
     } else if (trend == "no trend"){
       seasont <- 1
-    } else{
+    } else if (trend == "custom" & !is.null(custom_func)) {
+      arguments <- list(...)
+      arguments$n <- n
+      seasont <- do.call(custom_func, arguments)
+    } else {
       stop(paste0("`trend` value is not a valid choice. Please check the",
                   " function documentation to select a valid option."))
     }
+  seasont <- seasont / mean(seasont)
   return(seasont)
 }
 

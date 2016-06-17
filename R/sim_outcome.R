@@ -64,7 +64,7 @@ seasonal_baseline <- function(n, lambda, start.date = "2000-01-01",
 #' @return A data frame with the date, exposure value, expected baseline outcome,
 #' expected outcome, and simulated outcome for each day of simulated data.
 #'
-#' @example
+#' @examples
 #' sim_data(n=10, rr = 1.1, lambda = 100, p = .5)
 #'
 #' @export
