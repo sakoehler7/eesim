@@ -24,7 +24,7 @@ mean_beta <- function(df){
 #' This function gives the variance of the point estimates of $\hat{\beta}$ over the n simulations
 #' and the mean of the variances of each $\hat{\beta}$.
 #'
-#' @param df A data frame of replicated simulations which must include columns titles "est" and "se".
+#' @param df A data frame of replicated simulations which must include columns titled "est" and "se".
 #'
 #' @return A data frame of the variance across $\hat{\beta}$s and the mean variance of the $\hat{\beta}$s
 #'
@@ -40,7 +40,11 @@ beta_var <- function(df){
   return(out)
 }
 #'
+#' Percent Coverage of Estimated Coefficients
 #'
+#' This function gives the percent coverage for the true coefficient.
+#'
+#' @param df A data frame of replicated simulations which must include columns titled
 #'
 #'
 #'
