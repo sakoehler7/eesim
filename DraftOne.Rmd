@@ -2,7 +2,7 @@
 title: "DraftOne"
 author: "Sarah Koehler"
 date: "June 1, 2016"
-output: html_document
+output: word_document
 ---
 
 ```{r echo = FALSE, message=FALSE, warning=FALSE}
@@ -515,9 +515,8 @@ I'll write a function that measures both (`fig_bias` and `wang_bias`):
 ```{r}
 # Measure percent bias
 beta_bias <- function(df, true_rr){
-        fig_bias <- 100 * (mean(df$est) - true_rr) / true_rr
-        wang_bias <- 100 * (true_rr - mean(df$est)) / true_rr
-        out <- data.frame(fig_bias, wang_bias)
+        percent_bias <- 100 * (true_rr - mean(exp(df$est))) / true_rr
+        out <- data.frame(percent_bias)
         return(out)
 }
 beta_bias(rep_df, true_rr = 1.02)
