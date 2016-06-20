@@ -514,11 +514,7 @@ I'll write a function that measures both (`fig_bias` and `wang_bias`):
 
 ```{r}
 # Measure percent bias
-beta_bias <- function(df, true_rr){
-        percent_bias <- 100 * (true_rr - mean(exp(df$est))) / true_rr
-        out <- data.frame(percent_bias)
-        return(out)
-}
+beta_bias 
 beta_bias(rep_df, true_rr = 1.02)
 ```
 
@@ -544,13 +540,7 @@ These all seem to be saying the same thing.
 
 ```{r}
 # Measure coverage
-coverage_beta <- function(df, true_rr){
-        true_beta <- log(true_rr)
-        coverage <- df$lower_ci <= true_beta & df$upper_ci >= true_beta
-        out <- data.frame(coverage = sum(coverage) / nrow(df))
-        return(out)
-}
-
+coverage_beta 
 coverage_beta(rep_df, true_rr = 1.02)
 ```
 
