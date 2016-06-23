@@ -68,21 +68,21 @@ continuous_exposure <- function(n, mu, sd, start.date = "2000-01-01", ...){
 #' calc_t(5, "cos3")
 #'
 #' @export
-calc_t <- function(n, trend = "no trend", custom_func = NULL, ...){
+calc_t <- function(n, trend = "no trend", amp = .6, custom_func = NULL, ...){
   day <- c(1:n)
   if (trend == "cos1"){
-    seasont <- 1 + .6 * cos(2 * pi * (day / 365))
+    seasont <- 1 + amp * cos(2 * pi * (day / 365))
     } else if (trend == "cos2"){
-    seasont <- 1 + .6 * cos(2 * pi * (day / 365)) +
+    seasont <- 1 + amp * cos(2 * pi * (day / 365)) +
       ifelse(day < 639 & day > 274, .4 * cos(2 * (pi * (day / 365))), 0)
     } else if (trend == "cos3"){
-      seasont <- 1 + .75 ^ (day / 365) * .6 * cos(2 * pi * (day / 365))
+      seasont <- 1 + .75 ^ (day / 365) * amp * cos(2 * pi * (day / 365))
     } else if (trend == "linear"){
       seasont <- 1 + (day / n)
     } else if (trend == "curvilinear"){
       seasont <- 1+ day * (2 / n) + day^2 * (-1 / n^2)
     } else if (trend == "cos1linear"){
-      seasont <- (1 + (day / n)) * (1 + .6 * cos(2 * pi * (day / 365)))
+      seasont <- (1 + (day / n)) * (1 + amp * cos(2 * pi * (day / 365)))
     } else if (trend == "no trend"){
       seasont <- 1
     } else if (trend == "custom" & !is.null(custom_func)) {
@@ -111,11 +111,15 @@ calc_t <- function(n, trend = "no trend", custom_func = NULL, ...){
 #' season_binexp(n = 5, p = 0.25)
 #'
 #' @export
-season_binexp <- function(n, p, start.date = "2000-01-01", ...){
+season_binexp <- function(n, p, trend, start.date = "2000-01-01"){
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
-  p <- p #Change this later to reflect probability varying by season using trends
-  x <- sample(c(0, 1), size = n, replace = T, prob = c(1 - p, p))
+  t <- calc_t(n = n, trend = trend)
+  p <- p*t
+  p <- #Magic
+  for (i in 1:n){
+    x <- sample(c(0, 1), size = 1, replace = T, prob = c(1 - p[i], p[i]))
+  }
   df <- data.frame(date, x)
   return(df)
 }
