@@ -13,23 +13,26 @@ author:
       Fort Collins, CO
     email: brooke.anderson@colostate.edu
 title:
-  formatted: "\\pkg{eesim}: A Package to Simulate Environmental Epidemiology Time Series for Simulation Studies and Power Analyses"
+  formatted: "\\pkg{eesim}: An R Package to Simulate Environmental Epidemiology Time Series for Simulation Studies and Power Analyses"
   # If you use tex in the formatted title, also supply version without
-  plain:     "eesim: A Package to Simulate Environmental Epidemiology Time Series for Simulation Studies and Power Analyses"
+  plain:     "eesim: An R Package to Simulate Environmental Epidemiology Time Series for Simulation Studies and Power Analyses"
   # For running headers, if needed
   short:     "\\pkg{eesim}: Simulations for Environmental Epidemiology"
 abstract: >
   The abstract of the article.
 keywords:
   # at least one keyword must be supplied
-  formatted: [environmental epidemiology, simulation studies, power analysis, air pollution]
-  plain:     [environmental epidemiology, simulation studies, power analysis, air pollution]
+  formatted: [R, environmental epidemiology, simulation studies, power analysis, air pollution]
+  plain:     [R, environmental epidemiology, simulation studies, power analysis, air pollution]
 preamble: >
   \usepackage{amsmath}
-output: rticles::jss_article
+output:
+  rticles::jss_article:
+    citation_package: natbib
+bibliography: mybibfile.bib
 ---
 
-# Purpose of package
+# Introduction
 
 ## Environmental time series studies and why they're important
 
@@ -42,7 +45,9 @@ output: rticles::jss_article
 * Not consistent across different studies
 * Time consuming to create, often only need to customize certain parts
 
-# Package functionality
+# Basic overview of package
+
+# Implementing the package
 
 ## Simulating time series
 
@@ -54,4 +59,10 @@ output: rticles::jss_article
 
 ## Customizing simulations
 
+Example citation [@Dirac1953888].
 
+# Discussion
+
+# Acknowledgments
+
+# References
