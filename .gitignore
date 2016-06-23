@@ -1,3 +1,7 @@
 .Rproj.user
 .Rhistory
 .RData
+*.pdf
+*.tex
+JSSDraft_files/
+

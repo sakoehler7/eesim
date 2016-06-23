@@ -1,0 +1,57 @@
+---
+author:
+  - name: Sarah Koehler
+    affiliation: Colorado State University
+    address: >
+      Lake Street
+      Fort Collins, CO
+    email: sakoehler7@gmail.com
+  - name: G. Brooke Anderson
+    affiliation: Colorado State University
+    address: >
+      Lake Street
+      Fort Collins, CO
+    email: brooke.anderson@colostate.edu
+title:
+  formatted: "\\pkg{eesim}: A Package to Simulate Environmental Epidemiology Time Series for Simulation Studies and Power Analyses"
+  # If you use tex in the formatted title, also supply version without
+  plain:     "eesim: A Package to Simulate Environmental Epidemiology Time Series for Simulation Studies and Power Analyses"
+  # For running headers, if needed
+  short:     "\\pkg{eesim}: Simulations for Environmental Epidemiology"
+abstract: >
+  The abstract of the article.
+keywords:
+  # at least one keyword must be supplied
+  formatted: [environmental epidemiology, simulation studies, power analysis, air pollution]
+  plain:     [environmental epidemiology, simulation studies, power analysis, air pollution]
+preamble: >
+  \usepackage{amsmath}
+output: rticles::jss_article
+---
+
+# Purpose of package
+
+## Environmental time series studies and why they're important
+
+## Using simulated time series for power analysis
+
+## Using simulated time series to test modeling questions
+
+## Challenges in creating simulated time series
+
+* Not consistent across different studies
+* Time consuming to create, often only need to customize certain parts
+
+# Package functionality
+
+## Simulating time series
+
+## Using simulated time series for power analysis
+
+## Using simulated time series to test modeling questions
+
+## Evaluating simulations based on these time series
+
+## Customizing simulations
+
+
