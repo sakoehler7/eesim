@@ -1,0 +1,43 @@
+---
+title: Performance of time series, case-crossover, and cross-year models in estimating the effects of natural disasters on human health in the presence of delayed or displaced effects 
+author:
+  - name: Sarah Koehler
+    email: sakoehler7@gmail.com
+    affiliation: Colorado State University Statistics
+  - name: G. Brooke Anderson
+    email: brooke.anderson@colostate.edu
+    affiliation: Colorado State University ERHS
+    footnote: Corresponding Author
+address:
+  - code: Colorado State University Statistics
+    address: Colorado State University, Department of Statistics, Street, Fort Collins, CO, Zip
+  - code: Colorado State University ERHS
+    address: Colorado State University, Department of Environmental & Radiological Health Sciences, Lake Street, Fort Collins, CO, Zip
+abstract: |
+  Time series and case-crossover studies have been extensively used to determine the health effects of both continuous environmental exposures (e.g., air pollution concentration, temperature) and binary exposures (e.g., heat waves). However, exposures to severe natural disasters, like heat waves and tropical storms, could affect mid-term patterns in health risks through either delayed effects or through mortality displacement. 
+
+  Here, we conduct a simulation study to determine the performance of time series, case-crossover, and cross-year models to assess the acute health effects of natural disasters under different scenarios of delayed health effects or mortality displacement.
+
+bibliography: mybibfile.bib
+output: rticles::elsevier_article
+---
+
+Introduction
+==========================
+
+Data and Methods
+==========================
+
+#### Data
+
+#### Methods
+
+Results
+==========================
+
+Discussion
+==========================
+
+
+References {#references .unnumbered}
+==========
