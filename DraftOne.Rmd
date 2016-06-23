@@ -131,14 +131,7 @@ exp_base_y <- rep(lambda, n)
 ```
 
 ```{r}
-constant_baseline <- function(n, lambda, start.date = "2000-01-01", ...){
-        start.date <- as.Date(start.date)
-        date <- seq(from = start.date, by = 1, length.out = n)
-        exp_base_y <- rep(lambda, n)
-        df <- data.frame(date = date,
-                         exp_base_y = exp_base_y)
-        return(df)
-}
+constant_baseline 
 constant_baseline(n = 3, lambda = 100)
 ```
 
@@ -147,7 +140,8 @@ constant_baseline(n = 3, lambda = 100)
 A function to calculate the trend variable. Choices for trend are cvd, cos1, cos2, cos3, linear, curvilinear, cos1linear.
 
 ```{r}
-calc_t 
+calc_t
+calc_t(n=10, trend="curvilinear")
 ```
 
 We need to generate the explanatory exposure variable.  Here are functions for binary and continuous exposure which varies by season.   
@@ -155,9 +149,11 @@ We need to generate the explanatory exposure variable.  Here are functions for b
 ```{r}
 # A function for binary exposure which varies by season:
 season_binexp
+season_binexp(n=100, p=.25)
 
 # A function for continuous exposure which varies by season:
 season_contexp
+season_contexp(10, mu = 100, sd = 10, trend = "curvilinear")
 ```
 
 ```{r}
