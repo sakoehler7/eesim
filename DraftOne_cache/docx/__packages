@@ -1,6 +1,13 @@
 base
+methods
+datasets
+utils
+grDevices
+graphics
+stats
 ggplot2
 dplyr
+splines
 eesim
 dlnm
 tidyr

@@ -3,6 +3,9 @@
 .RData
 *.pdf
 *.tex
+*.docx
+*.html
 JSSDraft_files/
 SimulationPaper_files/
-
+DraftOne_cache/
+DraftOne_files/
