@@ -9,10 +9,13 @@
   \urlstyle{rm}\Url}\fi
 \providecommand{\eprint}[2][]{\url{#2}}
 
-\bibitem[{Dirac(1953)}]{Dirac1953888}
-Dirac P (1953).
-\newblock \enquote{The lorentz transformation and absolute time.}
-\newblock \emph{Physica}, \textbf{19}(1-–12), 888--896.
-\newblock \doi{10.1016/S0031-8914(53)80099-6}.
+\bibitem[{Roberts and Martin(2006)}]{Roberts2006}
+Roberts S, Martin MA (2006).
+\newblock \enquote{The question of nonlinearity in the dose-response relation
+  between particulate matter air pollution and mortality: Can {A}kaike's
+  {I}nformation {C}riterion be trusted to take the right turn?}
+\newblock \emph{American Journal of Epidemiology}, \textbf{164}(164),
+  1242--1250.
+\newblock \doi{10.1093/aje/kwj335}.
 
 \end{thebibliography}

@@ -59,7 +59,7 @@ bibliography: mybibfile.bib
 
 ## Customizing simulations
 
-Example citation [@Dirac1953888].
+Example citations: \citet{Roberts2006}, \citep{Roberts2006}.
 
 # Discussion
 
