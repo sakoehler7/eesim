@@ -2,7 +2,7 @@
 title: "DraftOne"
 author: "Sarah Koehler"
 date: "June 1, 2016"
-output: html_document
+output: word_document
 ---
 
 ```{r echo = FALSE, message=FALSE, warning=FALSE}
@@ -131,14 +131,7 @@ exp_base_y <- rep(lambda, n)
 ```
 
 ```{r}
-constant_baseline <- function(n, lambda, start.date = "2000-01-01", ...){
-        start.date <- as.Date(start.date)
-        date <- seq(from = start.date, by = 1, length.out = n)
-        exp_base_y <- rep(lambda, n)
-        df <- data.frame(date = date,
-                         exp_base_y = exp_base_y)
-        return(df)
-}
+constant_baseline 
 constant_baseline(n = 3, lambda = 100)
 ```
 
@@ -147,7 +140,8 @@ constant_baseline(n = 3, lambda = 100)
 A function to calculate the trend variable. Choices for trend are cvd, cos1, cos2, cos3, linear, curvilinear, cos1linear.
 
 ```{r}
-calc_t 
+calc_t
+calc_t(n=10, trend="curvilinear")
 ```
 
 We need to generate the explanatory exposure variable.  Here are functions for binary and continuous exposure which varies by season.   
@@ -155,9 +149,11 @@ We need to generate the explanatory exposure variable.  Here are functions for b
 ```{r}
 # A function for binary exposure which varies by season:
 season_binexp
+season_binexp(n=100, p=.25)
 
 # A function for continuous exposure which varies by season:
 season_contexp
+season_contexp(10, mu = 100, sd = 10, trend = "curvilinear")
 ```
 
 ```{r}
@@ -514,12 +510,7 @@ I'll write a function that measures both (`fig_bias` and `wang_bias`):
 
 ```{r}
 # Measure percent bias
-beta_bias <- function(df, true_rr){
-        fig_bias <- 100 * (mean(df$est) - true_rr) / true_rr
-        wang_bias <- 100 * (true_rr - mean(df$est)) / true_rr
-        out <- data.frame(fig_bias, wang_bias)
-        return(out)
-}
+beta_bias 
 beta_bias(rep_df, true_rr = 1.02)
 ```
 
@@ -545,19 +536,13 @@ These all seem to be saying the same thing.
 
 ```{r}
 # Measure coverage
-coverage_beta <- function(df, true_rr){
-        true_beta <- log(true_rr)
-        coverage <- df$lower_ci <= true_beta & df$upper_ci >= true_beta
-        out <- data.frame(coverage = sum(coverage) / nrow(df))
-        return(out)
-}
-
+coverage_beta 
 coverage_beta(rep_df, true_rr = 1.02)
 ```
 
 ### Power
 
-This is the percent of all estimated coefficients for the $n$ simulations where the lower 95% confidence interval is above 0 [@figueiras2005analysis]. This is a metric of statistical efficiency.
+This is the percent of all estimated coefficients for the $n$ simulations where the lower 95% confidence interval bound is above 0 [@figueiras2005analysis]. This is a metric of statistical efficiency.
 
 From Butland and coauthors [@butland2013measurement]:
 
@@ -567,11 +552,7 @@ These also seem to be saying the same thing.
 
 ```{r}
 # Measure power
-power_beta <- function(df){
-        no_zero <- df$lower_ci >= 0 | df$upper_ci <= 0
-        out <- data.frame(power = sum(no_zero) / nrow(df))
-        return(out)
-}
+power_beta 
 
 power_beta(rep_df)
 ```
@@ -591,16 +572,7 @@ This looks like it is a comparative metric. I have already measured the mean var
 I created a function that will perform all these checks:
 
 ```{r}
-check_sims <- function(df, true_rr){
-        a <- mean_beta(df)
-        b <- beta_var(df)
-        c <- beta_bias(df, true_rr = true_rr)
-        d <- coverage_beta(df, true_rr = true_rr)
-        e <- power_beta(df)
-        
-        out <- cbind(a, b, c, d, e)
-        return(out)
-}
+check_sims 
 check_sims(rep_df, true_rr = 1.02)
 ```
 
@@ -614,36 +586,7 @@ Power can vary with the following elements of the analysis:
 - Patterns in exposure (variance for continuous exposure, percent of exposed days for binary exposure)
 
 ```{r}
-power_calc <- function(varying, values, plot = FALSE, ...){
-        out <- data.frame(x = values, power = NA)
-        if(varying == "n"){
-                for(i in 1:nrow(out)){
-                        rep_df <- rep_sims(n = out$x[i], ...)
-                        out$power[i] <- power_beta(rep_df)[1,1]
-                }
-        } else if(varying == "rr"){
-                for(i in 1:nrow(out)){
-                        rep_df <- rep_sims(rr = out$x[i], ...)
-                        out$power[i] <- power_beta(rep_df)[1,1]
-                }
-        } else if(varying == "lambda"){
-                for(i in 1:nrow(out)){
-                        rep_df <- rep_sims(lambda = out$x[i], ...)
-                        out$power[i] <- power_beta(rep_df)[1,1]
-                }
-        }
-        
-        if(plot == TRUE){
-                        library(ggplot2)
-                        my_plot <- ggplot(out, aes(x = x, y = power)) + 
-                                geom_line() + theme_minimal() + 
-                                xlab(varying)
-                        print(my_plot)
-        }
-        
-        colnames(out)[1] <- varying
-        return(out)
-}
+power_calc 
 ```
 
 Here are some examples of varying the sample size, `n`:

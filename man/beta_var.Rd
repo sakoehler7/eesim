@@ -7,7 +7,7 @@
 beta_var(df)
 }
 \arguments{
-\item{df}{A data frame of replicated simulations which must include columns titles "est" and "se".}
+\item{df}{A data frame of replicated simulations which must include columns titled "est" and "se".}
 }
 \value{
 A data frame of the variance across $\hat{\beta}$s and the mean variance of the $\hat{\beta}$s

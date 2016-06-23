@@ -1,4 +1,4 @@
-#' Expected baseline outcomes for constant hazard rate
+#' Constant Baseline
 #'
 #' This is a function to compute the expected baseline outcomes when the hazard
 #' rate for exposure is constant.
