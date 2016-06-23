@@ -2,7 +2,7 @@
 % Please edit documentation in R/sim_outcome.R
 \name{constant_baseline}
 \alias{constant_baseline}
-\title{Expected baseline outcomes for constant hazard rate}
+\title{Constant Baseline}
 \usage{
 constant_baseline(n, lambda, start.date = "2000-01-01", ...)
 }
