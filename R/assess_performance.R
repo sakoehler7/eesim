@@ -111,6 +111,9 @@ power_beta <- function(df){
 #'
 #' @examples
 #' check_sims(df, true_rr = 1.02)
+#' \dontrun{
+#' check_sims(rep_df, true_rr = 1.02)
+#' }
 #'
 #' @export
 #'
@@ -124,7 +127,7 @@ check_sims <- function(df, true_rr){
   out <- cbind(a, b, c, d, e)
   return(out)
 }
-check_sims(rep_df, true_rr = 1.02)
+
 #'
 #' Power Calculations
 #'
