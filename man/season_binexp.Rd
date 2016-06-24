@@ -4,7 +4,7 @@
 \alias{season_binexp}
 \title{Simulate binary exposure data with a seasonal trend}
 \usage{
-season_binexp(n, p, start.date = "2000-01-01", ...)
+season_binexp(n, p, trend, start.date = "2000-01-01")
 }
 \arguments{
 \item{n}{A numeric value giving the number of days to simulate.}
