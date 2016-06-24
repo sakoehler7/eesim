@@ -25,19 +25,60 @@ output: rticles::elsevier_article
 Introduction
 ==========================
 
+#### Mortality displacement
+
+Some immediate fatalaties during natural disasters might result from very frail people dying a few days earlier than under the counterfactual of no disaster. For example, [evidence on mortality displacement following heat waves, other disasters]. While these deaths still represent excess premature mortality related to the disaster, they represent a much shorter loss of life-time than premature deaths that were advanced by months or years. Further, in model designs that use times near to the disaster as controls, including time series and case-crossover designs, displaced mortality could cause the estimated baseline mortality during control periods to be artifically low, so biasing the acute disaster effect estimate to be too high [we might want to do a figure that sketches this out].
+
+#### Delayed effects
+
+Disasters could elevate mortality risk in the week or weeks after the acute exposure. For example, [Florida study of mortality in the 2004 hurricane season]. If a study uses controls nearby in time to the disaster, here there would be a bias to underestimate acute disaster effects (the opposite direction of bias than in the case of mortality displacement effects).
+
+A higher-than-average mortality count in the days around a disaster could also be related to autocorrelation in the exposure variable, particularly when a "disaster" is identified as a string of days when a continous exposure outcome is above a certain threshold. For example, @Armstrong2014 note that mortality is expected to be elevated on days around a severe heat wave because temperatures tend to be higher than normal on days just before and after a severe heat wave, and mortality risk is positively associated with temperature across the range of summer temperatures, whether a day meets the threshold for a heat wave or not. A similar pattern could exist for "smokewave" days, used in some studies to explore health risks related to forest fires [Coco's Epidemiology paper].
+
 Data and Methods
 ==========================
 
 #### Data
 
+We generated simulated time series of disaster exposure and mortality outcomes using the `eesim` R package.
+
+We simulated several environmental time series, based on different scenarios of (1) the size of the acute effect of the disaster on mortality risk; (2) the size of the delayed or mortality displacement effect; and (3) the length of either the delayed or mortality displacement effect. We based the range of sizes used for each of these values on reasonable values from studies of the health impacts of heat waves and other natural disasters.
+
 #### Methods
+
+For each simulated time series dataset, we fit three models to estimate acute disaster effects: (1) a time series model; (2) a case-crossover model; and (3) a cross-year model. This last model compares mortality counts during the disaster to a set of control periods within the same city. However, unlike the case-crossover model, it uses control periods from the same month and days of the week as the case in neighboring years, rather than from the same days of the week and month as the case in the same year as the case. This model therefore controls for seasonality by design, but requires addition control to account for year-to-year trends in average mortality.
+
+As a sensitivity analysis, we re-ran our main analysis using environmental time series datasets simulated using some other common simulation methods. We tested results using [other simulation methods].
 
 Results
 ==========================
 
+#### Performance of three models
+
+#### Sensitivity analysis
+
 Discussion
 ==========================
 
+#### Implications for epidemiological studies of natural disasters
+
+#### More complex models to model delayed or mortality displacement effects
+
+Methods exist to model effect sizes over a period that includes the disaster and the following weeks. [More about dlnm.]
+
+Why researchers might want to model acute effects without using these more complex models:
+
+- Low power (especially with rarer health outcomes, may run into very low power when modeling the more complex models required to assess lags)
+- Interest might be in immediate impacts (e.g., what should city planners be prepared for during a disaster, in terms of health care needs, medical examiners?) rather than in estimating the total impacts (e.g., what is the total attributable impact?)
+- May not have a good idea of the time range of delayed or mortality displacement effects. If it's longer than the model includes, what are the impacts? Very long time ranges (e.g., month or more) could start to interfere with seasonal patterns, right?
+
+#### Other advantages / disadvantages of each model type
+
+For single disasters, there is the chance for some bias in comparing to controls in the same year if the event occurs during the yearly dip or peak in mortality trends. For example, [Jennifer's ozone and Olympics study]. A model that uses control periods from the same time of the year (i.e., same week) of other years might prevent this bias. 
+
+#### Delayed / mortality displacement effects that extend past a year
+
+For very severe disasters, there is some evidence that delayed or mortality displacement effects might span into the following year. [French and Russian heat wave examples, hurricane examples]. In this case, even a study design that uses controls from other years could be biased by how these effects influence control periods.
 
 References {#references .unnumbered}
 ==========

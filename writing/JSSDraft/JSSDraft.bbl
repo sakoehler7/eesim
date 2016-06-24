@@ -9,13 +9,13 @@
   \urlstyle{rm}\Url}\fi
 \providecommand{\eprint}[2][]{\url{#2}}
 
-\bibitem[{Roberts and Martin(2006)}]{Roberts2006}
-Roberts S, Martin MA (2006).
-\newblock \enquote{The question of nonlinearity in the dose-response relation
-  between particulate matter air pollution and mortality: Can {A}kaike's
-  {I}nformation {C}riterion be trusted to take the right turn?}
-\newblock \emph{American Journal of Epidemiology}, \textbf{164}(164),
-  1242--1250.
-\newblock \doi{10.1093/aje/kwj335}.
+\bibitem[{Armstrong \emph{et~al.}(2014)Armstrong, Gasparrini, and
+  Hajat}]{Armstrong2014}
+Armstrong B, Gasparrini A, Hajat S (2014).
+\newblock \enquote{Estimating mortality displacement during and after heat
+  waves.}
+\newblock \emph{American Journal of Epidemiology}, \textbf{179}(12),
+  1405--1406.
+\newblock \doi{10.1093/aje/kwu083}.
 
 \end{thebibliography}
