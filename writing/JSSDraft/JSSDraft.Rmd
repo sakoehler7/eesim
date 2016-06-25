@@ -40,7 +40,7 @@ bibliography: mybibfile.bib
 
 ## Using simulated time series for power analysis
 
-Simulation studies can be used to determine effective sample size or power when planning or proposing future research studies. This method can be particularly useful in cases where modeling of the study data will be particularly complex and when the strong assumptions of classical, analytical power analysis are questionable \citep{Bellan2015, Johnson2015, Burton2009}. Simulation studies can often be used to generate power analyses under a more realistic set of assumptions \cite{Burton2009}.
+Simulation studies can be used to determine effective sample size or power when planning or proposing future research studies. This method can be particularly useful in cases where modeling of the study data will be particularly complex and when the strong assumptions of classical, analytical power analysis are questionable \citep{Bellan2015, Johnson2015, Burton2009, Alfons2010}. Simulation studies can often be used to generate power analyses under a more realistic set of assumptions \cite{Burton2009}.
 
 For example, \citet{Bellan2015} used a simulation study to determine the power and statistical validity of two potential Ebola vaccine trials, a randomized controlled trial and a stepped-wedge cluster trial. Simulation was useful in this case because the trial would be conducting in a population with clustering by geographical district and with a temporally changing hazard of Ebola infection over the trial period \citep{Bellan2015}.
 
@@ -48,7 +48,13 @@ For example, \citet{Bellan2015} used a simulation study to determine the power a
 
 \citet{Burton2009} used simulation to investigate the power of case-control studies of genetic associations for chronic diseases.
 
+A number of R packages have been created to do power analyses through simulations for a variety of purposes and contexts, including for genetic association studies \citep{Gaye2015}, microbiome studies \citep{Kelly2015}, network data \citep{Handcock2008}, survey statistics \citep{Alfons2010}, ... . More general-purpose R packages also exist for simulations for power analyses, including packages for power analyses for generalized linear mixed models \cite{Green2016}, ... . 
+
 ## Using simulated time series to test modeling questions
+
+Simulation studies can also be used to assess different models and modeling choices. This way of assessing models can be particularly useful for complex statistical methods, which can often be very hard to assess performance metrics of using analytical methods \citep{Alfons2010}.
+
+Several R packages exist that simulate data to allow model evaluation in a variety of domains. For example, \code{ss3sim} allows the simulation of fisheries stock assessment for use in evaluating methods in fishery stock assessments \citep{Anderson2014}.
 
 ## Challenges in creating simulated time series
 
@@ -56,7 +62,7 @@ For many environmental time series studies, including those investigating air po
 
 Exposures, outcomes, and their relationship with each other can all have complex patterns that could cause problems in epidemiological studies. For example, \citet{Armstrong2014} explain how autocorrelation in temperature data (e.g., days right after a very severe heat wave are likely to be hotter than days right after a milder heat wave) can introduce spurious results in a model testing for evidence of short-term mortality displacement following heat waves.
 
-There are a few important advantages to having an open-source software package that can simulate this type of environmental time series for simulation studies. First, current methods of simulating environmental time series, to use to assess modeling choices, vary across different studies. While, ideally, results from a simulation study would be robust to different choices in how to simulate the data used in the study, this may not always be the case; if so, results across studies using different methods of simulating data would not be comparable. This package offers a tool that both allows different research to simulate environmental time series for simulation studies in a consistent way, it also offers several methods of simulating time series, and so allows researchers to check if simulation results are sensitive to the method of simulating study data. Tools for consistency across studies have helped in the progress of environmental epidemiology research; for example, the public availability of the NMMAPs dataset--which included air pollution, weather, and mortality counts in over 100 US communities for 14 years-- allowed researchers around the world to explore hypotheses and investigate health effects of air pollution and temperature using the same data, and so differences in results could be traced to methodological differences rather than random differences in environmental datasets. [We could add some on the usefulness of (1) reproducible studies and (2) open source software for scientific studies here.]
+There are a few important advantages to having an open-source software package that can simulate this type of environmental time series for simulation studies. First, current methods of simulating environmental time series, to use to assess modeling choices, vary across different studies. While, ideally, results from a simulation study would be robust to different choices in how to simulate the data used in the study, this may not always be the case; if so, results across studies using different methods of simulating data would not be comparable \citep{Alfons2010}. This package offers a tool that both allows different research to simulate environmental time series for simulation studies in a consistent way, it also offers several methods of simulating time series, and so allows researchers to check if simulation results are sensitive to the method of simulating study data. Tools for consistency across studies have helped in the progress of environmental epidemiology research; for example, the public availability of the NMMAPs dataset--which included air pollution, weather, and mortality counts in over 100 US communities for 14 years-- allowed researchers around the world to explore hypotheses and investigate health effects of air pollution and temperature using the same data, and so differences in results could be traced to methodological differences rather than random differences in environmental datasets. [We could add some on the usefulness of (1) reproducible studies and (2) open source software for scientific studies here.]
 
 Further, developing the code to simulate environmental time series in an appropriate way can be time consuming. While researchers often need to customize certain parts of a simulation, to test a particular research question, often most of the simulation can be performed in a way that is generalizable across most other environmental time series studies. Therefore, by providing simulation tools with reasonable defaults, as well as room to customize at each step of the simulation, this package can make environmental epidemiolgoy simulation studies much more efficient and also make simulation a reasonable alternative for determining expected power when planning and proposing future studies.
 
@@ -75,6 +81,8 @@ To do this simulation, which required simulating a time series with a heat wave 
 ## Exploring spatial misalignment between exposure and outcome measurements
 
 # Basic overview of package
+
+[Table / Figure of functions included and simulation process]
 
 A time series of simulated count outcome data with Poisson random noise can be simulated using the following model \citep{Johnson2015}:
 
@@ -107,15 +115,19 @@ Running a power analysis requires specifications of effect sizes, baseline count
 A number of different metrics are used to evaluate the results of simulation studies. These include: 
 
 * False positive rate / type I error rate (percent of time significant effect is detected-- i.e., null hypothesis is rejected-- when there is not a true effect) \citep{Bellan2015, Johnson2015}
-* Statistical power to detect a true effect of a certain size (percent of simulations in which a true effect of a certain size is identified with a p-value of 0.05 or lower; i.e., probability of rejecting the null hypothesis when the null hypothesis is false) \citep{Bellan2015, Johnson2015}
+* Statistical power to detect a true effect of a certain size / empirical power (percent of simulations in which a true effect of a certain size is identified with a p-value of 0.05 or lower; i.e., probability of rejecting the null hypothesis when the null hypothesis is false) \citep{Bellan2015, Johnson2015, Gaye2015, Green2016}
 * Precision of effect estimate (average confidence interval width over all simulations) \citep{Johnson2015}
 * 95% confidence inverval coverage (percent of 95% confidence intervals from simulations that include the true effect size) \citep{Johnson2015}
 * Bias in effect estimate \citep{Johnson2015}
 * Margin of error [?] \citep{Johnson2015}
-* Sample size required to detect a certain effect size \citep{Burton2009}
+* Sample size required to detect a certain effect size \citep{Burton2009, Gaye2015, Green2016}
 * Time to achieve required number of cases \citep{Burton2009}
 
 ## Customizing simulations
+
+While R packages always offer the opportunity for a user to alter the original code to create customized solutions, this process can require extensive skill in R programming for anything but fairly straightforward functions. Here, we provide the opportunity at every step of the simulation process for a user to input custom R functions, from simple to complex, to be run through our functions, without requiring changes to the function code provided by the package. 
+
+For each of the customization options, we have provided the input and output rules required for a custom function to use for that step. A custom function can include any code, and implement any functionality, as long as it adheres to these rules for the input it takes and output it produces. Further, through using R's "dots" functionality, custom functions can include inputs other than those specified by our interface rules, as long as the custom function inputs, at a minimum, the inputs required by the interface rules. 
 
 # Discussion
 

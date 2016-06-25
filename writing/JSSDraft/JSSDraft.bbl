@@ -1,4 +1,4 @@
-\begin{thebibliography}{3}
+\begin{thebibliography}{9}
 \newcommand{\enquote}[1]{``#1''}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
@@ -8,6 +8,13 @@
   \providecommand{\doi}{doi:\discretionary{}{}{}\begingroup
   \urlstyle{rm}\Url}\fi
 \providecommand{\eprint}[2][]{\url{#2}}
+
+\bibitem[{Anderson \emph{et~al.}(2014)Anderson, Monnahan, Johnson, Ono, and
+  Valero}]{Anderson2014}
+Anderson SC, Monnahan CC, Johnson KF, Ono K, Valero JL (2014).
+\newblock \enquote{ss3sim: an {R} package for fisheries stock assessment
+  simulation with Stock Synthesis.}
+\newblock \emph{PloS ONE}, \textbf{9}(4), e92725.
 
 \bibitem[{Armstrong \emph{et~al.}(2014)Armstrong, Gasparrini, and
   Hajat}]{Armstrong2014}
@@ -26,11 +33,47 @@ Bellan SE, Pulliam JR, Pearson CA, Champredon D, Fox SJ, Skrip L, Galvani AP,
   {S}ierra {L}eone: a simulation study of trial design and analysis.}
 \newblock \emph{The Lancet Infectious Diseases}, \textbf{15}(6), 703--710.
 
+\bibitem[{Burton \emph{et~al.}(2009)Burton, Hansell, Fortier, Manolio, Khoury,
+  Little, and Elliott}]{Burton2009}
+Burton PR, Hansell AL, Fortier I, Manolio TA, Khoury MJ, Little J, Elliott P
+  (2009).
+\newblock \enquote{Size matters: just how big is BIG? Quantifying realistic
+  sample size requirements for human genome epidemiology.}
+\newblock \emph{International journal of epidemiology}, \textbf{38}(1),
+  263--273.
+
+\bibitem[{Gaye \emph{et~al.}(2015)Gaye, Burton, and Burton}]{Gaye2015}
+Gaye A, Burton TW, Burton PR (2015).
+\newblock \enquote{{ESPRESSO}: taking into account assessment errors on outcome
+  and exposures in power analysis for association studies.}
+\newblock \emph{Bioinformatics}, \textbf{31}(16), 2691--2696.
+
+\bibitem[{Green and MacLeod(2016)}]{Green2016}
+Green P, MacLeod CJ (2016).
+\newblock \enquote{{SIMR}: an {R} package for power analysis of generalized
+  linear mixed models by simulation.}
+\newblock \emph{Methods in Ecology and Evolution}, \textbf{7}, 493--498.
+
+\bibitem[{Handcock \emph{et~al.}(2008)Handcock, Hunter, Butts, Goodreau, and
+  Morris}]{Handcock2008}
+Handcock MS, Hunter DR, Butts CT, Goodreau SM, Morris M (2008).
+\newblock \enquote{statnet: Software tools for the representation,
+  visualization, analysis and simulation of network data.}
+\newblock \emph{Journal of Statistical Software}, \textbf{24}(1), 1--11.
+
 \bibitem[{Johnson \emph{et~al.}(2015)Johnson, Barry, Ferguson, and
   M{\"u}ller}]{Johnson2015}
 Johnson PC, Barry SJ, Ferguson HM, M{\"u}ller P (2015).
 \newblock \enquote{Power analysis for generalized linear mixed models in
   ecology and evolution.}
 \newblock \emph{Methods in Ecology and Evolution}, \textbf{6}(2), 133--142.
+
+\bibitem[{Kelly \emph{et~al.}(2015)Kelly, Gross, Bittinger, Sherrill-Mix,
+  Lewis, Collman, Bushman, and Li}]{Kelly2015}
+Kelly BJ, Gross R, Bittinger K, Sherrill-Mix S, Lewis JD, Collman RG, Bushman
+  FD, Li H (2015).
+\newblock \enquote{Power and sample-size estimation for microbiome studies
+  using pairwise distances and {PERMANOVA}.}
+\newblock \emph{Bioinformatics}, pp. 2461--2468.
 
 \end{thebibliography}
