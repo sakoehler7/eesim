@@ -1,4 +1,4 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{3}
 \newcommand{\enquote}[1]{``#1''}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
@@ -17,5 +17,20 @@ Armstrong B, Gasparrini A, Hajat S (2014).
 \newblock \emph{American Journal of Epidemiology}, \textbf{179}(12),
   1405--1406.
 \newblock \doi{10.1093/aje/kwu083}.
+
+\bibitem[{Bellan \emph{et~al.}(2015)Bellan, Pulliam, Pearson, Champredon, Fox,
+  Skrip, Galvani, Gambhir, Lopman, Porco \emph{et~al.}}]{Bellan2015}
+Bellan SE, Pulliam JR, Pearson CA, Champredon D, Fox SJ, Skrip L, Galvani AP,
+  Gambhir M, Lopman BA, Porco TC, \emph{et~al.} (2015).
+\newblock \enquote{Statistical power and validity of {E}bola vaccine trials in
+  {S}ierra {L}eone: a simulation study of trial design and analysis.}
+\newblock \emph{The Lancet Infectious Diseases}, \textbf{15}(6), 703--710.
+
+\bibitem[{Johnson \emph{et~al.}(2015)Johnson, Barry, Ferguson, and
+  M{\"u}ller}]{Johnson2015}
+Johnson PC, Barry SJ, Ferguson HM, M{\"u}ller P (2015).
+\newblock \enquote{Power analysis for generalized linear mixed models in
+  ecology and evolution.}
+\newblock \emph{Methods in Ecology and Evolution}, \textbf{6}(2), 133--142.
 
 \end{thebibliography}
