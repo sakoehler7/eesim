@@ -1,4 +1,4 @@
-\begin{thebibliography}{11}
+\begin{thebibliography}{12}
 \newcommand{\enquote}[1]{``#1''}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
@@ -88,5 +88,13 @@ Kelly BJ, Gross R, Bittinger K, Sherrill-Mix S, Lewis JD, Collman RG, Bushman
 \newblock \enquote{Power and sample-size estimation for microbiome studies
   using pairwise distances and {PERMANOVA}.}
 \newblock \emph{Bioinformatics}, pp. 2461--2468.
+
+\bibitem[{Schoemann \emph{et~al.}(2014)Schoemann, Miller, Pornprasertmanit, and
+  Wu}]{Schoemann2014}
+Schoemann AM, Miller P, Pornprasertmanit S, Wu W (2014).
+\newblock \enquote{Using {M}onte {C}arlo simulations to determine power and
+  sample size for planned missing designs.}
+\newblock \emph{International Journal of Behavioral Development},
+  \textbf{38}(5), 471--479.
 
 \end{thebibliography}

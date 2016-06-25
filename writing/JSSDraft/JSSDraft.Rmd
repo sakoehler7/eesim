@@ -48,6 +48,8 @@ For example, \citet{Bellan2015} used a simulation study to determine the power a
 
 \citet{Burton2009} used simulation to investigate the power of case-control studies of genetic associations for chronic diseases.
 
+\citet{Schoemann2014} demonstrate how to use simulation studies to assess power for study designs with planned missing data. 
+
 A number of R packages have been created to do power analyses through simulations for a variety of purposes and contexts, including for genetic association studies \citep{Gaye2015}, microbiome studies \citep{Kelly2015}, network data \citep{Handcock2008}, survey statistics \citep{Alfons2010}, ... . More general-purpose R packages also exist for simulations for power analyses, including packages for power analyses for generalized linear mixed models \cite{Green2016}, ... . 
 
 ## Using simulated time series to test modeling questions
@@ -118,9 +120,10 @@ A number of different metrics are used to evaluate the results of simulation stu
 * Power / Statistical power to detect a true effect of a certain size / empirical power (percent of simulations in which a true effect of a certain size is identified with a p-value of 0.05 or lower; i.e., probability of rejecting the null hypothesis when the null hypothesis is false) \citep{Bellan2015, Johnson2015, Gaye2015, Green2016, Beaujean2014}
 * Precision of effect estimate (average confidence interval width over all simulations; some studies give average half-width) \citep{Johnson2015, Beaujean2014}
 * Coverage / 95% confidence inverval coverage (percent of 95% confidence intervals from simulations that include the true effect size) \citep{Johnson2015, Beaujean2014}
-* Bias in effect estimate \citep{Johnson2015}
+* Bias in effect estimate / relative parameter estimate bias / relative bias in point estimate \citep{Johnson2015, Beaujean2014, Schoemann2014}
+* Relative standard error bias / standard error bias \citep{Beaujean2014, Schoemann2014}
 * Margin of error [?] \citep{Johnson2015}
-* Sample size required to detect a certain effect size \citep{Burton2009, Gaye2015, Green2016, Beaujean2014}
+* Sample size required to detect a certain effect size \citep{Burton2009, Gaye2015, Green2016, Beaujean2014, Schoemann2014}
 * Time to achieve required number of cases \citep{Burton2009}
 * Power curve \citep{Beaujean2014}
 * Accuracy curve \citep{Beaujean2014}
