@@ -1,4 +1,4 @@
-\begin{thebibliography}{9}
+\begin{thebibliography}{11}
 \newcommand{\enquote}[1]{``#1''}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
@@ -8,6 +8,12 @@
   \providecommand{\doi}{doi:\discretionary{}{}{}\begingroup
   \urlstyle{rm}\Url}\fi
 \providecommand{\eprint}[2][]{\url{#2}}
+
+\bibitem[{Alfons \emph{et~al.}(2010)Alfons, Templ, and Filzmoser}]{Alfons2010}
+Alfons A, Templ M, Filzmoser P (2010).
+\newblock \enquote{An Object-Oriented Framework for Statistical Simulation: The
+  {R} Package {simFrame}.}
+\newblock \emph{Journal of Statistical Software}, \textbf{37}(i03).
 
 \bibitem[{Anderson \emph{et~al.}(2014)Anderson, Monnahan, Johnson, Ono, and
   Valero}]{Anderson2014}
@@ -24,6 +30,13 @@ Armstrong B, Gasparrini A, Hajat S (2014).
 \newblock \emph{American Journal of Epidemiology}, \textbf{179}(12),
   1405--1406.
 \newblock \doi{10.1093/aje/kwu083}.
+
+\bibitem[{Beaujean(2014)}]{Beaujean2014}
+Beaujean AA (2014).
+\newblock \enquote{Sample size determination for regression models using
+  {M}onte {C}arlo methods in {R}.}
+\newblock \emph{Practical Assessment, Research \& Evaluation}, \textbf{19}(12),
+  1--16.
 
 \bibitem[{Bellan \emph{et~al.}(2015)Bellan, Pulliam, Pearson, Champredon, Fox,
   Skrip, Galvani, Gambhir, Lopman, Porco \emph{et~al.}}]{Bellan2015}

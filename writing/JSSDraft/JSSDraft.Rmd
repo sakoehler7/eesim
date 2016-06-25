@@ -40,7 +40,7 @@ bibliography: mybibfile.bib
 
 ## Using simulated time series for power analysis
 
-Simulation studies can be used to determine effective sample size or power when planning or proposing future research studies. This method can be particularly useful in cases where modeling of the study data will be particularly complex and when the strong assumptions of classical, analytical power analysis are questionable \citep{Bellan2015, Johnson2015, Burton2009, Alfons2010}. Simulation studies can often be used to generate power analyses under a more realistic set of assumptions \cite{Burton2009}.
+Simulation studies can be used to determine effective sample size or power when planning or proposing future research studies. This method can be particularly useful in cases where modeling of the study data will be particularly complex and when the strong assumptions of classical, analytical power analysis are questionable \citep{Bellan2015, Johnson2015, Burton2009, Alfons2010, Beaujean2014}. Simulation studies can often be used to generate power analyses under a more realistic set of assumptions \cite{Burton2009, Beaujean2014}.
 
 For example, \citet{Bellan2015} used a simulation study to determine the power and statistical validity of two potential Ebola vaccine trials, a randomized controlled trial and a stepped-wedge cluster trial. Simulation was useful in this case because the trial would be conducting in a population with clustering by geographical district and with a temporally changing hazard of Ebola infection over the trial period \citep{Bellan2015}.
 
@@ -115,13 +115,27 @@ Running a power analysis requires specifications of effect sizes, baseline count
 A number of different metrics are used to evaluate the results of simulation studies. These include: 
 
 * False positive rate / type I error rate (percent of time significant effect is detected-- i.e., null hypothesis is rejected-- when there is not a true effect) \citep{Bellan2015, Johnson2015}
-* Statistical power to detect a true effect of a certain size / empirical power (percent of simulations in which a true effect of a certain size is identified with a p-value of 0.05 or lower; i.e., probability of rejecting the null hypothesis when the null hypothesis is false) \citep{Bellan2015, Johnson2015, Gaye2015, Green2016}
-* Precision of effect estimate (average confidence interval width over all simulations) \citep{Johnson2015}
-* 95% confidence inverval coverage (percent of 95% confidence intervals from simulations that include the true effect size) \citep{Johnson2015}
+* Power / Statistical power to detect a true effect of a certain size / empirical power (percent of simulations in which a true effect of a certain size is identified with a p-value of 0.05 or lower; i.e., probability of rejecting the null hypothesis when the null hypothesis is false) \citep{Bellan2015, Johnson2015, Gaye2015, Green2016, Beaujean2014}
+* Precision of effect estimate (average confidence interval width over all simulations; some studies give average half-width) \citep{Johnson2015, Beaujean2014}
+* Coverage / 95% confidence inverval coverage (percent of 95% confidence intervals from simulations that include the true effect size) \citep{Johnson2015, Beaujean2014}
 * Bias in effect estimate \citep{Johnson2015}
 * Margin of error [?] \citep{Johnson2015}
-* Sample size required to detect a certain effect size \citep{Burton2009, Gaye2015, Green2016}
+* Sample size required to detect a certain effect size \citep{Burton2009, Gaye2015, Green2016, Beaujean2014}
 * Time to achieve required number of cases \citep{Burton2009}
+* Power curve \citep{Beaujean2014}
+* Accuracy curve \citep{Beaujean2014}
+
+\citet{Beaujean2014} gives the following equation for calculating relative parameter estimate bias, given $\theta_{H}$ (true value of the parameter, as set when creating the simulated data) and $\hat{\theta}$ (value of the parameter estimated from applying a model to the simulated data): 
+
+\begin{equation}
+\theta_{bias} = \frac{\hat{\theta} - \theta_{H}}{\theta_{H}}
+\end{equation}
+
+\citet{Beaujean2014} gives the following equation for calculating relative standard error bias, given $\sigma_{\hat{\theta}}$ (the standard deviation of the parameter estimations across the simulations) and $\hat{\sigma_{\theta}}$ (the average of the standard errors estimated for the simultations):
+
+\begin{equation}
+\sigma_{bias} = \frac{\hat{\sigma_{\theta}} - \sigma_{\hat{\theta}}}{\sigma_{\hat{\theta}}}
+\end{equation}
 
 ## Customizing simulations
 
@@ -133,18 +147,10 @@ For each of the customization options, we have provided the input and output rul
 
 ## Limitations
 
-We currently do not include overdispersion when simulating health outcome counts. \citet{Johnson2015} discusses why this might be problematic and suggests some methods for incorporating overdispersion in a simulation in cases where count outcome data is expected to include overdispersion. They suggest that the following model can be used to generate the expected outcome count with overdispersion-- model the linear predictor as: 
+We currently do not include overdispersion when simulating health outcome counts. \citet{Johnson2015} discusses why this might be problematic and suggests some methods for incorporating overdispersion in a simulation in cases where count outcome data is expected to include overdispersion. They suggest that the following model can be used to generate the expected outcome count with overdispersion-- modeling the linear predictor as: 
 
 \begin{equation}
 \eta_t = \beta_0 + \sum_{m=1}^{p}\beta_{m}X_{m,t} + \epsilon_t
-\end{equation}
-
-\begin{equation}
-\eta_t = log(\lambda_t)
-\end{equation}
-
-\begin{equation}
-y_i \sim Pois(\lambda_t)
 \end{equation}
 
 \noindent where $\epsilon_t$ represents the overdispersion and follows a normal distribution: 
