@@ -2,7 +2,7 @@
 title: "DraftOne"
 author: "Sarah Koehler"
 date: "June 1, 2016"
-output: word_document
+output: pdf_document
 ---
 
 ```{r echo = FALSE, message=FALSE, warning=FALSE}
