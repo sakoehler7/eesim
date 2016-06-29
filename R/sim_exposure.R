@@ -114,8 +114,8 @@ calc_t <- function(n, trend = "no trend", amp = .6, custom_func = NULL, ...){
 season_binexp <- function(n, p, trend, start.date = "2000-01-01"){
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
-  t <- calc_t(n = n, trend = trend, amp=amp)
-
+  t <- calc_t(n = n, trend = trend, amp=amp)+log((1/p)-1)+1
+  newt <- 1/(1+exp(-t))
   p <- #Magic
   for (i in 1:n){
     x <- sample(c(0, 1), size = 1, replace = T, prob = c(1 - p[i], p[i]))
