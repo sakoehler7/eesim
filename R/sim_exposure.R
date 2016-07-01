@@ -96,7 +96,19 @@ calc_t <- function(n, trend = "no trend", amp = .6, custom_func = NULL, ...){
   seasont <- seasont / mean(seasont)
   return(seasont)
 }
-
+#'
+#' Create a trend variable for binary exposure data
+#'
+#' This function creates a trend variable for binary exposure data which is centered at p and
+#' restricts the probability of exposure between 0 and 1.
+#'
+#' @inheritParams calc_t
+#' @param p A numeric value giving the mean probability of exposure
+#'
+#' @return
+#'
+#'
+#'
 #' Simulate binary exposure data with a seasonal trend
 #'
 #' This function simulates binary exposure data with a seasonal trend.
