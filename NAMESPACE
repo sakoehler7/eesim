@@ -2,6 +2,7 @@
 
 export(beta_bias)
 export(beta_var)
+export(bin_t)
 export(binary_exposure)
 export(calc_t)
 export(casecross_mod)

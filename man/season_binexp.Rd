@@ -2,40 +2,21 @@
 % Please edit documentation in R/sim_exposure.R
 \name{season_binexp}
 \alias{season_binexp}
-\title{Create a trend variable for binary exposure data}
+\title{Simulate binary exposure data with a seasonal trend}
 \usage{
 season_binexp(n, p, trend, start.date = "2000-01-01")
 }
 \arguments{
 \item{n}{A numeric value giving the number of days to simulate.}
 
-\item{p}{A numeric value giving the mean probability of exposure}
-
-\item{trend}{A character string that gives the trend function to use. Options
-include:
-\itemize{
-  \item{"cos1"}
-  \item{"cos2"}
-  \item{"cos3"}
-  \item{"linear"}
-  \item{"curvilinear"}
-  \item{"cos1linear"}
-  \item{"no trend"}
-}}
-
 \item{p}{A numeric value giving the baseline probability of exposure for
 a binary exposure.}
 }
 \value{
-Simulate binary exposure data with a seasonal trend
-
-This function simulates binary exposure data with a seasonal trend.
-
 A numeric vector with simulated exposure of length n.
 }
 \description{
-This function creates a trend variable for binary exposure data which is centered at p and
-restricts the probability of exposure between 0 and 1.
+This function simulates binary exposure data with a seasonal trend.
 }
 \examples{
 season_binexp(n = 5, p = 0.25)
