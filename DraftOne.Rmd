@@ -149,6 +149,12 @@ Now a function for calc_t to use for seasonal binary exposure:
 ```{r}
 bin_t <- function(n, p, trend = "no trend", amp = .3, custom_func = NULL, ...){
   day <- c(1:n)
+  if (p > .5 & amp >1-p){
+    stop(paste0("For p>.5, amp must be between 0 and 1-p."))
+  }
+  if (p < .5 & amp>p){
+    stop(paste0("For p<.5, amp must be between 0 and p."))
+  }
   if (trend == "cos1"){
     seasont <- p + amp * cos(2 * pi * (day / 365))
     } else if (trend == "cos2"){
