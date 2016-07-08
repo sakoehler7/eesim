@@ -159,17 +159,15 @@ bin_t <- function(n, p, trend = "no trend", amp = .2, custom_func = NULL, ...){
 #' @return A numeric vector with simulated exposure of length n.
 #'
 #' @examples
-#' season_binexp(n = 5, p = 0.25)
+#' season_binexp(n = 5, p = 0.25, trend = "cos1")
 #'
 #' @export
 #'
-season_binexp <- function(n, p, trend, amp=.2, start.date = "2000-01-01", ...){
+season_binexp <- function(n, p, trend, amp = .2, start.date = "2000-01-01"){
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
   t <- bin_t(n, p, trend, amp)
-  for (i in 1:n){
-    x <- sample(c(0, 1), size = 1, replace = T, prob = c(1 - t[i], t[i]))
-  }
+  x <- rbinom(length(t), size = 1, prob = t)
   df <- data.frame(date, x)
   return(df)
 }
