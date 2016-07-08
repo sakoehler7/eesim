@@ -42,13 +42,15 @@ sim_random_exposure <- function(n, central, custom_func = NULL,
 #' @examples
 #' custom_baseline(n = 5)
 #' custom_baseline(n = 5, outcome_type = "death")
-custom_baseline <- function(n, average_outcome = NA, trend = NA,
-                            outcome_type = "cvd"){
-  df <- dlnm::chicagoNMMAPS
+custom_baseline <- function(n, df = dlnm::chicagoNMMAPS, average_outcome = NA, trend = NA,
+                            outcome_type = "cvd", start.date = "2000-01-01"){
+  start.date <- as.Date(start.date)
+  date <- seq(from = start.date, by = 1, length.out = n)
   df$outcome <- df[ , outcome_type]
   smooth_mod <- glm(outcome ~ splines::ns(time, 7 * 14), data = df)
   baseline <- predict(smooth_mod)[1:n]
-  return(baseline)
+  df2 <- data.frame(date, baseline)
+  return(df2)
 }
 
 #' Create a series of baseline outcomes
