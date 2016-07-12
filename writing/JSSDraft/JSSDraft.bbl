@@ -1,4 +1,4 @@
-\begin{thebibliography}{12}
+\begin{thebibliography}{13}
 \newcommand{\enquote}[1]{``#1''}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
@@ -96,5 +96,13 @@ Schoemann AM, Miller P, Pornprasertmanit S, Wu W (2014).
   sample size for planned missing designs.}
 \newblock \emph{International Journal of Behavioral Development},
   \textbf{38}(5), 471--479.
+
+\bibitem[{Strickland \emph{et~al.}(2015)Strickland, Gass, Goldman, and
+  Mulholland}]{Strickland2015}
+Strickland MJ, Gass KM, Goldman GT, Mulholland JA (2015).
+\newblock \enquote{Effects of ambient air pollution measurement error on health
+  effect estimates in time-series studies: a simulation-based analysis.}
+\newblock \emph{Journal of Exposure Science and Environmental Epidemiology},
+  \textbf{25}(2), 160--166.
 
 \end{thebibliography}
