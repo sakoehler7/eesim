@@ -83,7 +83,9 @@ sim_data <- function(n, rr, lambda, x_type = "binary", trend = "constant",
     }
     exp_base_y <- constant_baseline(n=n, lambda = lambda, start.date = start.date)
     df <- full_join(x, exp_base_y, by="date") %>% mutate(exp_y =
-                                                           exp(log(exp_base_y)+log(rr)*x))
+                                                           exp(log(exp_base_y) -
+                                                                 log(rr) * mean(x) +
+                                                                 log(rr)*x))
     df$y <- sapply(df$exp_y, FUN = function(x) rpois(1,x))
   }
 
