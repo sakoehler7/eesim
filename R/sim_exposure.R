@@ -104,6 +104,16 @@ calc_t <- function(n, trend = "no trend", amp = .6, custom_func = NULL, ...){
 #' This function creates a trend variable for binary exposure data which is centered at p and
 #' restricts the probability of exposure between 0 and 1.
 #'
+#' @param trend A character string that gives the trend function to use. Options
+#'    include:
+#'    \itemize{
+#'      \item{"cos1"}
+#'      \item{"cos2"}
+#'      \item{"cos3"}
+#'      \item{"linear"}
+#'      \item{"monthly"}
+#'      \item{"no trend"}
+#'    }
 #' @inheritParams calc_t
 #' @param p A numeric value giving the mean probability of exposure
 #'
@@ -157,9 +167,7 @@ bin_t <- function(n, p, trend = "no trend", amp = .01, start.date = "2000-01-01"
 #'
 #' This function simulates binary exposure data with a seasonal trend.
 #'
-#' @param n A numeric value giving the number of days to simulate.
-#' @param p A numeric value giving the baseline probability of exposure for
-#'    a binary exposure.
+#' @inheritParams bin_t
 #'
 #' @return A numeric vector with simulated exposure of length n.
 #'
