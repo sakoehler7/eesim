@@ -114,12 +114,17 @@ calc_t <- function(n, trend = "no trend", amp = .6, custom_func = NULL, ...){
 #'
 #' @export
 #'
-bin_t <- function(n, p, trend = "no trend", amp = .2, custom_func = NULL, ...){
+bin_t <- function(n, p, trend = "no trend", amp = .01, start.date = "2000-01-01", custom_func = NULL, ...){
   day <- c(1:n)
-  if (p > .5 & amp >1-p){
+  start.date <- as.Date(start.date)
+  date <- seq(from = start.date, by = 1, length.out = n)
+  if (trend == "monthly"){
+
+  }
+  else if (p > .5 & amp >1-p){
     stop(paste0("For p>.5, amp must be between 0 and 1-p."))
   }
-  if (p < .5 & amp>p){
+  else if (p < .5 & amp>p){
     stop(paste0("For p<.5, amp must be between 0 and p."))
   }
   if (trend == "cos1"){
@@ -130,11 +135,11 @@ bin_t <- function(n, p, trend = "no trend", amp = .2, custom_func = NULL, ...){
   } else if (trend == "cos3"){
     seasont <- p + .75 ^ (day / 365) * amp * cos(2 * pi * (day / 365))
   } else if (trend == "linear"){
-    seasont <- p+1/(day/n)
-  } else if (trend == "curvilinear"){
-    seasont <- p + day * (2 / n) + day^2 * (-1 / n^2)
-  } else if (trend == "cos1linear"){
-    seasont <- (p + (day / n)) * (p + amp * cos(2 * pi * (day / 365)))
+    seasont <- ifelse(p*(1 + day/n) <1, p*(1+day/n), 1)
+  } else if (trend == "monthly"){
+    require(lubridate)
+    months <- month(date)
+    seasont <- p[months]
   } else if (trend == "no trend"){
     seasont <- p
   } else if (trend == "custom" & !is.null(custom_func)) {
@@ -163,7 +168,7 @@ bin_t <- function(n, p, trend = "no trend", amp = .2, custom_func = NULL, ...){
 #'
 #' @export
 #'
-season_binexp <- function(n, p, trend, amp = .2, start.date = "2000-01-01"){
+season_binexp <- function(n, p, trend, amp = .05, start.date = "2000-01-01"){
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
   t <- bin_t(n, p, trend, amp)
