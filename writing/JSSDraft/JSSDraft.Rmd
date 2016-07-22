@@ -86,6 +86,10 @@ To do this simulation, which required simulating a time series with a heat wave 
 
 The authors then created three different pollutant metrics based on their simulated data which contained additional measurement error and compared estimates of relative risk using these metrics to the RR = 1.05 they specified while simulating the TPWA.  As expected they found that the population-weighted average metric resulted in less bias than measurements from a single monitoring station or measurements averaged across stations.  
 
+##PM and Mortality
+
+\citet{Roberts2006} used a simulation study to test the reliability of using AIC to determine the shape of the relationship between particulate matter and mortality.  The authors used Chicago NMMAPS data, which is the default data set in eesim. They estimated the effects of confounders such as temperature on the mortality time series, all from this Chicago NMMAPS, and incorporated the estimates in generating mortality time series with author-specified relationships with PM dose.  These explicitly specified relationships were piecewise linear relationships with and without a lower threshhold for effects.  They could use our customization functions to specify these relationships. Then they estimated the shape of the dose-response relationship using a Poisson log-linear model and four different candidate models for the dose-response relation.  They found the AIC for each of these models and determined whether the AIC was lowest for the models which reflected the true relationship between PM and response in the simulated data.  They found that AIC does not always detect nonlinear relationships in dose-response data.  
+
 # Basic overview of package
 
 [Table / Figure of functions included and simulation process]
