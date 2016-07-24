@@ -78,7 +78,13 @@ To do this simulation, which required simulating a time series with a heat wave 
 
 ## Comparing case-crossover and time series
 
+\citet{Bateson1999} compare several different case-crossover designs in the analysis of data with confounding seasonal trends.  They generated both exposure and response data exhibiting each of eight different temporal trends, which can be done with eesim.  They analyzed the simulated data using five different case-crossover designs, which could be done using the customization features of eesim.  They assessed these models with measures such as mean variance of the estimates, relative efficiency, and coverage probability, all included in eesim.  Based on the model performances, the authors concluded that symmetric bi-directional design with a lag period of one week can control for a large variety of confounding time trends.   
+
 ## Investigating confounding
+
+\citet{Peng2006} investigated the effects of confounding factors and model choice on time series studies of air pollution and mortality. In their simulation study, the authors specified four scenarios differing in smoothness and concurvity between pollutant and time trend variable.  They simulated exposure and mortality data based on a data from Minneapolis-St. Paul, for which they could use eesim's customization feature.  They then fit Poisson regression models to each simulated data set, which could be done using eesim.  They assessed the models with measures including AIC and BIC and found that different approaches to smoothing functions of time have different effects on the bias and variance of the effect estimates depending on factors such as the concurvity of the data.  
+
+\citet{Bateson2001} investigated confounding in case-crossover studies.  They simulated continuous exposure data with a cosinusoidal trend and generated Poisson-distributed outcome counts with the same trend, all of which can be done with eesim's functions.  
 
 ## Exploring spatial misalignment between exposure and outcome measurements
 
