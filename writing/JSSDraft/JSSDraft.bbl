@@ -1,4 +1,4 @@
-\begin{thebibliography}{13}
+\begin{thebibliography}{17}
 \newcommand{\enquote}[1]{``#1''}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
@@ -46,6 +46,15 @@ Bellan SE, Pulliam JR, Pearson CA, Champredon D, Fox SJ, Skrip L, Galvani AP,
   {S}ierra {L}eone: a simulation study of trial design and analysis.}
 \newblock \emph{The Lancet Infectious Diseases}, \textbf{15}(6), 703--710.
 
+\bibitem[{Bobb \emph{et~al.}(2015)Bobb, Valeri, Henn, Christiani, Wright,
+  Mazumdar, Godleski, and Coull}]{Bobb2015}
+Bobb JF, Valeri L, Henn BC, Christiani DC, Wright RO, Mazumdar M, Godleski JJ,
+  Coull BA (2015).
+\newblock \enquote{{B}ayesian kernel machine regression for estimating the
+  health effects of multi-pollutant mixtures.}
+\newblock \emph{Biostatistics}, \textbf{16}(3), 493--508.
+\newblock \doi{10.1093/biostatistics/kxu058}.
+
 \bibitem[{Burton \emph{et~al.}(2009)Burton, Hansell, Fortier, Manolio, Khoury,
   Little, and Elliott}]{Burton2009}
 Burton PR, Hansell AL, Fortier I, Manolio TA, Khoury MJ, Little J, Elliott P
@@ -54,6 +63,14 @@ Burton PR, Hansell AL, Fortier I, Manolio TA, Khoury MJ, Little J, Elliott P
   sample size requirements for human genome epidemiology.}
 \newblock \emph{International journal of epidemiology}, \textbf{38}(1),
   263--273.
+
+\bibitem[{Butland \emph{et~al.}(2013)Butland, Armstrong, Atkinson, Wilkinson,
+  Heal, Doherty, and Vieno}]{Butland2013}
+Butland BK, Armstrong B, Atkinson RW, Wilkinson P, Heal MR, Doherty RM, Vieno M
+  (2013).
+\newblock \enquote{Measurement error in time-series analysis: a simulation
+  study comparing modelled and monitored data.}
+\newblock \emph{BMC Medical Research Methodology}, \textbf{13}, 136.
 
 \bibitem[{Gaye \emph{et~al.}(2015)Gaye, Burton, and Burton}]{Gaye2015}
 Gaye A, Burton TW, Burton PR (2015).
@@ -66,6 +83,14 @@ Green P, MacLeod CJ (2016).
 \newblock \enquote{{SIMR}: an {R} package for power analysis of generalized
   linear mixed models by simulation.}
 \newblock \emph{Methods in Ecology and Evolution}, \textbf{7}, 493--498.
+
+\bibitem[{Gryparis \emph{et~al.}(2009)Gryparis, Paciorek, Zeka, Schwartz, and
+  Coull}]{Gryparis2009}
+Gryparis A, Paciorek CJ, Zeka A, Schwartz J, Coull BA (2009).
+\newblock \enquote{Measurement error caused by spatial misalignment in
+  environmental epidemiology.}
+\newblock \emph{Biostatistics}, \textbf{10}(2), 258--274.
+\newblock \doi{10.1093/biostatistics/kxn033}.
 
 \bibitem[{Handcock \emph{et~al.}(2008)Handcock, Hunter, Butts, Goodreau, and
   Morris}]{Handcock2008}
@@ -88,6 +113,15 @@ Kelly BJ, Gross R, Bittinger K, Sherrill-Mix S, Lewis JD, Collman RG, Bushman
 \newblock \enquote{Power and sample-size estimation for microbiome studies
   using pairwise distances and {PERMANOVA}.}
 \newblock \emph{Bioinformatics}, pp. 2461--2468.
+
+\bibitem[{Roberts and Martin(2006)}]{Roberts2006}
+Roberts S, Martin MA (2006).
+\newblock \enquote{The question of nonlinearity in the dose-response relation
+  between particulate matter air pollution and mortality: Can {A}kaike's
+  {I}nformation {C}riterion be trusted to take the right turn?}
+\newblock \emph{American Journal of Epidemiology}, \textbf{164}(164),
+  1242--1250.
+\newblock \doi{10.1093/aje/kwj335}.
 
 \bibitem[{Schoemann \emph{et~al.}(2014)Schoemann, Miller, Pornprasertmanit, and
   Wu}]{Schoemann2014}
