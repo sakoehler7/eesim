@@ -1,10 +1,10 @@
 #' Create a trend variable
 #'
-#' This function creates a trend variable.
+#' This function creates a trend variable for continuous exposures.
 #'
-#' @param n A numeric value giving the number of days to simulate.
-#' @param trend A character string that gives the trend function to use. Options
-#'    include:
+#' @param n A numeric value specifying the number of days to simulate.
+#' @param trend A character string that specifies the desired trend function. Options
+#'    are:
 #'    \itemize{
 #'      \item{"cos1"}
 #'      \item{"cos2"}
@@ -13,9 +13,10 @@
 #'      \item{"curvilinear"}
 #'      \item{"cos1linear"}
 #'      \item{"no trend"}
+#'      \item{"custom"}
 #'    }
 #'
-#' @param amp A numeric value giving the amplitude of the seasonal trend. Must be between 0 and 1.
+#' @param amp A numeric value specifying the amplitude of the seasonal trend. Must be between 0 and 1.
 #'
 #' @return A numeric vector used to generate data with seasonal trends.
 #'
@@ -54,11 +55,10 @@ calc_t <- function(n, trend = "no trend", amp = .6, custom_func = NULL, ...){
 #'
 #' Create a trend variable for binary exposure data
 #'
-#' This function creates a trend variable for binary exposure data which is centered at p and
-#' restricts the probability of exposure between 0 and 1.
+#' This function creates a trend variable for binary exposure data which is centered at p.
 #'
 #' @param trend A character string that gives the trend function to use. Options
-#'    include:
+#'    are:
 #'    \itemize{
 #'      \item{"cos1"}
 #'      \item{"cos2"}
@@ -66,9 +66,12 @@ calc_t <- function(n, trend = "no trend", amp = .6, custom_func = NULL, ...){
 #'      \item{"linear"}
 #'      \item{"monthly"}
 #'      \item{"no trend"}
+#'      \item{"custom"}
 #'    }
-#' @inheritParams calc_t
+#'
 #' @param p A numeric value giving the mean probability of exposure
+#' @param amp A numeric value specifying the amplitude of the seasonal trend. Must be between 0 and .5.
+#' @inheritParams calc_t
 #'
 #' @return A numeric vector used to generate binary exposure data with seasonal trends
 #'
@@ -82,7 +85,6 @@ bin_t <- function(n, p, trend = "no trend", amp = .01, start.date = "2000-01-01"
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
   if (trend == "monthly"){
-
   }
   else if (p > .5 & amp >1-p){
     stop(paste0("For p>.5, amp must be between 0 and 1-p."))
@@ -118,11 +120,11 @@ bin_t <- function(n, p, trend = "no trend", amp = .01, start.date = "2000-01-01"
 #'
 #' Simulate binary exposure data
 #'
-#' This function simulates binary exposure data with or without seasonal trends.
+#' This function simulates a time series of binary exposure values with or without seasonal trends.
 #'
 #' @inheritParams bin_t
 #'
-#' @return A numeric vector with simulated exposure of length n.
+#' @return A data frame with n rows, a column for date of exposure, and a column for exposure value
 #'
 #' @examples
 #' binary_exposure(n = 5, p = 0.25, trend = "cos1")
@@ -140,16 +142,15 @@ binary_exposure <- function(n, p, trend = "no trend", amp, start.date = "2000-01
 
 #' Simulate continuous exposure data
 #'
-#' This function simulates a time series of continuous exposure data with or without a
+#' This function simulates a time series of continuous exposure values with or without a
 #' seasonal trend.
 #'
-#' @param mu A numeric vector giving the average of the exposure distribution.
-#' @param sd A numeric vector giving the standard deviation of the exposure
+#' @param mu A numeric value giving the average of the exposure distribution.
+#' @param sd A numeric value giving the standard deviation of the exposure
 #'    values around their expected values.
 #' @inheritParams calc_t
-#' @inheritParams season_binexp
 #'
-#' @return A numeric vector with simulated exposure of length n.
+#' @return A data frame with n rows, a column for the date of exposure, and a column giving the exposure value.
 #'
 #' @examples
 #' continuous_exposure(n = 5, mu = 100, sd = 10, trend = "cos1")
