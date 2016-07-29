@@ -2,8 +2,7 @@
 #'
 #' @examples
 #' custom_exposure(n = 5, metric = "temp")
-custom_exposure <- function(n, central = NA, metric = "temp"){
-  df <- dlnm::chicagoNMMAPS
+custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, central = NA, metric = "temp"){
   exposure <- df[1:n, metric]
   return(exposure)
 }
