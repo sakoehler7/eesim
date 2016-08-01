@@ -17,11 +17,13 @@ custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, central = NA, metric = 
 #'                     metric = "temp")
 #'
 #' @export
-sim_exposure <- function(n, central, trend = NA, amp, custom_func = NULL,
+sim_exposure <- function(n, central, trend = NA, amp, start.date = "2001-01-01", custom_func = NULL,
                          exposure_type = NA, ...){
   if(is.null(custom_func)){
     exposure <- std_exposure(n, central, trend, amp, exposure_type, ...)
   } else if (!(is.null(custom_func))){
+    start.date <- as.Date(start.date)
+    date <- seq(from = start.date, by = 1, length.out = n)
     arguments <- list(...)
     arguments$n <- n
     arguments$central <- central
@@ -96,7 +98,9 @@ sim_random_outcome <- function(lambda, custom_func = NULL, ...){
   return(outcome)
 }
 
-sim_outcome <- function(exposure, average_outcome, rr, custom_func = NULL, ...){
+sim_outcome <- function(exposure, average_outcome, rr, start.date="2000-01-01", custom_func = NULL, ...){
+  start.date <- as.Date(start.date)
+  date <- seq(from = start.date, by = 1, length.out = n)
   if(is.null(custom_func)){
     baseline <- create_baseline(n = length(exposure), average_outcome, ...)
     lambda <- create_lambda(baseline, exposure, rr, ...)
@@ -112,7 +116,8 @@ sim_outcome <- function(exposure, average_outcome, rr, custom_func = NULL, ...){
     arguments$lambda <- lambda
     outcome <- do.call(custom_func, arguments)
   }
-  return(outcome)
+  df <- data.frame(date, outcome)
+  return(df)
 }
 
 

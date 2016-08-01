@@ -132,11 +132,12 @@ bin_t <- function(n, p, trend = "no trend", amp = .01, start.date = "2000-01-01"
 #' @export
 #'
 binary_exposure <- function(n, p, trend = "no trend", amp = .01, start.date = "2000-01-01", custom_func = NULL, ...){
-  start.date <- as.Date(start.date)
-  date <- seq(from = start.date, by = 1, length.out = n)
   t <- bin_t(n, p, ...)
   x <- rbinom(length(t), size = 1, prob = t)
-  return(x)
+  start.date <- as.Date(start.date)
+  date <- seq(from = start.date, by = 1, length.out = n)
+  df <- data.frame(date, x)
+  return(df)
 }
 
 #' Simulate continuous exposure data
@@ -157,12 +158,15 @@ binary_exposure <- function(n, p, trend = "no trend", amp = .01, start.date = "2
 #' @export
 continuous_exposure <- function(n, mu, trend = "no trend", amp, start.date = "2000-01-01", ...){
   day <- c(1:n)
+  start.date <- as.Date(start.date)
+  date <- seq(from = start.date, by = 1, length.out = n)
   t <- calc_t(n, trend, amp, start.date, ...)
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
   newmu <- mu * t
   x <- rnorm(n, newmu, ...)
-  return(x)
+  df <- data.frame(date, x)
+  return(df)
 }
 #'
 #' Simulate exposure data
