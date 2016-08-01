@@ -22,7 +22,7 @@ sim_baseline <- function(n, lambda, start.date = "2000-01-01",
   t <- calc_t(n = n, trend = trend)
   exp_base_y <- lambda * t
   df <- data.frame(date = date, exp_base_y = exp_base_y)
-  return(df)
+  return(exp_base_y)
 }
 #'
 #' Simulated Exposure and Outcome Data

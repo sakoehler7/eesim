@@ -27,7 +27,7 @@ are:
 \item{amp}{A numeric value specifying the amplitude of the seasonal trend. Must be between 0 and .5.}
 }
 \value{
-A data frame with n rows, a column for date of exposure, and a column for exposure value
+A vector with n exposure values
 }
 \description{
 This function simulates a time series of binary exposure values with or without seasonal trends.

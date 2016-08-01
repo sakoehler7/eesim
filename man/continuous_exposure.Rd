@@ -31,7 +31,7 @@ are:
 values around their expected values.}
 }
 \value{
-A data frame with n rows, a column for the date of exposure, and a column giving the exposure value.
+A vector with n exposure values
 }
 \description{
 Simulates a time series of continuous exposure values with or without a

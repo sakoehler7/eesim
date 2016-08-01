@@ -13,5 +13,6 @@ Create a series of baseline outcomes
 create_baseline(n = 5, average_outcome = 22, trend = "linear")
 create_baseline(n = 5, average_outcome = NA, trend = NA,
                 custom_func = "custom_baseline", outcome_type = "death")
+
 }
 
