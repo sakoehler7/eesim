@@ -56,10 +56,11 @@ custom_baseline <- function(n, df = dlnm::chicagoNMMAPS, average_outcome = NA, t
 #' create_baseline(n = 5, average_outcome = 22, trend = "linear")
 #' create_baseline(n = 5, average_outcome = NA, trend = NA,
 #'                 custom_func = "custom_baseline", outcome_type = "death")
+#'
 create_baseline <- function(n, average_outcome, trend, custom_func = NULL, ...){
   if(is.null(custom_func)){
-    season_t <- calc_t(n = n, trend = trend, ...)
-    baseline <- rep(average_outcome, n) * season_t
+    lambda <- average_outcome
+    baseline <- sim_baseline(n, lambda, trend, start.date, ...)
   } else {
     arguments <- list(...)
     arguments$n <- n
