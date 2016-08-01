@@ -17,10 +17,10 @@ custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, central = NA, metric = 
 #'                     metric = "temp")
 #'
 #' @export
-sim_exposure <- function(n, central, trend = NA, custom_func = NULL,
+sim_exposure <- function(n, central, trend = NA, amp, custom_func = NULL,
                          exposure_type = NA, ...){
   if(is.null(custom_func)){
-    exposure <- std_exposure(n, central, trend, exposure_type, ...)
+    exposure <- std_exposure(n, central, trend, amp, exposure_type, ...)
   } else if (!(is.null(custom_func))){
     arguments <- list(...)
     arguments$n <- n
@@ -95,6 +95,26 @@ sim_random_outcome <- function(lambda, custom_func = NULL, ...){
   }
   return(outcome)
 }
+
+sim_outcome <- function(exposure, average_outcome, rr, custom_func = NULL, ...){
+  if(is.null(custom_func)){
+    baseline <- create_baseline(n = length(exposure), average_outcome, ...)
+    lambda <- create_lambda(baseline, exposure, rr, ...)
+    outcome <- rpois(n= length(exposure), lamba = lambda)
+  }
+  else {
+    arguments <- list(...)
+    arguments$n <- n
+    arguments$average_outcome <- average_outcome
+    arguments$trend <- trend
+    arguments$baseline <- baseline
+    arguments$exposure <- exposure
+    arguments$lambda <- lambda
+    outcome <- do.call(custom_func, arguments)
+  }
+  return(outcome)
+}
+
 
 sim_df <- function(n, central, exposure_type, average_outcome, trend, rr){
   df <- data.frame(day = 1:n) %>%
