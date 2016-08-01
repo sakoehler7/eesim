@@ -54,13 +54,13 @@ custom_baseline <- function(n, df = dlnm::chicagoNMMAPS, average_outcome = NA, t
 #'
 #' @examples
 #' create_baseline(n = 5, average_outcome = 22, trend = "linear")
-#' create_baseline(n = 5, average_outcome = NA, trend = NA,
+#' create_baseline(n = 5, average_outcome = NA, trend = NA, amp = NA,
 #'                 custom_func = "custom_baseline", outcome_type = "death")
 #'
-create_baseline <- function(n, average_outcome, trend, custom_func = NULL, ...){
+create_baseline <- function(n, average_outcome, trend, amp, custom_func = NULL, ...){
   if(is.null(custom_func)){
     lambda <- average_outcome
-    baseline <- sim_baseline(n, lambda, trend, start.date, ...)
+    baseline <- sim_baseline(n, lambda, trend, amp, ...)
   } else {
     arguments <- list(...)
     arguments$n <- n

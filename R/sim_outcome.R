@@ -15,13 +15,9 @@
 #' @examples
 #' sim_baseline(n = 3, lambda = 100, trend = "cos1")
 #'
-sim_baseline <- function(n, lambda, start.date = "2000-01-01",
-                              trend = "no trend"){
-  start.date <- as.Date(start.date)
-  date <- seq(from = start.date, by = 1, length.out = n)
-  t <- calc_t(n = n, trend = trend)
+sim_baseline <- function(n, lambda, trend = "no trend", amp){
+  t <- calc_t(n = n, trend = trend, amp = amp)
   exp_base_y <- lambda * t
-  df <- data.frame(date = date, exp_base_y = exp_base_y)
   return(exp_base_y)
 }
 #'
