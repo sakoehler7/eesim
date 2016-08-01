@@ -17,12 +17,10 @@ custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, central = NA, metric = 
 #'                     metric = "temp")
 #'
 #' @export
-sim_random_exposure <- function(n, central, custom_func = NULL,
+sim_random_exposure <- function(n, central, trend = NA, custom_func = NULL,
                          exposure_type = NA, ...){
-  if(is.null(custom_func) & exposure_type == "binary"){
-    exposure <- stats::rbinom(n = n, size = 1, prob = central)
-  } else if (is.null(custom_func) & exposure_type == "continuous"){
-    exposure <- stats::rnorm(n = n, mean = central, ...)
+  if(is.null(custom_func)){
+    exposure <- sim_exposure(n, ...)
   } else if (!(is.null(custom_func))){
     arguments <- list(...)
     arguments$n <- n
