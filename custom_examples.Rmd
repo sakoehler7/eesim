@@ -1,0 +1,30 @@
+---
+title: "Examples of Customization"
+output: pdf_document
+---
+
+#Exposure
+
+##calc_t
+
+```{r}
+sintrend <- function(n, y){
+  day <- c(1:n)
+  1 + y * sin(2 * pi * (day / 365))
+}
+calc_t(n = 5, y = .3, trend = "custom", custom_func = sintrend)
+plot(calc_t(1000, y = .3, trend = "custom", custom_func = sintrend))
+```
+
+bin_t is similar.
+
+##binary and continuous exposure
+
+```{r}
+binary_exposure(n=5, p = .2, y = .1, trend = "custom", custom_func = sintrend)
+plot(binary_exposure(n=400, p = .2, y = .1, trend = "custom", custom_func = sintrend))
+
+continuous_exposure(n = 5, y = .6, mu = 100, sd = 10, trend = "custom", custom_func = sintrend)
+plot(continuous_exposure(n=1000, y = .6, mu = 5, sd = .5, trend = "custom", custom_func = sintrend))
+```
+

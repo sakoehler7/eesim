@@ -131,10 +131,10 @@ bin_t <- function(n, p, trend = "no trend", amp = .01, start.date = "2000-01-01"
 #'
 #' @export
 #'
-binary_exposure <- function(n, p, trend = "no trend", amp, start.date = "2000-01-01"){
+binary_exposure <- function(n, p, trend = "no trend", amp = .01, start.date = "2000-01-01", custom_func = NULL, ...){
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
-  t <- bin_t(n, p, trend, amp)
+  t <- bin_t(n, p, ...)
   x <- rbinom(length(t), size = 1, prob = t)
   df <- data.frame(date, x)
   return(df)
@@ -142,7 +142,7 @@ binary_exposure <- function(n, p, trend = "no trend", amp, start.date = "2000-01
 
 #' Simulate continuous exposure data
 #'
-#' This function simulates a time series of continuous exposure values with or without a
+#' Simulates a time series of continuous exposure values with or without a
 #' seasonal trend.
 #'
 #' @param mu A numeric value giving the average of the exposure distribution.
@@ -158,11 +158,42 @@ binary_exposure <- function(n, p, trend = "no trend", amp, start.date = "2000-01
 #' @export
 continuous_exposure <- function(n, mu, sd, trend = "no trend", amp, start.date = "2000-01-01", ...){
   day <- c(1:n)
-  t <- calc_t(n, trend, amp)
+  t <- calc_t(n, trend, amp, start.date, ...)
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
-  mu <- mu * t
-  x <- rnorm(n, mean = mu, sd = sd)
+  newmu <- mu * t
+  x <- rnorm(n, newmu, sd)
   df <- data.frame(date, x)
   return(df)
 }
+#'
+#' Simulate exposure data
+#'
+#' Simulates binary or continuous exposure data with or without seasonal trends.
+#'
+#' @param central A numeric value specifying the mean probability of exposure (for binary data) or
+#' the mean exposure value (for continuous data)
+#' @param exposure_type A character string specifying the type of exposure.  Choices are "binary" or "continuous".
+#'
+#' @inheritParams continuous_exposure
+#'
+#' @return A data frame with n rows, a column for the date of exposure, and a column giving the exposure value.
+#'
+#' @examples
+#' sim_exposure(n=1000, central = .1, trend = "cos1", amp = .02)
+#' sim_exposure(n = 1000, central = 50, sd = 5, trend = "cos3", amp = .6, exposure_type = "continuous", start.date = "2001-04-01")
+#'
+#' @export
+#'
+sim_exposure <- function(n, central, sd, trend = "no trend", exposure_type = "binary", amp, start.date = "2000-01-01", ...){
+  if(exposure_type=="binary"){
+    p <- central
+    df <- binary_exposure(n, p, trend, amp, start.date, ...)
+  }
+  else if(exposure_type == "continuous"){
+    mu <- central
+    df <- continuous_exposure(n, mu, sd, trend, amp, start.date, ...)
+  }
+  return(df)
+}
+#'
