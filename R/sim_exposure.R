@@ -124,7 +124,7 @@ bin_t <- function(n, p, trend = "no trend", amp = .01, start.date = "2000-01-01"
 #'
 #' @inheritParams bin_t
 #'
-#' @return A data frame with n rows, a column for date of exposure, and a column for exposure value
+#' @return A vector with n exposure values
 #'
 #' @examples
 #' binary_exposure(n = 5, p = 0.25, trend = "cos1")
@@ -136,8 +136,7 @@ binary_exposure <- function(n, p, trend = "no trend", amp = .01, start.date = "2
   date <- seq(from = start.date, by = 1, length.out = n)
   t <- bin_t(n, p, ...)
   x <- rbinom(length(t), size = 1, prob = t)
-  df <- data.frame(date, x)
-  return(df)
+  return(x)
 }
 
 #' Simulate continuous exposure data
@@ -150,7 +149,7 @@ binary_exposure <- function(n, p, trend = "no trend", amp = .01, start.date = "2
 #'    values around their expected values.
 #' @inheritParams calc_t
 #'
-#' @return A data frame with n rows, a column for the date of exposure, and a column giving the exposure value.
+#' @return A vector with n exposure values
 #'
 #' @examples
 #' continuous_exposure(n = 5, mu = 100, sd = 10, trend = "cos1")
@@ -163,8 +162,7 @@ continuous_exposure <- function(n, mu, trend = "no trend", amp, start.date = "20
   date <- seq(from = start.date, by = 1, length.out = n)
   newmu <- mu * t
   x <- rnorm(n, newmu, ...)
-  df <- data.frame(date, x)
-  return(df)
+  return(x)
 }
 #'
 #' Simulate exposure data
@@ -177,15 +175,15 @@ continuous_exposure <- function(n, mu, trend = "no trend", amp, start.date = "20
 #'
 #' @inheritParams continuous_exposure
 #'
-#' @return A data frame with n rows, a column for the date of exposure, and a column giving the exposure value.
+#' @return A vector with n exposure values
 #'
 #' @examples
-#' sim_exposure(n=1000, central = .1, trend = "cos1", amp = .02)
-#' sim_exposure(n = 1000, central = 50, sd = 5, trend = "cos3", amp = .6, exposure_type = "continuous", start.date = "2001-04-01")
+#' std_exposure(n=5, central = .1, trend = "cos1", amp = .02)
+#' std_exposure(n = 5, central = 50, sd = 5, trend = "cos3", amp = .6, exposure_type = "continuous", start.date = "2001-04-01")
 #'
 #' @export
 #'
-sim_exposure <- function(n, central, trend = "no trend", exposure_type = "binary", amp, start.date = "2000-01-01", ...){
+std_exposure <- function(n, central, trend = "no trend", exposure_type = "binary", amp, start.date = "2000-01-01", ...){
   if(exposure_type=="binary"){
     p <- central
     df <- binary_exposure(n, p, trend, amp, start.date, ...)

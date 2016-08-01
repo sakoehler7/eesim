@@ -7,10 +7,10 @@
 calc_t(n, trend = "no trend", amp = 0.6, custom_func = NULL, ...)
 }
 \arguments{
-\item{n}{A numeric value giving the number of days to simulate.}
+\item{n}{A numeric value specifying the number of days to simulate.}
 
-\item{trend}{A character string that gives the trend function to use. Options
-include:
+\item{trend}{A character string that specifies the desired trend function. Options
+are:
 \itemize{
   \item{"cos1"}
   \item{"cos2"}
@@ -19,13 +19,16 @@ include:
   \item{"curvilinear"}
   \item{"cos1linear"}
   \item{"no trend"}
+  \item{"custom"}
 }}
+
+\item{amp}{A numeric value specifying the amplitude of the seasonal trend. Must be between 0 and 1.}
 }
 \value{
 A numeric vector used to generate data with seasonal trends.
 }
 \description{
-This function creates a trend variable.
+This function creates a trend variable for continuous exposures.
 }
 \examples{
 calc_t(5, "cos3")

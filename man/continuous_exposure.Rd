@@ -2,29 +2,43 @@
 % Please edit documentation in R/sim_exposure.R
 \name{continuous_exposure}
 \alias{continuous_exposure}
-\title{Simulate continuous exposure data without a seasonal trend}
+\title{Simulate continuous exposure data}
 \usage{
-continuous_exposure(n, mu, sd, start.date = "2000-01-01", ...)
+continuous_exposure(n, mu, trend = "no trend", amp,
+  start.date = "2000-01-01", ...)
 }
 \arguments{
-\item{n}{A numeric value giving the number of days to simulate.}
+\item{n}{A numeric value specifying the number of days to simulate.}
 
-\item{mu}{A numeric vector giving the average of the exposure distribution.}
+\item{mu}{A numeric value giving the average of the exposure distribution.}
 
-\item{sd}{A numeric vector giving the standard deviation of the exposure
-distribution.}
+\item{trend}{A character string that specifies the desired trend function. Options
+are:
+\itemize{
+  \item{"cos1"}
+  \item{"cos2"}
+  \item{"cos3"}
+  \item{"linear"}
+  \item{"curvilinear"}
+  \item{"cos1linear"}
+  \item{"no trend"}
+  \item{"custom"}
+}}
 
-\item{start.date}{A date in the format "yyyy-mm-dd" specifying the first day
-of simulated measurements.}
+\item{amp}{A numeric value specifying the amplitude of the seasonal trend. Must be between 0 and 1.}
+
+\item{sd}{A numeric value giving the standard deviation of the exposure
+values around their expected values.}
 }
 \value{
-A data frame with date and exposure value for each day.
+A data frame with n rows, a column for the date of exposure, and a column giving the exposure value.
 }
 \description{
-This function simulates continuous exposure data without a seasonal trend.
+Simulates a time series of continuous exposure values with or without a
+seasonal trend.
 }
 \examples{
-continuous_exposure(n = 5, mu = 10, sd = 10)
+continuous_exposure(n = 5, mu = 100, sd = 10, trend = "cos1")
 
 }
 

@@ -4,31 +4,33 @@
 \alias{bin_t}
 \title{Create a trend variable for binary exposure data}
 \usage{
-bin_t(n, p, trend = "no trend", amp = 0.3, custom_func = NULL, ...)
+bin_t(n, p, trend = "no trend", amp = 0.01, start.date = "2000-01-01",
+  custom_func = NULL, ...)
 }
 \arguments{
-\item{n}{A numeric value giving the number of days to simulate.}
+\item{n}{A numeric value specifying the number of days to simulate.}
 
 \item{p}{A numeric value giving the mean probability of exposure}
 
 \item{trend}{A character string that gives the trend function to use. Options
-include:
+are:
 \itemize{
   \item{"cos1"}
   \item{"cos2"}
   \item{"cos3"}
   \item{"linear"}
-  \item{"curvilinear"}
-  \item{"cos1linear"}
+  \item{"monthly"}
   \item{"no trend"}
+  \item{"custom"}
 }}
+
+\item{amp}{A numeric value specifying the amplitude of the seasonal trend. Must be between 0 and .5.}
 }
 \value{
 A numeric vector used to generate binary exposure data with seasonal trends
 }
 \description{
-This function creates a trend variable for binary exposure data which is centered at p and
-restricts the probability of exposure between 0 and 1.
+This function creates a trend variable for binary exposure data which is centered at p.
 }
 \examples{
 bin_t(n = 5, p = .3, trend = "cos1", amp = .3)

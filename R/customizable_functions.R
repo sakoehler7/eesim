@@ -10,17 +10,17 @@ custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, central = NA, metric = 
 #' Simulate random series of exposure values
 #'
 #' @examples
-#' sim_random_exposure(n = 5, central = 0.25, exposure_type = "binary")
-#' sim_random_exposure(n = 5, central = 100, sd = 10,
+#' sim_exposure(n = 5, central = 0.25, exposure_type = "binary")
+#' sim_exposure(n = 5, central = 100, sd = 10,
 #'                     exposure_type = "continuous")
-#' sim_random_exposure(n = 5, central = NA, custom_func = "custom_exposure",
+#' sim_exposure(n = 5, central = NA, custom_func = "custom_exposure",
 #'                     metric = "temp")
 #'
 #' @export
-sim_random_exposure <- function(n, central, trend = NA, custom_func = NULL,
+sim_exposure <- function(n, central, trend = NA, custom_func = NULL,
                          exposure_type = NA, ...){
   if(is.null(custom_func)){
-    exposure <- sim_exposure(n, ...)
+    exposure <- std_exposure(n, central, trend, exposure_type, ...)
   } else if (!(is.null(custom_func))){
     arguments <- list(...)
     arguments$n <- n

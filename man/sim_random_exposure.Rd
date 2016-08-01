@@ -4,7 +4,8 @@
 \alias{sim_random_exposure}
 \title{Simulate random series of exposure values}
 \usage{
-sim_random_exposure(n, central, custom_func = NULL, exposure_type = NA, ...)
+sim_random_exposure(n, central, trend = NA, custom_func = NULL,
+  exposure_type = NA, ...)
 }
 \description{
 Simulate random series of exposure values

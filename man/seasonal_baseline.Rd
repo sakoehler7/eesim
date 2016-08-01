@@ -15,8 +15,8 @@ data}
 \item{start.date}{A date in the format "yyyy-mm-dd" specifying the first day
 for which to simulate data}
 
-\item{trend}{A character string that gives the trend function to use. Options
-include:
+\item{trend}{A character string that specifies the desired trend function. Options
+are:
 \itemize{
   \item{"cos1"}
   \item{"cos2"}
@@ -25,6 +25,7 @@ include:
   \item{"curvilinear"}
   \item{"cos1linear"}
   \item{"no trend"}
+  \item{"custom"}
 }}
 }
 \value{
