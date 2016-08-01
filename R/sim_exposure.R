@@ -156,13 +156,13 @@ binary_exposure <- function(n, p, trend = "no trend", amp = .01, start.date = "2
 #' continuous_exposure(n = 5, mu = 100, sd = 10, trend = "cos1")
 #'
 #' @export
-continuous_exposure <- function(n, mu, sd, trend = "no trend", amp, start.date = "2000-01-01", ...){
+continuous_exposure <- function(n, mu, trend = "no trend", amp, start.date = "2000-01-01", ...){
   day <- c(1:n)
   t <- calc_t(n, trend, amp, start.date, ...)
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
   newmu <- mu * t
-  x <- rnorm(n, newmu, sd)
+  x <- rnorm(n, newmu, ...)
   df <- data.frame(date, x)
   return(df)
 }
@@ -185,14 +185,14 @@ continuous_exposure <- function(n, mu, sd, trend = "no trend", amp, start.date =
 #'
 #' @export
 #'
-sim_exposure <- function(n, central, sd, trend = "no trend", exposure_type = "binary", amp, start.date = "2000-01-01", ...){
+sim_exposure <- function(n, central, trend = "no trend", exposure_type = "binary", amp, start.date = "2000-01-01", ...){
   if(exposure_type=="binary"){
     p <- central
     df <- binary_exposure(n, p, trend, amp, start.date, ...)
   }
   else if(exposure_type == "continuous"){
     mu <- central
-    df <- continuous_exposure(n, mu, sd, trend, amp, start.date, ...)
+    df <- continuous_exposure(n, mu, trend, amp, start.date, ...)
   }
   return(df)
 }
