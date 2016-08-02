@@ -161,8 +161,6 @@ continuous_exposure <- function(n, mu, trend = "no trend", amp, start.date = "20
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
   t <- calc_t(n, trend, amp, start.date, ...)
-  start.date <- as.Date(start.date)
-  date <- seq(from = start.date, by = 1, length.out = n)
   newmu <- mu * t
   x <- rnorm(n, newmu, ...)
   df <- data.frame(date, x)
@@ -198,4 +196,5 @@ std_exposure <- function(n, central, trend = "no trend", exposure_type = "binary
   }
   return(df)
 }
+#'
 #'
