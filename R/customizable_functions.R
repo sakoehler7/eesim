@@ -28,7 +28,7 @@ sim_exposure <- function(n, central, trend = "no trend", amp,
     arguments$trend <- trend
     arguments$amp <- amp
     arguments$exposure_type <- exposure_type
-    exposure <- do.call(std_exposure, arguments)
+    exposure <- do.call("std_exposure", arguments)
   } else if (!(is.null(custom_func))){
     start.date <- as.Date(start.date)
     date <- seq(from = start.date, by = 1, length.out = n)
