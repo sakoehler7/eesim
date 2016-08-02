@@ -2,7 +2,8 @@
 #'
 #' @examples
 #' custom_exposure(n = 5, metric = "temp")
-custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, central = NA, metric = "temp"){
+custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, central = NA,
+                            metric = "temp"){
   exposure <- df[1:n, metric]
   return(exposure)
 }
@@ -11,12 +12,14 @@ custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, central = NA, metric = 
 #'
 #' @examples
 #' sim_exposure(n = 5, central = 0.25, exposure_type = "binary")
-#' sim_exposure(n = 5, central = 100, sd = 10, amp = .6, exposure_type = "continuous")
+#' sim_exposure(n = 5, central = 100, sd = 10, amp = .6,
+#'              exposure_type = "continuous")
 #' sim_exposure(n = 5, central = NA, custom_func = "custom_exposure",
 #'                     metric = "temp")
 #'
 #' @export
-sim_exposure <- function(n, central, trend = NA, amp, start.date = "2001-01-01", custom_func = NULL,
+sim_exposure <- function(n, central, trend = NA, amp,
+                         start.date = "2001-01-01", custom_func = NULL,
                          exposure_type = NA, ...){
   if(is.null(custom_func)){
     exposure <- std_exposure(n, central, trend, amp, exposure_type, ...)
@@ -41,8 +44,9 @@ sim_exposure <- function(n, central, trend = NA, amp, start.date = "2001-01-01",
 #' @examples
 #' custom_baseline(n = 5)
 #' custom_baseline(n = 5, outcome_type = "death")
-custom_baseline <- function(n, df = dlnm::chicagoNMMAPS, average_outcome = NA, trend = NA,
-                            outcome_type = "cvd", start.date = "2000-01-01"){
+custom_baseline <- function(n, df = dlnm::chicagoNMMAPS, average_outcome = NA,
+                            trend = NA, outcome_type = "cvd",
+                            start.date = "2000-01-01"){
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
   df$outcome <- df[ , outcome_type]
@@ -59,7 +63,8 @@ custom_baseline <- function(n, df = dlnm::chicagoNMMAPS, average_outcome = NA, t
 #' create_baseline(n = 5, average_outcome = NA, trend = NA, amp = NA,
 #'                 custom_func = "custom_baseline", outcome_type = "death")
 #'
-create_baseline <- function(n, average_outcome, trend, amp, custom_func = NULL, ...){
+create_baseline <- function(n, average_outcome, trend, amp, custom_func = NULL,
+                            ...){
   if(is.null(custom_func)){
     lambda <- average_outcome
     baseline <- sim_baseline(n, lambda, trend, amp, ...)
@@ -98,11 +103,14 @@ sim_random_outcome <- function(lambda, custom_func = NULL, ...){
   return(outcome)
 }
 
-sim_outcome <- function(exposure, average_outcome, trend = "no trend", amp = .6, rr, start.date="2000-01-01", custom_func = NULL, ...){
+sim_outcome <- function(exposure, average_outcome, trend = "no trend",
+                        amp = .6, rr, start.date="2000-01-01",
+                        custom_func = NULL, ...){
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = nrow(exposure))
   if(is.null(custom_func)){
-    baseline <- create_baseline(n = length(exposure), average_outcome, trend, amp, start.date, ...)
+    baseline <- create_baseline(n = length(exposure), average_outcome, trend,
+                                amp, start.date, ...)
     lambda <- create_lambda(baseline, exposure, rr, ...)
     outcome <- rpois(n= length(exposure), lamba = lambda)
   }
