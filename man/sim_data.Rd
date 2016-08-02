@@ -4,7 +4,7 @@
 \alias{sim_data}
 \title{Simulated Exposure and Outcome Data}
 \usage{
-sim_data(n, rr, lambda, x_type = "binary", trend = "constant",
+sim_data(n, rr, lambda, exposure_type = "binary", trend = "constant",
   start.date = "2000-01-01", ...)
 }
 \arguments{
@@ -15,10 +15,10 @@ data}
 
 \item{lambda}{A numeric value specifying the mean for the expected outcomes}
 
-\item{x_type}{A character string specifying the type of exposure data.  Options are "binary" and "continuous".}
+\item{exposure_type}{A character string specifying the type of exposure data.  Options are "binary" and "continuous".}
 
-\item{trend}{A character string that gives the trend function to use. Options
-include:
+\item{trend}{A character string that specifies the desired trend function. Options
+are:
 \itemize{
   \item{"cos1"}
   \item{"cos2"}
@@ -27,6 +27,7 @@ include:
   \item{"curvilinear"}
   \item{"cos1linear"}
   \item{"no trend"}
+  \item{"custom"}
 }}
 
 \item{start.date}{A date in the format "yyyy-mm-dd" specifying the first day

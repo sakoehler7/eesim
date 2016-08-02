@@ -4,7 +4,8 @@
 \alias{custom_baseline}
 \title{Pull smoothed Chicago NMMAPS mortality data}
 \usage{
-custom_baseline(n, average_outcome = NA, trend = NA, outcome_type = "cvd")
+custom_baseline(n, df = dlnm::chicagoNMMAPS, average_outcome = NA,
+  trend = NA, outcome_type = "cvd", start.date = "2000-01-01")
 }
 \description{
 Pull smoothed Chicago NMMAPS mortality data

@@ -2,27 +2,38 @@
 % Please edit documentation in R/sim_exposure.R
 \name{binary_exposure}
 \alias{binary_exposure}
-\title{Simulate binary exposure data without a seasonal trend}
+\title{Simulate binary exposure data}
 \usage{
-binary_exposure(n, p, start.date = "2000-01-01", ...)
+binary_exposure(n, p, trend = "no trend", amp = 0.01,
+  start.date = "2000-01-01", custom_func = NULL, ...)
 }
 \arguments{
-\item{n}{A numeric value giving the number of days to simulate.}
+\item{n}{A numeric value specifying the number of days to simulate.}
 
-\item{p}{A numeric value between 0 and 1 specifying the probability of
-exposure.}
+\item{p}{A numeric value giving the mean probability of exposure}
 
-\item{start.date}{A date in the format "yyyy-mm-dd" specifying the first day
-of simulated measurements.}
+\item{trend}{A character string that gives the trend function to use. Options
+are:
+\itemize{
+  \item{"cos1"}
+  \item{"cos2"}
+  \item{"cos3"}
+  \item{"linear"}
+  \item{"monthly"}
+  \item{"no trend"}
+  \item{"custom"}
+}}
+
+\item{amp}{A numeric value specifying the amplitude of the seasonal trend. Must be between 0 and .5.}
 }
 \value{
-A data frame with the date and a 0 or 1 exposure value for each day.
+A vector with n exposure values
 }
 \description{
-This function generates binary exposure data without a seasonal trend.
+This function simulates a time series of binary exposure values with or without seasonal trends.
 }
 \examples{
-binary_exposure(n = 5, p = 0.25)
+binary_exposure(n = 5, p = 0.25, trend = "cos1")
 
 }
 

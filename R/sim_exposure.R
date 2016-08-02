@@ -1,57 +1,10 @@
-#' Simulate binary exposure data without a seasonal trend
-#'
-#' This function generates binary exposure data without a seasonal trend.
-#'
-#' @inheritParams season_binexp
-#' @param p A numeric value between 0 and 1 specifying the probability of
-#'    exposure.
-#' @param start.date A date in the format "yyyy-mm-dd" specifying the first day
-#'    of simulated measurements.
-#'
-#' @return A data frame with the date and a 0 or 1 exposure value for each day.
-#'
-#' @examples
-#' binary_exposure(n = 5, p = 0.25)
-#'
-#' @export
-binary_exposure <- function(n, p, start.date = "2000-01-01", ...){
-  start.date <- as.Date(start.date)
-  date <- seq(from = start.date, by = 1, length.out = n)
-  x <- rbinom(n, 1, p)
-  df <- data.frame(date, x)
-  return(df)
-}
-
-#' Simulate continuous exposure data without a seasonal trend
-#'
-#' This function simulates continuous exposure data without a seasonal trend.
-#'
-#' @inheritParams season_binexp
-#' @inheritParams binary_exposure
-#' @inheritParams season_contexp
-#'
-#' @return A data frame with date and exposure value for each day.
-#'
-#' @examples
-#' continuous_exposure(n = 5, mu = 10, sd = 10)
-#'
-#' @export
-#'
-continuous_exposure <- function(n, mu, sd, start.date = "2000-01-01", ...){
-  start.date <- as.Date(start.date)
-  date <- seq(from = start.date, by = 1, length.out = n)
-  x <- rnorm(n, mean = mu, sd = sd)
-  df <- data.frame(date, x)
-  return(df)
-}
-
 #' Create a trend variable
 #'
-#' This function creates a trend variable.
+#' Creates a trend variable for continuous exposures.
 #'
-#' @param n A numeric value giving the number of days to simulate.
-#' @param trend A character string that gives the trend function to use. Options
-#'    include:
+#' @param n A numeric value specifying the number of days to simulate.
+#' @param trend A character string that specifies the desired trend function. Options
+#'    are:
 #'    \itemize{
 #'      \item{"cos1"}
 #'      \item{"cos2"}
@@ -60,14 +13,16 @@ continuous_exposure <- function(n, mu, sd, start.date = "2000-01-01", ...){
 #'      \item{"curvilinear"}
 #'      \item{"cos1linear"}
 #'      \item{"no trend"}
+#'      \item{"custom"}
 #'    }
 #'
-#' @param amp A numeric value giving the amplitude of the seasonal trend. Must be between 0 and 1.
+#' @param amp A numeric value specifying the amplitude of the seasonal trend. Must be between 0 and 1.
+#' @param custom_func A character string specifying a customized function from which to create a trend variable
 #'
 #' @return A numeric vector used to generate data with seasonal trends.
 #'
 #' @examples
-#' calc_t(5, "cos3")
+#' calc_t(5, "cos3", amp = .5)
 #'
 #' @export
 calc_t <- function(n, trend = "no trend", amp = .6, custom_func = NULL, ...){
@@ -86,7 +41,7 @@ calc_t <- function(n, trend = "no trend", amp = .6, custom_func = NULL, ...){
     } else if (trend == "cos1linear"){
       seasont <- (1 + (day / n)) * (1 + amp * cos(2 * pi * (day / 365)))
     } else if (trend == "no trend"){
-      seasont <- 1
+      seasont <- rep(1, n)
     } else if (trend == "custom" & !is.null(custom_func)) {
       arguments <- list(...)
       arguments$n <- n
@@ -99,13 +54,12 @@ calc_t <- function(n, trend = "no trend", amp = .6, custom_func = NULL, ...){
   return(seasont)
 }
 #'
-#' Create a trend variable for binary exposure data
+#' Create a trend variable
 #'
-#' This function creates a trend variable for binary exposure data which is centered at p and
-#' restricts the probability of exposure between 0 and 1.
+#' Creates a trend variable for binary exposure data which is centered at p.
 #'
 #' @param trend A character string that gives the trend function to use. Options
-#'    include:
+#'    are:
 #'    \itemize{
 #'      \item{"cos1"}
 #'      \item{"cos2"}
@@ -113,9 +67,12 @@ calc_t <- function(n, trend = "no trend", amp = .6, custom_func = NULL, ...){
 #'      \item{"linear"}
 #'      \item{"monthly"}
 #'      \item{"no trend"}
+#'      \item{"custom"}
 #'    }
-#' @inheritParams calc_t
+#'
 #' @param p A numeric value giving the mean probability of exposure
+#' @param amp A numeric value specifying the amplitude of the seasonal trend. Must be between 0 and .5.
+#' @inheritParams calc_t
 #'
 #' @return A numeric vector used to generate binary exposure data with seasonal trends
 #'
@@ -129,7 +86,6 @@ bin_t <- function(n, p, trend = "no trend", amp = .01, start.date = "2000-01-01"
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
   if (trend == "monthly"){
-
   }
   else if (p > .5 & amp >1-p){
     stop(paste0("For p>.5, amp must be between 0 and 1-p."))
@@ -151,7 +107,7 @@ bin_t <- function(n, p, trend = "no trend", amp = .01, start.date = "2000-01-01"
     months <- month(date)
     seasont <- p[months]
   } else if (trend == "no trend"){
-    seasont <- p
+    seasont <- rep(p, n)
   } else if (trend == "custom" & !is.null(custom_func)) {
     arguments <- list(...)
     arguments$n <- n
@@ -163,52 +119,82 @@ bin_t <- function(n, p, trend = "no trend", amp = .01, start.date = "2000-01-01"
   return(seasont)
 }
 #'
-#' Simulate binary exposure data with a seasonal trend
+#' Simulate binary exposure data
 #'
-#' This function simulates binary exposure data with a seasonal trend.
+#' Simulates a time series of binary exposure values with or without seasonal trends.
 #'
+#' @param start.date A date of the format "yyyy-mm-dd" from which to begin simulating daily exposures
 #' @inheritParams bin_t
 #'
-#' @return A numeric vector with simulated exposure of length n.
+#' @return A data frame with the dates and daily exposure values from n days
 #'
 #' @examples
-#' season_binexp(n = 5, p = 0.25, trend = "cos1")
+#' binary_exposure(n = 5, p = 0.1, trend = "cos1", amp = .02, start.date = "2001-02-01")
 #'
 #' @export
 #'
-season_binexp <- function(n, p, trend, amp = .05, start.date = "2000-01-01"){
+binary_exposure <- function(n, p, trend = "no trend", amp = .01, start.date = "2000-01-01", custom_func = NULL, ...){
+  t <- bin_t(n, p, ...)
+  x <- rbinom(length(t), size = 1, prob = t)
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
-  t <- bin_t(n, p, trend, amp)
-  x <- rbinom(length(t), size = 1, prob = t)
   df <- data.frame(date, x)
   return(df)
 }
 
-#' Simulate continuous exposure data with a seasonal trend
+#' Simulate continuous exposure data
 #'
-#' This function simulates a time series of continuous exposure data with a
+#' Simulates a time series of continuous exposure values with or without a
 #' seasonal trend.
 #'
-#' @param mu A numeric vector giving the average of the exposure distribution.
-#' @param sd A numeric vector giving the standard deviation of the exposure
-#'    distribution.
+#' @param mu A numeric value giving the mean exposure.
 #' @inheritParams calc_t
-#' @inheritParams season_binexp
 #'
-#' @return A numeric vector with simulated exposure of length n.
+#' @return A data frame with the dates and daily exposure values from n days
 #'
 #' @examples
-#' season_contexp(n = 5, mu = 100, sd = 10, trend = "cos1")
+#' continuous_exposure(n = 5, mu = 100, sd = 10, trend = "cos1")
 #'
 #' @export
-season_contexp <- function(n, mu, sd, trend, amp, start.date = "2000-01-01", ...){
+continuous_exposure <- function(n, mu, trend = "no trend", amp = .6, start.date = "2000-01-01", ...){
   day <- c(1:n)
-  t <- calc_t(n, trend, amp)
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
-  mu <- mu * t
-  x <- rnorm(n, mean = mu, sd = sd)
+  t <- calc_t(n, trend, amp, start.date, ...)
+  newmu <- mu * t
+  x <- rnorm(n, newmu, ...)
   df <- data.frame(date, x)
   return(df)
 }
+#'
+#' Simulate exposure data
+#'
+#' Simulates binary or continuous exposure data with or without seasonal trends.
+#'
+#' @param central A numeric value specifying the mean probability of exposure (for binary data) or
+#' the mean exposure value (for continuous data)
+#' @param exposure_type A character string specifying the type of exposure.  Choices are "binary" or "continuous".
+#'
+#' @inheritParams continuous_exposure
+#'
+#' @return A data frame with the dates and daily exposure values from n days
+#'
+#' @examples
+#' std_exposure(n=5, central = .1, trend = "cos1", amp = .02)
+#' std_exposure(n = 5, central = 50, sd = 5, trend = "cos3", amp = .6, exposure_type = "continuous", start.date = "2001-04-01")
+#'
+#' @export
+#'
+std_exposure <- function(n, central, trend = "no trend", exposure_type = "binary", amp, start.date = "2000-01-01", ...){
+  if(exposure_type=="binary"){
+    p <- central
+    df <- binary_exposure(n, p, trend, amp, start.date, ...)
+  }
+  else if(exposure_type == "continuous"){
+    mu <- central
+    df <- continuous_exposure(n, mu, trend, amp, start.date, ...)
+  }
+  return(df)
+}
+#'
+#'

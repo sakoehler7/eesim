@@ -4,7 +4,8 @@
 \alias{custom_exposure}
 \title{Pulls exposure series from Chicago NMMAPS data set}
 \usage{
-custom_exposure(n, central = NA, metric = "temp")
+custom_exposure(n, df = dlnm::chicagoNMMAPS, central = NA,
+  metric = "temp")
 }
 \description{
 Pulls exposure series from Chicago NMMAPS data set

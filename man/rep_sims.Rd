@@ -22,6 +22,11 @@ increase in exposure}
 
 \item{x_type}{A character string specifying the type of exposure data.
 Options are "binary" and "continuous".}
+
+\item{mu}{A numeric value giving the average of the exposure distribution.}
+
+\item{sd}{A numeric value giving the standard deviation of the exposure
+values around their expected values.}
 }
 \value{
 A data frame with the summaries of the estimate of the log relative
