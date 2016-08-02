@@ -4,16 +4,13 @@
 \alias{sim_baseline}
 \title{Expected baseline health outcomes}
 \usage{
-sim_baseline(n, lambda, start.date = "2000-01-01", trend = "no trend")
+sim_baseline(n, lambda, trend = "no trend", amp)
 }
 \arguments{
 \item{n}{A numeric vector specifying the number of days for which to simulate
 data}
 
 \item{lambda}{A numeric value specifying the mean for the expected outcomes}
-
-\item{start.date}{A date in the format "yyyy-mm-dd" specifying the first day
-for which to simulate data}
 
 \item{trend}{A character string that specifies the desired trend function. Options
 are:
@@ -27,6 +24,11 @@ are:
   \item{"no trend"}
   \item{"custom"}
 }}
+
+\item{amp}{A numeric value specifying the amplitude of the seasonal trend. Must be between 0 and 1.}
+
+\item{start.date}{A date in the format "yyyy-mm-dd" specifying the first day
+for which to simulate data}
 }
 \value{
 A data frame with the date and expected baseline outcomes for each

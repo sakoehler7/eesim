@@ -4,14 +4,14 @@
 \alias{create_baseline}
 \title{Create a series of baseline outcomes}
 \usage{
-create_baseline(n, average_outcome, trend, custom_func = NULL, ...)
+create_baseline(n, average_outcome, trend, amp, custom_func = NULL, ...)
 }
 \description{
 Create a series of baseline outcomes
 }
 \examples{
 create_baseline(n = 5, average_outcome = 22, trend = "linear")
-create_baseline(n = 5, average_outcome = NA, trend = NA,
+create_baseline(n = 5, average_outcome = NA, trend = NA, amp = NA,
                 custom_func = "custom_baseline", outcome_type = "death")
 
 }

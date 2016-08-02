@@ -4,16 +4,15 @@
 \alias{sim_exposure}
 \title{Simulate random series of exposure values}
 \usage{
-sim_exposure(n, central, trend = NA, custom_func = NULL,
-  exposure_type = NA, ...)
+sim_exposure(n, central, trend = NA, amp, start.date = "2001-01-01",
+  custom_func = NULL, exposure_type = NA, ...)
 }
 \description{
 Simulate random series of exposure values
 }
 \examples{
 sim_exposure(n = 5, central = 0.25, exposure_type = "binary")
-sim_exposure(n = 5, central = 100, sd = 10,
-                    exposure_type = "continuous")
+sim_exposure(n = 5, central = 100, sd = 10, amp = .6, exposure_type = "continuous")
 sim_exposure(n = 5, central = NA, custom_func = "custom_exposure",
                     metric = "temp")
 
