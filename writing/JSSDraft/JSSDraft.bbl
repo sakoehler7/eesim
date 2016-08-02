@@ -1,4 +1,4 @@
-\begin{thebibliography}{17}
+\begin{thebibliography}{20}
 \newcommand{\enquote}[1]{``#1''}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
@@ -30,6 +30,18 @@ Armstrong B, Gasparrini A, Hajat S (2014).
 \newblock \emph{American Journal of Epidemiology}, \textbf{179}(12),
   1405--1406.
 \newblock \doi{10.1093/aje/kwu083}.
+
+\bibitem[{Bateson and Schwartz(1999)}]{Bateson1999}
+Bateson TF, Schwartz J (1999).
+\newblock \enquote{Control for seasonal variation and time trend in
+  case-crossover studies of acute effects of environmental exposures.}
+\newblock \emph{Epidemiology}, \textbf{10}(5), 539--544.
+
+\bibitem[{Bateson and Schwartz(2001)}]{Bateson2001}
+Bateson TF, Schwartz J (2001).
+\newblock \enquote{Selection bias and confounding in case-crossover analyses of
+  environmental time-series data.}
+\newblock \emph{Epidemiology}, \textbf{12}(6), 654--661.
 
 \bibitem[{Beaujean(2014)}]{Beaujean2014}
 Beaujean AA (2014).
@@ -113,6 +125,13 @@ Kelly BJ, Gross R, Bittinger K, Sherrill-Mix S, Lewis JD, Collman RG, Bushman
 \newblock \enquote{Power and sample-size estimation for microbiome studies
   using pairwise distances and {PERMANOVA}.}
 \newblock \emph{Bioinformatics}, pp. 2461--2468.
+
+\bibitem[{Peng \emph{et~al.}(2006)Peng, Dominici, and Louis}]{Peng2006}
+Peng RD, Dominici F, Louis TA (2006).
+\newblock \enquote{Model choice in time series studies of air pollution and
+  mortality.}
+\newblock \emph{Journal of the Royal Statistical Society: Series A (Statistics
+  in Society)}, \textbf{169}(2), 179--203.
 
 \bibitem[{Roberts and Martin(2006)}]{Roberts2006}
 Roberts S, Martin MA (2006).
