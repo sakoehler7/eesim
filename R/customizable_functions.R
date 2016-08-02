@@ -11,24 +11,27 @@ custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, central = NA,
 #' Simulate random series of exposure values
 #'
 #' @examples
-#' sim_exposure(n = 5, central = 0.25, exposure_type = "binary")
+#' sim_exposure(n = 5, central = 0.25, exposure_type = "binary", amp = .02)
 #' sim_exposure(n = 5, central = 100, sd = 10, amp = .6,
 #'              exposure_type = "continuous")
 #' sim_exposure(n = 5, central = NA, custom_func = "custom_exposure",
 #'                     metric = "temp")
 #'
 #' @export
-sim_exposure <- function(n, central, trend = NA, amp,
+sim_exposure <- function(n, central, trend = "no trend", amp,
                          start.date = "2001-01-01", custom_func = NULL,
                          exposure_type = NA, ...){
+  arguments <- list(...)
+  arguments$n <- n
+  arguments$central <- central
   if(is.null(custom_func)){
-    exposure <- std_exposure(n, central, trend, amp, exposure_type, ...)
+    arguments$trend <- trend
+    arguments$amp <- amp
+    arguments$exposure_type <- exposure_type
+    exposure <- do.call(std_exposure, arguments)
   } else if (!(is.null(custom_func))){
     start.date <- as.Date(start.date)
     date <- seq(from = start.date, by = 1, length.out = n)
-    arguments <- list(...)
-    arguments$n <- n
-    arguments$central <- central
     exposure <- do.call(custom_func, arguments)
   } else {
     stop(paste0("If a custom function is not used to simulate randomness in the",
