@@ -98,11 +98,11 @@ sim_random_outcome <- function(lambda, custom_func = NULL, ...){
   return(outcome)
 }
 
-sim_outcome <- function(exposure, average_outcome, rr, start.date="2000-01-01", custom_func = NULL, ...){
+sim_outcome <- function(exposure, average_outcome, trend = "no trend", amp = .6, rr, start.date="2000-01-01", custom_func = NULL, ...){
   start.date <- as.Date(start.date)
-  date <- seq(from = start.date, by = 1, length.out = n)
+  date <- seq(from = start.date, by = 1, length.out = nrow(exposure))
   if(is.null(custom_func)){
-    baseline <- create_baseline(n = length(exposure), average_outcome, ...)
+    baseline <- create_baseline(n = length(exposure), average_outcome, trend, amp, start.date, ...)
     lambda <- create_lambda(baseline, exposure, rr, ...)
     outcome <- rpois(n= length(exposure), lamba = lambda)
   }
