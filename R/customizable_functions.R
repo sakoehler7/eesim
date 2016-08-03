@@ -18,9 +18,8 @@ custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, central = NA,
 #'                     metric = "temp")
 #'
 #' @export
-sim_exposure <- function(n, central, trend = "no trend", amp,
-                         start.date = "2001-01-01", custom_func = NULL,
-                         exposure_type = NA, ...){
+sim_exposure <- function(n, central, trend = "no trend", amp = .6, exposure_type = NA,
+                         start.date = "2001-01-01", custom_func = NULL, ...){
   arguments <- list(...)
   arguments$n <- n
   arguments$central <- central
@@ -131,16 +130,19 @@ sim_outcome <- function(exposure, average_outcome, trend = "no trend",
   return(df)
 }
 
-
-sim_df <- function(n, central, exposure_type, average_outcome, trend, rr){
-  df <- data.frame(day = 1:n) %>%
-    dplyr::mutate(exposure = sim_random_exposure(n = n, central = central,
+sim_df <- function(n, central, amp, exposure_type, average_outcome, trend, rr, start.date = "2000-01-01"){
+  start.date <- as.Date(start.date)
+  date <- seq(from = start.date, by = 1, length.out = n)
+  df <- data.frame(date) %>%
+    dplyr::mutate(exposure = sim_exposure(n = n, amp = amp, central = central,
                                           exposure_type = exposure_type),
            baseline = create_baseline(n = n, average_outcome = average_outcome,
-                                      trend = trend),
+                                      trend = trend, amp = amp),
            lambda = create_lambda(baseline = baseline, exposure = exposure,
                                   rr = rr),
            outcome = sim_random_outcome(lambda = lambda)
            )
   return(df)
 }
+
+

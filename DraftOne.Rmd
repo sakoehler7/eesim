@@ -674,5 +674,22 @@ ggplot(df, aes(x = n, y = power, color = model)) +
         geom_hline(aes(yintercept = 0.8), linetype = 2)
 ```
 
+##Stuff from .R Files
+
+```{r}
+sim_df2 <- function(n, central, amp, exposure_type, average_outcome, trend, rr, start.date = "2000-01-01"){
+  start.date <- as.Date(start.date)
+  date <- seq(from = start.date, by = 1, length.out = n)
+  exposure = sim_exposure(n = n, amp = amp, central = central,
+                          exposure_type = exposure_type)
+  
+  df <- data.frame(date, exposure) %>%
+    dplyr:: mutate(outcome = sim_outcome(exposure=exposure, average_outcome=average_outcome, trend = trend,
+                                        amp = amp, rr=rr, start.date=start.date))
+  return(df)
+}
+```
+
+
 
 ## References
