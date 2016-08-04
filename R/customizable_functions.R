@@ -105,16 +105,43 @@ sim_random_outcome <- function(lambda, custom_func = NULL, ...){
   return(outcome)
 }
 
+
+sim_outcome2 <- function(exposure, average_outcome, trend = "no trend", amp = .6,
+                         rr = 1.1, start.date = "2000-01-01", custom_func = NULL, ...){
+  n <- nrow(exposure)
+  start.date <- as.Date(start.date)
+  date <- seq(from = start.date, by = 1, length.out = n)
+  if (is.null(custom_func)){
+    baseline <- sim_baseline(n, lambda = average_outcome, trend, amp, start.date, ...)
+    log_lambda <- log(baseline$exp_base_y) + log(rr) * exposure$x
+    lambda2 <- exp(log_lambda)
+    outcome <- rpois(n, lambda2)
+  }
+  else {
+
+  }
+  df <- data.frame(date, outcome)
+  return(df)
+}
+
 sim_outcome <- function(exposure, average_outcome, trend = "no trend",
                         amp = .6, rr, start.date="2000-01-01",
                         custom_func = NULL, ...){
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = nrow(exposure))
   if(is.null(custom_func)){
-    baseline <- create_baseline(n = length(exposure), average_outcome, trend,
-                                amp, start.date, ...)
-    lambda <- create_lambda(baseline, exposure, rr, ...)
-    outcome <- rpois(n= length(exposure), lamba = lambda)
+    arguments <- list(...)
+    arguments$n <- nrow(exposure)
+    arguments$average_outcome <- average_outcome
+    arguments$amp <- amp
+    arguments$rr <- rr
+    arguments$trend <- trend
+    arguments$exposure <- exposure
+    baseline <- do.call(create_baseline, arguments)
+    arguments$baseline <- baseline
+    lambda <- do.call(create_lambda, arguments)
+    arguments$lambda <- lambda
+    outcome <- rpois(n=nrow(exposure), lamba = lambda)
   }
   else {
     arguments <- list(...)

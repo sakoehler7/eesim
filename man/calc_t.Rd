@@ -9,8 +9,8 @@ calc_t(n, trend = "no trend", amp = 0.6, custom_func = NULL, ...)
 \arguments{
 \item{n}{A numeric value specifying the number of days to simulate.}
 
-\item{trend}{A character string that specifies the desired trend function. Options
-are:
+\item{trend}{A character string that specifies the desired trend function.
+Options are:
 \itemize{
   \item{"cos1"}
   \item{"cos2"}
@@ -22,16 +22,20 @@ are:
   \item{"custom"}
 }}
 
-\item{amp}{A numeric value specifying the amplitude of the seasonal trend. Must be between 0 and 1.}
+\item{amp}{A numeric value specifying the amplitude of the seasonal trend.
+Must be between 0 and 1.}
+
+\item{custom_func}{A character string specifying a customized function from
+which to create a trend variable}
 }
 \value{
 A numeric vector used to generate data with seasonal trends.
 }
 \description{
-This function creates a trend variable for continuous exposures.
+Creates a trend variable for continuous exposures.
 }
 \examples{
-calc_t(5, "cos3")
+calc_t(5, "cos3", amp = .5)
 
 }
 

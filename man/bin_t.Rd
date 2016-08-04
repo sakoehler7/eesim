@@ -2,7 +2,7 @@
 % Please edit documentation in R/sim_exposure.R
 \name{bin_t}
 \alias{bin_t}
-\title{Create a trend variable for binary exposure data}
+\title{Create a trend variable}
 \usage{
 bin_t(n, p, trend = "no trend", amp = 0.01, start.date = "2000-01-01",
   custom_func = NULL, ...)
@@ -24,13 +24,18 @@ are:
   \item{"custom"}
 }}
 
-\item{amp}{A numeric value specifying the amplitude of the seasonal trend. Must be between 0 and .5.}
+\item{amp}{A numeric value specifying the amplitude of the seasonal trend.
+Must be between 0 and .5.}
+
+\item{custom_func}{A character string specifying a customized function from
+which to create a trend variable}
 }
 \value{
-A numeric vector used to generate binary exposure data with seasonal trends
+A numeric vector used to generate binary exposure data with seasonal
+   trends.
 }
 \description{
-This function creates a trend variable for binary exposure data which is centered at p.
+Creates a trend variable for binary exposure data which is centered at p.
 }
 \examples{
 bin_t(n = 5, p = .3, trend = "cos1", amp = .3)

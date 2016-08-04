@@ -8,7 +8,7 @@ sim_data(n, rr, lambda, exposure_type = "binary", trend = "constant",
   start.date = "2000-01-01", ...)
 }
 \arguments{
-\item{n}{A numeric vector specifying the number of days for which to simulate
+\item{n}{A numeric value specifying the number of days for which to simulate
 data}
 
 \item{rr}{A numeric value specifying the relative risk of the outcome for each 1-unit increase in exposure}
@@ -17,8 +17,8 @@ data}
 
 \item{exposure_type}{A character string specifying the type of exposure data.  Options are "binary" and "continuous".}
 
-\item{trend}{A character string that specifies the desired trend function. Options
-are:
+\item{trend}{A character string that specifies the desired trend function.
+Options are:
 \itemize{
   \item{"cos1"}
   \item{"cos2"}

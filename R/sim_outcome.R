@@ -42,12 +42,12 @@ sim_baseline <- function(n, lambda, trend = "no trend", amp = .6, start.date = "
 #'
 #' @export
 #'
-sim_data <- function(n, rr, lambda, exposure_type = "binary", trend = "constant",
+sim_data <- function(n, rr, lambda, amp = .01, exposure_type = "binary", trend = "no trend",
                      start.date = "2000-01-01", ...){
 
   require(dplyr)
 
-  if(trend=="constant"){
+  if(trend=="no trend"){
     if(exposure_type == "binary"){
       x <- binary_exposure(n=n, ...)
     }
@@ -62,7 +62,7 @@ sim_data <- function(n, rr, lambda, exposure_type = "binary", trend = "constant"
     df$y <- sapply(df$exp_y, FUN = function(x) rpois(1,x))
   }
 
-  else if(trend != "constant"){
+  else if(trend != "no trend"){
     if(exposure_type == "binary"){
       x <- season_binexp(n = n, ...)
     }

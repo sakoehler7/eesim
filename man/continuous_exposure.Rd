@@ -4,16 +4,16 @@
 \alias{continuous_exposure}
 \title{Simulate continuous exposure data}
 \usage{
-continuous_exposure(n, mu, trend = "no trend", amp,
+continuous_exposure(n, mu, trend = "no trend", amp = 0.6,
   start.date = "2000-01-01", ...)
 }
 \arguments{
 \item{n}{A numeric value specifying the number of days to simulate.}
 
-\item{mu}{A numeric value giving the average of the exposure distribution.}
+\item{mu}{A numeric value giving the mean exposure.}
 
-\item{trend}{A character string that specifies the desired trend function. Options
-are:
+\item{trend}{A character string that specifies the desired trend function.
+Options are:
 \itemize{
   \item{"cos1"}
   \item{"cos2"}
@@ -25,13 +25,11 @@ are:
   \item{"custom"}
 }}
 
-\item{amp}{A numeric value specifying the amplitude of the seasonal trend. Must be between 0 and 1.}
-
-\item{sd}{A numeric value giving the standard deviation of the exposure
-values around their expected values.}
+\item{amp}{A numeric value specifying the amplitude of the seasonal trend.
+Must be between 0 and 1.}
 }
 \value{
-A vector with n exposure values
+A data frame with the dates and daily exposure values from n days
 }
 \description{
 Simulates a time series of continuous exposure values with or without a
