@@ -25,6 +25,9 @@ sim_exposure <- function(n, central = NULL, trend = "no trend", amp = .6,
   arguments$n <- n
   arguments$central <- central
   if(is.null(custom_func)){
+    if(is.null(central)){
+      stop(paste0("If a custom function is not used to generate exposure values, a central value must be specified."))
+    }
     arguments$trend <- trend
     arguments$amp <- amp
     arguments$exposure_type <- exposure_type
@@ -99,11 +102,15 @@ create_lambda <- function(baseline, exposure, rr, custom_func = NULL, ...){
 #' @export
 
 sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
-                        amp = .6, rr = NULL, start.date="2000-01-01",
+                        amp = .6, rr = 1.01, start.date="2000-01-01",
                         custom_func = NULL, ...){
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = nrow(exposure))
   if(is.null(custom_func)){
+    if(is.null(average_outcome)){
+      stop(paste0("If a custom function is not used to generate outcomes,
+                  a value for average_outcome must be specified."))
+    }
     baseline <- create_baseline(n = nrow(exposure),
                                 average_outcome = average_outcome,
                                 trend = trend,
