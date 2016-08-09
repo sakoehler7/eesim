@@ -10,11 +10,11 @@ std_exposure(n, central, trend = "no trend", exposure_type = "binary", amp,
 \arguments{
 \item{n}{A numeric value specifying the number of days to simulate.}
 
-\item{central}{A numeric value specifying the mean probability of exposure (for binary data) or
-the mean exposure value (for continuous data)}
+\item{central}{A numeric value specifying the mean probability of exposure
+(for binary data) or the mean exposure value (for continuous data)}
 
-\item{trend}{A character string that specifies the desired trend function. Options
-are:
+\item{trend}{A character string that specifies the desired trend function.
+Options are:
 \itemize{
   \item{"cos1"}
   \item{"cos2"}
@@ -26,19 +26,22 @@ are:
   \item{"custom"}
 }}
 
-\item{exposure_type}{A character string specifying the type of exposure.  Choices are "binary" or "continuous".}
+\item{exposure_type}{A character string specifying the type of exposure.
+Choices are "binary" or "continuous".}
 
-\item{amp}{A numeric value specifying the amplitude of the seasonal trend. Must be between 0 and 1.}
+\item{amp}{A numeric value specifying the amplitude of the seasonal trend.
+Must be between 0 and 1.}
 }
 \value{
-A vector with n exposure values
+A data frame with the dates and daily exposure values from n days
 }
 \description{
 Simulates binary or continuous exposure data with or without seasonal trends.
 }
 \examples{
 std_exposure(n=5, central = .1, trend = "cos1", amp = .02)
-std_exposure(n = 5, central = 50, sd = 5, trend = "cos3", amp = .6, exposure_type = "continuous", start.date = "2001-04-01")
+std_exposure(n = 5, central = 50, sd = 5, trend = "cos3", amp = .6,
+             exposure_type = "continuous", start.date = "2001-04-01")
 
 }
 

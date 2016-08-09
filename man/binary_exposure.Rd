@@ -24,16 +24,25 @@ are:
   \item{"custom"}
 }}
 
-\item{amp}{A numeric value specifying the amplitude of the seasonal trend. Must be between 0 and .5.}
+\item{amp}{A numeric value specifying the amplitude of the seasonal trend.
+Must be between 0 and .5.}
+
+\item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
+simulating daily exposures}
+
+\item{custom_func}{A character string specifying a customized function from
+which to create a trend variable}
 }
 \value{
-A vector with n exposure values
+A data frame with the dates and daily exposure values from n days
 }
 \description{
-This function simulates a time series of binary exposure values with or without seasonal trends.
+Simulates a time series of binary exposure values with or without seasonal
+trends.
 }
 \examples{
-binary_exposure(n = 5, p = 0.25, trend = "cos1")
+binary_exposure(n = 5, p = 0.1, trend = "cos1", amp = .02,
+                start.date = "2001-02-01")
 
 }
 

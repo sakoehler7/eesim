@@ -18,7 +18,8 @@ custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, central = NA,
 #'                     metric = "temp")
 #'
 #' @export
-sim_exposure <- function(n, central, trend = "no trend", amp = .6, exposure_type = NA,
+sim_exposure <- function(n, central, trend = "no trend", amp = .6,
+                         exposure_type = NA,
                          start.date = "2001-01-01", custom_func = NULL, ...){
   arguments <- list(...)
   arguments$n <- n
@@ -69,7 +70,7 @@ create_baseline <- function(n, average_outcome, trend, amp, custom_func = NULL,
                             ...){
   if(is.null(custom_func)){
     lambda <- average_outcome
-    baseline <- sim_baseline(n, lambda, trend, amp, ...)
+    baseline <- sim_baseline(n, lambda, trend, amp)
   } else {
     arguments <- list(...)
     arguments$n <- n
@@ -105,16 +106,21 @@ sim_random_outcome <- function(lambda, custom_func = NULL, ...){
   return(outcome)
 }
 
+#' @export
 sim_outcome <- function(exposure, average_outcome, trend = "no trend",
                         amp = .6, rr, start.date="2000-01-01",
                         custom_func = NULL, ...){
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = nrow(exposure))
   if(is.null(custom_func)){
-    baseline <- create_baseline(n = length(exposure), average_outcome, trend,
-                                amp, start.date, ...)
-    lambda <- create_lambda(baseline, exposure, rr, ...)
-    outcome <- rpois(n= length(exposure), lamba = lambda)
+    baseline <- create_baseline(n = nrow(exposure),
+                                average_outcome = average_outcome,
+                                trend = trend,
+                                amp = amp)
+    lambda <- create_lambda(baseline = baseline$exp_base_y,
+                            exposure = exposure$x,
+                            rr = rr)
+    outcome <- rpois(n = nrow(exposure), lambda = lambda)
   }
   else {
     arguments <- list(...)
@@ -126,7 +132,7 @@ sim_outcome <- function(exposure, average_outcome, trend = "no trend",
     arguments$lambda <- lambda
     outcome <- do.call(custom_func, arguments)
   }
-  df <- data.frame(date, outcome)
+  df <- data.frame(date, x = exposure$x, outcome)
   return(df)
 }
 
