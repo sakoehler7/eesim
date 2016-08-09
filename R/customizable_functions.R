@@ -71,7 +71,7 @@ create_baseline <- function(n, average_outcome, trend, amp, custom_func = NULL,
                             ...){
   if(is.null(custom_func)){
     lambda <- average_outcome
-    baseline <- sim_baseline(n, lambda, trend, amp)
+    baseline <- sim_baseline(n=n, lambda=lambda, trend=trend, amp=amp)
   } else {
     arguments <- list(...)
     arguments$n <- n
@@ -96,21 +96,10 @@ create_lambda <- function(baseline, exposure, rr, custom_func = NULL, ...){
   return(lambda)
 }
 
-sim_random_outcome <- function(lambda, custom_func = NULL, ...){
-  if(is.null(custom_func)){
-    outcome <- rpois(n = length(lambda), lambda = lambda)
-  } else {
-    arguments <- list(...)
-    arguments$lambda <- lambda
-    outcome <- do.call(custom_func, arguments)
-  }
-  return(outcome)
-}
-
 #' @export
 
-sim_outcome <- function(exposure, average_outcome, trend = "no trend",
-                        amp = .6, rr, start.date="2000-01-01",
+sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
+                        amp = .6, rr = NULL, start.date="2000-01-01",
                         custom_func = NULL, ...){
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = nrow(exposure))
@@ -138,19 +127,5 @@ sim_outcome <- function(exposure, average_outcome, trend = "no trend",
   return(df)
 }
 
-sim_df <- function(n, central, amp, exposure_type, average_outcome, trend, rr, start.date = "2000-01-01"){
-  start.date <- as.Date(start.date)
-  date <- seq(from = start.date, by = 1, length.out = n)
-  df <- data.frame(date) %>%
-    dplyr::mutate(exposure = sim_exposure(n = n, amp = amp, central = central,
-                                          exposure_type = exposure_type),
-           baseline = create_baseline(n = n, average_outcome = average_outcome,
-                                      trend = trend, amp = amp),
-           lambda = create_lambda(baseline = baseline, exposure = exposure,
-                                  rr = rr),
-           outcome = sim_random_outcome(lambda = lambda)
-           )
-  return(df)
-}
 
 
