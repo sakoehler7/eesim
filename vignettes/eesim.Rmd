@@ -11,19 +11,41 @@ vignette: >
 
 ```{r}
 library(eesim)
+library(ggplot2)
 ```
 
-Here's an example of simulating binary exposure data: 
+## Overview of package
+
+This package allows you to simulate time series of environmental health data, to allow you to perform simulation-based power analyses and evaluate model performance.
+
+## Basic example of using the package
+
+As a basic example, you can use this package to simulate a continuous environmental exposure with seasonal and year-round trends and a count outcome. You can then fit a case-crossover and GLM model to this data and compare performance.
+
+First, you would simulate the time series data:
 
 ```{r}
-season_binexp(5, 0.25)
+exposure_df <- sim_exposure(n = 1000, central = 55, sd = 10, 
+                            trend = "cos1", exposure_type = "continuous")
+head(exposure_df)
+ggplot(exposure_df, aes(x = date, y = x)) + geom_line()
+
+outcome_df <- sim_outcome(exposure_df, average_outcome = 20, rr = 1.005,
+                          trend = "linear")
+head(outcome_df)
+ggplot(outcome_df, aes(x = date, y = outcome)) + geom_line()
 ```
 
-Here's an example of simulating continuous exposure data:
+Next, you could fit the two models: 
 
 ```{r}
-season_contexp(n = 5, mu = 100, sd = 10, trend = "cos1")
+
 ```
 
+Finally, you can assess the model performance for each model:
 
+```{r}
 
+```
+
+## More detailed examples

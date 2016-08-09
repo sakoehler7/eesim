@@ -1,6 +1,6 @@
 #' Average Estimated Coefficient
 #'
-#' This function gives the mean value of the $\hat{\beta}$s and the mean estimated
+#' This function gives the mean value of the \eqn{\hat{\beta}}s and the mean estimated
 #' relative risk over the n simulations.
 #'
 #' @param df A data frame of replicated simulations which must include a column titled "est"
