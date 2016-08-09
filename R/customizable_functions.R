@@ -18,8 +18,8 @@ custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, central = NA,
 #'                     metric = "temp")
 #'
 #' @export
-sim_exposure <- function(n, central, trend = "no trend", amp = .6,
-                         exposure_type = NA,
+sim_exposure <- function(n, central = NULL, trend = "no trend", amp = .6,
+                         exposure_type = NULL,
                          start.date = "2001-01-01", custom_func = NULL, ...){
   arguments <- list(...)
   arguments$n <- n
@@ -32,11 +32,12 @@ sim_exposure <- function(n, central, trend = "no trend", amp = .6,
   } else if (!(is.null(custom_func))){
     start.date <- as.Date(start.date)
     date <- seq(from = start.date, by = 1, length.out = n)
-    exposure <- do.call(custom_func, arguments)
+    exposure1 <- do.call(custom_func, arguments)
+    exposure <- data.frame(date, exposure1)
   } else {
-    stop(paste0("If a custom function is not used to simulate randomness in the",
-                "exposure variable, then `outcome_type` must be specified as",
-                "either `binary` or `continuous`."))
+    stop(paste0("If a custom function is not used to simulate randomness in the
+                exposure variable, then the parameters central and
+                exposure_type must be specified."))
   }
   return(exposure)
 }

@@ -10,7 +10,8 @@ output: pdf_document
 ```{r}
 sintrend <- function(n, y){
   day <- c(1:n)
-  1 + y * sin(2 * pi * (day / 365))
+  base <- 1 + y * sin(2 * pi * (day / 365))
+  rnorm(n, mean = base, sd = 1)
 }
 calc_t(n = 5, y = .3, trend = "custom", custom_func = sintrend)
 plot(calc_t(1000, y = .3, trend = "custom", custom_func = sintrend))
