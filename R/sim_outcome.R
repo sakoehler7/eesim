@@ -77,7 +77,6 @@ sim_data <- function(n, rr, lambda, amp = .01, exposure_type = "binary", trend =
   }
   return(df)
 }
-
 #'
 #'
 #'
