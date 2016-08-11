@@ -108,7 +108,11 @@ The authors first simulated "true" values for pollutant concentrations over 100 
 
 # Basic overview of package
 
-[Table / Figure of functions included and simulation process]
+[Chart / Figure of functions included and simulation process]
+
+eesim consists of four major parts: generating exposure time series, generating outcome time series, fitting models, and assessing models.  Exposure time series can be generated using the sim\_exposure function with a variety of built-in seasonal trends or using a custom trend specified by the user. This function also allows the user to choose either binary or continuous exposure values.  Using the resulting exposure values as an input, outcomes can then be generated using the sim\_outcome function. For outcomes as well as exposure, the user may specify a built-in seasonal trend or a custom trend.  
+
+The package includes functions for fitting two different models of the exposure and outcome data: a generalized linear model with splines and a case-crossover model.  The function rep\_sims runs many simulations for a given data set and model.  Finally, the function check\_sims returns several measures of model performance including the mean estimate of relative risk, mean variance of the relative risk estimates, percent bias, coverage, and power.  
 
 A time series of simulated count outcome data with Poisson random noise can be simulated using the following model \citep{Johnson2015}:
 
