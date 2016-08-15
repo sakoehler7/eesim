@@ -20,19 +20,28 @@ custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, central = NA,
 #' @export
 sim_exposure <- function(n, central = NULL, trend = "no trend", amp = .6,
                          exposure_type = NULL,
-                         start.date = "2001-01-01", custom_func = NULL, ...){
-  arguments <- list(...)
+                         start.date = "2001-01-01", custom_func = NULL,
+                         cust_exp_args = NULL){
+  if(is.null(cust_exp_args)){
+    arguments <- vector(mode = "list")
+  } else {
+    arguments <- cust_exp_args
+  }
   arguments$n <- n
-  arguments$central <- central
+
   if(is.null(custom_func)){
     if(is.null(central)){
       stop(paste0("If a custom function is not used to generate exposure values, a central value must be specified."))
     }
+    arguments$central <- central
     arguments$trend <- trend
     arguments$amp <- amp
     arguments$exposure_type <- exposure_type
     exposure <- do.call("std_exposure", arguments)
   } else if (!(is.null(custom_func))){
+    if (!is.null(central)){
+      arguments$central <- central
+    }
     start.date <- as.Date(start.date)
     date <- seq(from = start.date, by = 1, length.out = n)
     x <- do.call(custom_func, arguments)
