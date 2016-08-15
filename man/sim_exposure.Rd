@@ -6,7 +6,7 @@
 \usage{
 sim_exposure(n, central = NULL, trend = "no trend", amp = 0.6,
   exposure_type = NULL, start.date = "2001-01-01", custom_func = NULL,
-  ...)
+  cust_exp_args = NULL)
 }
 \description{
 Simulate random series of exposure values
