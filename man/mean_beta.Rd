@@ -13,7 +13,7 @@ mean_beta(df)
 A data frame with the mean estimated coefficient and mean estimated relative risk
 }
 \description{
-This function gives the mean value of the $\hat{\beta}$s and the mean estimated
+This function gives the mean value of the \eqn{\hat{\beta}}s and the mean estimated
 relative risk over the n simulations.
 }
 \examples{
