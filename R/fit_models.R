@@ -17,9 +17,9 @@
 spline_mod <- function(df, df_year = 7){
   dgrs_free <- df_year * as.numeric(diff(df[c(1, nrow(df)), "date"])) / 365.4
   df$time <- scale(df$date, center = TRUE, scale = FALSE)
-  mod <- glm(y ~ x + ns(time, round(dgrs_free)),
-             data = df,
-             family = quasipoisson(link = "log"))
+  mod <- stats::glm(outcome ~ x + splines::ns(time, round(dgrs_free)),
+                   data = df,
+                   family = stats::quasipoisson(link = "log"))
 
   out_1 <- summary(mod)$coef[2, ]
   out_2 <- confint.default(mod)[2, ]
