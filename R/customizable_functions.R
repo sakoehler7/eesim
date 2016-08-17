@@ -20,7 +20,7 @@ custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, central = NA,
 #'                     cust_exp_args = metric = "temp")
 #'
 #' @export
-sim_exposure <- function(n, central = NULL, trend = "no trend", amp = .6,
+sim_exposure <- function(n, central = NULL, sd=NULL, trend = "no trend", amp = .6,
                          exposure_type = NULL,
                          start.date = "2001-01-01", cust_exp_func = NULL,
                          cust_exp_args = NULL){
@@ -39,6 +39,7 @@ sim_exposure <- function(n, central = NULL, trend = "no trend", amp = .6,
     arguments$trend <- trend
     arguments$amp <- amp
     arguments$exposure_type <- exposure_type
+    arguments$sd <- sd
     exposure <- do.call("std_exposure", arguments)
   } else if (!(is.null(cust_exp_func))){
     if (!is.null(central)){

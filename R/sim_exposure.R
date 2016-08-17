@@ -157,6 +157,7 @@ binary_exposure <- function(n, p, trend = "no trend", amp = .01,
 #' seasonal trend.
 #'
 #' @param mu A numeric value giving the mean exposure.
+#' @param sd A numeric value giving the standard deviation of the exposure values around the trend line.
 #' @inheritParams calc_t
 #'
 #' @return A data frame with the dates and daily exposure values from n days
@@ -165,13 +166,13 @@ binary_exposure <- function(n, p, trend = "no trend", amp = .01,
 #' continuous_exposure(n = 5, mu = 100, sd = 10, trend = "cos1")
 #'
 #' @export
-continuous_exposure <- function(n, mu, trend = "no trend", amp = .6, start.date = "2000-01-01", ...){
+continuous_exposure <- function(n, mu, sd=1, trend = "no trend", amp = .6, start.date = "2000-01-01", ...){
   day <- c(1:n)
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
   t <- calc_t(n, trend, amp, start.date, ...)
   newmu <- mu * t
-  x <- rnorm(n, newmu, ...)
+  x <- rnorm(n, newmu, sd)
   df <- data.frame(date, x)
   return(df)
 }
@@ -196,16 +197,16 @@ continuous_exposure <- function(n, mu, trend = "no trend", amp = .6, start.date 
 #'
 #' @export
 #'
-std_exposure <- function(n, central, trend = "no trend",
+std_exposure <- function(n, central, sd = NULL, trend = "no trend",
                          exposure_type = "binary", amp,
                          start.date = "2000-01-01", ...){
   if(exposure_type=="binary"){
     p <- central
-    df <- binary_exposure(n, p, trend, amp, start.date, ...)
+    df <- binary_exposure(n=n, p=p, trend=trend, amp=amp, start.date=start.date, ...)
   }
   else if(exposure_type == "continuous"){
     mu <- central
-    df <- continuous_exposure(n, mu, trend, amp, start.date, ...)
+    df <- continuous_exposure(n=n, mu=mu, sd =sd, trend=trend, amp=amp, start.date=start.date, ...)
   }
   return(df)
 }
