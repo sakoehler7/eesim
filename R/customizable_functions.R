@@ -116,7 +116,7 @@ create_lambda <- function(baseline, exposure, rr, cust_lambda_func = NULL, ...){
 sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
                         amp = .6, rr = 1.01, start.date="2000-01-01",
                         cust_base_func = NULL, cust_lambda_func = NULL,
-                        cust_args = NULL,...){
+                        cust_args = NULL){
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = nrow(exposure))
   if (is.null(cust_args)){
@@ -124,7 +124,6 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
   } else {
     arguments <- cust_args
   }
-  arguments$n <- n
   if(is.null(cust_base_func) & is.null(cust_lambda_func)){
     if(is.null(average_outcome)){
       stop(paste0("If custom functions are not used to generate outcomes,
@@ -140,6 +139,7 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
     outcome <- rpois(n = nrow(exposure), lambda = lambda)
   }
   else if (is.null(cust_lambda_func) & !is.null(cust_base_func)){
+    arguments$n <- nrow(exposure)
     arguments$average_outcome <- average_outcome
     arguments$exposure <- exposure
     arguments$rr <- rr
@@ -150,11 +150,21 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
     outcome <- rpois(n = nrow(exposure), lambda = lambda)
   }
   else if (is.null(cust_base_func) & !is.null(cust_lambda_func)){
-    arguments$average_outcome <- average_outcome
-    arguments$exposure <- exposure
-    arguments$rr <- rr
-    arguments$trend <- trend
-    arguments$amp <- amp
+    if(!is.null(average_outcome)){
+      arguments$average_outcome <- average_outcome
+    }
+    if(!is.null(exposure)){
+      arguments$exposure <- exposure
+    }
+    if(!is.null(rr)){
+      arguments$rr <- rr
+    }
+    if(!is.null(trend)){
+      arguments$trend <- trend
+    }
+    if(!is.null(amp)){
+      arguments$amp <- amp
+    }
     baseline <- create_baseline(n = nrow(exposure),
                                 average_outcome = average_outcome,
                                 trend = trend,
@@ -174,6 +184,15 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
   df <- data.frame(date, x = exposure$x, outcome)
   return(df)
 }
+
+#' One Function to Rule Them All
+#'
+#' This function takes all the other functions and in the darkness binds them.
+#'
+#' @return A list resulting from repetitions of simulations with data frames
+#' for date, exposure, and outcomes, and estimates from fitting models
+#'
+eesim <-
 
 
 

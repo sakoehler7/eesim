@@ -29,3 +29,16 @@ continuous_exposure(n = 5, y = .6, mu = 100, sd = 10, trend = "custom", custom_f
 plot(continuous_exposure(n=1000, y = .6, mu = 5, sd = .5, trend = "custom", custom_func = sintrend))
 ```
 
+##Custom functions for outcome
+
+```{r}
+#For lambda:
+customlambda <- function(exposure, baseline, rr, constant){
+  log_lambda <- log(baseline) + log(rr) * exposure + constant
+  lambda <- exp(log_lambda)
+  return(lambda)
+}
+
+#Example:
+testlambda <- customlambda(testexp$x, testbase$exp_base_y,rr=1.01, constant = 4)
+```
