@@ -192,7 +192,17 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
 #' @return A list resulting from repetitions of simulations with data frames
 #' for date, exposure, and outcomes, and estimates from fitting models
 #'
-eesim <-
+eesim <- function(n_reps, n, central, sd, exposure_type, exposure_trend, exposure_amp,
+                  average_outcome, outcome_trend, outcome_amp, rr, start.date,
+                  cust_exp_func, cust_exp_args, cust_base_func, cust_lambda_func,
+                  cust_out_args){
+  exposure <- lapply(rep(n, times = n_reps), sim_exposure, central = central, sd = sd,
+                     exposure_type = exposure_type, amp = exposure_amp, trend = exposure_trend,
+                     start.date = start.date, cust_exp_func = cust_exp_func,
+                     cust_exp_args = cust_exp_args)
+  outcome <- lapply(exposure=exposure, sim_outcome, average_outcome = average_outcome,
+                    )
+}
 
 
 
