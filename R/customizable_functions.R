@@ -193,15 +193,18 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
 #' for date, exposure, and outcomes, and estimates from fitting models
 #'
 eesim <- function(n_reps, n, central, sd, exposure_type, exposure_trend, exposure_amp,
-                  average_outcome, outcome_trend, outcome_amp, rr, start.date,
-                  cust_exp_func, cust_exp_args, cust_base_func, cust_lambda_func,
-                  cust_out_args){
+                  average_outcome, outcome_trend, outcome_amp, rr, start.date = "2000-01-01",
+                  cust_exp_func = NULL, cust_exp_args = NULL, cust_base_func = NULL,
+                  cust_lambda_func = NULL, cust_out_args = NULL){
   exposure <- lapply(rep(n, times = n_reps), sim_exposure, central = central, sd = sd,
                      exposure_type = exposure_type, amp = exposure_amp, trend = exposure_trend,
                      start.date = start.date, cust_exp_func = cust_exp_func,
                      cust_exp_args = cust_exp_args)
-  outcome <- lapply(exposure=exposure, sim_outcome, average_outcome = average_outcome,
-                    )
+  outcome <- lapply(exposure, sim_outcome, average_outcome = average_outcome,
+                    trend = outcome_trend, amp = outcome_amp, rr = rr, start.date = start.date,
+                    cust_base_func = cust_base_func, cust_lambda_func = cust_lambda_func,
+                    cust_args = cust_out_args)
+  return(outcome)
 }
 
 
