@@ -189,10 +189,13 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
 #'
 #' This function takes all the other functions and in the darkness binds them.
 #'
+#' @param A character string specifying the model to be used.  Options are "spline" and "casecrossover"
+#'
 #' @return A list resulting from repetitions of simulations with data frames
 #' for date, exposure, and outcomes, and estimates from fitting models
 #'
-eesim <- function(n_reps, n, central, sd, exposure_type, exposure_trend, exposure_amp,
+#'
+eesim <- function(n_reps, model, df_year = NULL, n, central, sd, exposure_type, exposure_trend, exposure_amp,
                   average_outcome, outcome_trend, outcome_amp, rr, start.date = "2000-01-01",
                   cust_exp_func = NULL, cust_exp_args = NULL, cust_base_func = NULL,
                   cust_lambda_func = NULL, cust_out_args = NULL){
@@ -204,7 +207,17 @@ eesim <- function(n_reps, n, central, sd, exposure_type, exposure_trend, exposur
                     trend = outcome_trend, amp = outcome_amp, rr = rr, start.date = start.date,
                     cust_base_func = cust_base_func, cust_lambda_func = cust_lambda_func,
                     cust_args = cust_out_args)
-  return(outcome)
+  if(model == "spline"){
+    if(is.null(df_year)){
+      stop(paste0("Must specify degrees of freedom per year for a spline model"))
+    }
+    else{
+    fits <- spline_mod(df = outcome, df_year = df_year)
+    }}
+  else if(model == "casecrossover"){
+    fits <- casecross_mod(df = outcome)
+    }
+  return(fits)
 }
 
 
