@@ -179,7 +179,7 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
 #' for date, exposure, and outcomes, and estimates from fitting models
 #'
 #' @examples
-#' create_sims(n_reps=10, n=1000, central = 100, sd = 10, exposure_type="continuous",
+#' create_sims(n_reps=10, n=10, central = 100, sd = 10, exposure_type="continuous",
 #' exposure_trend = "cos1", exposure_amp = .6, average_outcome = 22, outcome_trend = "no trend",
 #' outcome_amp = .6, rr = 1.01)
 #'
@@ -187,7 +187,7 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
 create_sims <- function(n_reps, n, central, sd, exposure_type, exposure_trend, exposure_amp,
                   average_outcome, outcome_trend, outcome_amp, rr, start.date = "2000-01-01",
                   cust_exp_func = NULL, cust_exp_args = NULL, cust_base_func = NULL,
-                  cust_lambda_func = NULL, cust_out_args = NULL){
+                  cust_lambda_func = NULL, cust_base_args = NULL, cust_lambda_args = NULL){
   exposure <- lapply(rep(n, times = n_reps), sim_exposure, central = central, sd = sd,
                      exposure_type = exposure_type, amp = exposure_amp, trend = exposure_trend,
                      start.date = start.date, cust_exp_func = cust_exp_func,
@@ -195,7 +195,7 @@ create_sims <- function(n_reps, n, central, sd, exposure_type, exposure_trend, e
   outcome <- lapply(exposure, sim_outcome, average_outcome = average_outcome,
                     trend = outcome_trend, amp = outcome_amp, rr = rr, start.date = start.date,
                     cust_base_func = cust_base_func, cust_lambda_func = cust_lambda_func,
-                    cust_args = cust_out_args)
+                    cust_base_args = cust_base_args, cust_lambda_args = cust_lambda_args)
   return(outcome)
 }
 
