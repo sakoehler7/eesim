@@ -14,7 +14,7 @@ sintrend <- function(n, y){
   rnorm(n, mean = base, sd = 1)
 }
 calc_t(n = 5, y = .3, trend = "custom", custom_func = sintrend)
-plot(calc_t(1000, y = .3, trend = "custom", custom_func = sintrend))
+plot(calc_t(1000, y = 2, trend = "custom", custom_func = sintrend))
 ```
 
 bin_t is similar.
@@ -32,13 +32,23 @@ plot(continuous_exposure(n=1000, y = .6, mu = 5, sd = .5, trend = "custom", cust
 ##Custom functions for outcome
 
 ```{r}
+#For baseline:
+custombase <- function(n, slope, intercept){
+  day <- c(1:n)
+  baseline <- day*slope + intercept
+  return(baseline)
+}
+
+#Example
+custombase(n=5, slope = .3, intercept = 55)
+
 #For lambda:
-customlambda <- function(exposure, baseline, rr, constant){
+customlambda <- function(exposure, rr, constant, baseline){
   log_lambda <- log(baseline) + log(rr) * exposure + constant
   lambda <- exp(log_lambda)
   return(lambda)
 }
 
 #Example:
-testlambda <- customlambda(testexp$x, testbase$exp_base_y,rr=1.01, constant = 4)
+testlambda <- customlambda(testexp$x, testbase$baseline, rr=1.01, constant = 4)
 ```
