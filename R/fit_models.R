@@ -51,16 +51,16 @@ casecross_mod <- function(df){
     df <- subset(df, stratum %in% informative.strata)
 
     if(length(informative.strata) > 1){
-      mod <- glm(y ~ x + stratum,
+      mod <- glm(outcome ~ x + stratum,
                  data = df,
                  family = quasipoisson(link = "log"))
     } else {
-      mod <- glm(y ~ x,
+      mod <- glm(outcome ~ x,
                  data = df,
                  family = quasipoisson(link = "log"))
     }
   } else {
-    mod <- glm(y ~ x + stratum,
+    mod <- glm(outcome ~ x + stratum,
                data = df,
                family = quasipoisson(link = "log"))
   }

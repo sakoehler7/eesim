@@ -169,9 +169,7 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
   return(df)
 }
 
-#' One Function to Rule Them All
-#'
-#' This function takes all the other functions and in the darkness binds them.
+#' Create simulated data for many repetitions
 #'
 #' @param A character string specifying the model to be used.  Options are "spline" and "casecrossover"
 #'
@@ -199,5 +197,21 @@ create_sims <- function(n_reps, n, central, sd, exposure_type, exposure_trend, e
   return(outcome)
 }
 
+#' Fit models
+#'
+#' @param outcome A list of simulated data sets which each include columns called "x" and "outcome"
+#' @param model A character string specifying model to be used.  Choices are "spline" and "casecrossover"
+#'
+#' @export
+fit_mods <- function(outcome, model, df_year = 7){
+  if(model == "spline"){
+    mods <- lapply(outcome, spline_mod, df_year = df_year)
+  }
+  else if(model == "casecrossover"){
+    mods <- lapply(outcome, casecross_mod)
+  }
+  datframe <- do.call("rbind", mods)
+  return(datframe)
+}
 
 
