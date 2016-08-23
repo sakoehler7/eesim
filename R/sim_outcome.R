@@ -19,8 +19,8 @@ sim_baseline <- function(n, lambda, trend = "no trend", amp = .6, start.date = "
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
   t <- calc_t(n = n, trend = trend, amp = amp)
-  exp_base_y <- lambda * t
-  df <- data.frame(date, exp_base_y)
+  baseline <- lambda * t
+  df <- data.frame(date, baseline)
   return(df)
 }
 

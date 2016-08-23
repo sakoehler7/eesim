@@ -116,14 +116,9 @@ create_lambda <- function(baseline, exposure, rr, cust_lambda_func = NULL, ...){
 sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
                         amp = .6, rr = 1.01, start.date="2000-01-01",
                         cust_base_func = NULL, cust_lambda_func = NULL,
-                        cust_args = NULL){
+                        cust_base_args = list(), cust_lambda_args = list()){
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = nrow(exposure))
-  if (is.null(cust_args)){
-    arguments <- vector(mode = "list")
-  } else {
-    arguments <- cust_args
-  }
   if(is.null(cust_base_func) & is.null(cust_lambda_func)){
     if(is.null(average_outcome)){
       stop(paste0("If custom functions are not used to generate outcomes,
@@ -133,52 +128,31 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
                                 average_outcome = average_outcome,
                                 trend = trend,
                                 amp = amp)
-    lambda <- create_lambda(baseline = baseline$exp_base_y,
+    lambda <- create_lambda(baseline = baseline$baseline,
                             exposure = exposure$x,
                             rr = rr)
     outcome <- rpois(n = nrow(exposure), lambda = lambda)
   }
   else if (is.null(cust_lambda_func) & !is.null(cust_base_func)){
-    arguments$n <- nrow(exposure)
-    arguments$average_outcome <- average_outcome
-    arguments$exposure <- exposure
-    arguments$rr <- rr
-    baseline <- do.call(cust_base_func, arguments)
-    lambda <- create_lambda(baseline = baseline$exp_base_y,
+    baseline <- do.call(cust_base_func, cust_base_args)
+    lambda <- create_lambda(baseline = baseline$baseline,
                             exposure = exposure$x,
                             rr = rr)
     outcome <- rpois(n = nrow(exposure), lambda = lambda)
   }
   else if (is.null(cust_base_func) & !is.null(cust_lambda_func)){
-    if(!is.null(average_outcome)){
-      arguments$average_outcome <- average_outcome
-    }
-    if(!is.null(exposure)){
-      arguments$exposure <- exposure
-    }
-    if(!is.null(rr)){
-      arguments$rr <- rr
-    }
-    if(!is.null(trend)){
-      arguments$trend <- trend
-    }
-    if(!is.null(amp)){
-      arguments$amp <- amp
-    }
     baseline <- create_baseline(n = nrow(exposure),
                                 average_outcome = average_outcome,
                                 trend = trend,
                                 amp = amp)
-    lambda <- do.call(cust_lambda_func, arguments)
+    cust_lambda_args$baseline <- baseline
+    lambda <- do.call(cust_lambda_func, cust_lambda_args)
     outcome <- rpois(n = nrow(exposure), lambda = lambda)
   }
   else {
-    arguments$average_outcome <- average_outcome
-    arguments$exposure <- exposure
-    arguments$rr <- rr
-    baseline <- do.call(cust_base_func, arguments)
-    arguments$baseline <- baseline
-    lambda <- do.call(cust_lambda_func, arguments)
+    baseline <- do.call(cust_base_func, cust_base_args)
+    cust_lambda_args$baseline <- baseline
+    lambda <- do.call(cust_lambda_func, cust_lambda_args)
     outcome <- rpois(n = nrow(exposure), lambda = lambda)
   }
   df <- data.frame(date, x = exposure$x, outcome)
@@ -194,8 +168,13 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
 #' @return A list resulting from repetitions of simulations with data frames
 #' for date, exposure, and outcomes, and estimates from fitting models
 #'
+#' @examples
+#' create_sims(n_reps=10, n=1000, central = 100, sd = 10, exposure_type="continuous",
+#' exposure_trend = "cos1", exposure_amp = .6, average_outcome = 22, outcome_trend = "no trend",
+#' outcome_amp = .6, rr = 1.01)
 #'
-eesim <- function(n_reps, model, df_year = NULL, n, central, sd, exposure_type, exposure_trend, exposure_amp,
+#'
+create_sims <- function(n_reps, n, central, sd, exposure_type, exposure_trend, exposure_amp,
                   average_outcome, outcome_trend, outcome_amp, rr, start.date = "2000-01-01",
                   cust_exp_func = NULL, cust_exp_args = NULL, cust_base_func = NULL,
                   cust_lambda_func = NULL, cust_out_args = NULL){
@@ -207,17 +186,7 @@ eesim <- function(n_reps, model, df_year = NULL, n, central, sd, exposure_type, 
                     trend = outcome_trend, amp = outcome_amp, rr = rr, start.date = start.date,
                     cust_base_func = cust_base_func, cust_lambda_func = cust_lambda_func,
                     cust_args = cust_out_args)
-  if(model == "spline"){
-    if(is.null(df_year)){
-      stop(paste0("Must specify degrees of freedom per year for a spline model"))
-    }
-    else{
-    fits <- spline_mod(df = outcome, df_year = df_year)
-    }}
-  else if(model == "casecrossover"){
-    fits <- casecross_mod(df = outcome)
-    }
-  return(fits)
+  return(outcome)
 }
 
 
