@@ -3,7 +3,7 @@
 #' This function gives the mean value of the \eqn{\hat{\beta}}s and the mean estimated
 #' relative risk over the n simulations.
 #'
-#' @param df A data frame of replicated simulations which must include a column titled "est"
+#' @param df A data frame of replicated simulations which must include a column titled "Estimate"
 #'
 #' @return A data frame with the mean estimated coefficient and mean estimated relative risk
 #'
@@ -13,8 +13,8 @@
 #' @export
 #'
 mean_beta <- function(df){
-  beta_hat <- mean(df$est)
-  rr_hat <- mean(exp(df$est))
+  beta_hat <- mean(df$Estimate)
+  rr_hat <- mean(exp(df$Estimate))
   out <- data.frame(beta_hat, rr_hat)
   return(out)
 }
@@ -34,8 +34,8 @@ mean_beta <- function(df){
 #' @export
 #'
 beta_var <- function(df){
-  var_across_betas <- var(df$est)
-  mean_beta_var <- mean(df$se^2)
+  var_across_betas <- var(df$Estimate)
+  mean_beta_var <- mean(df$Std.Error^2)
   out <- data.frame(var_across_betas, mean_beta_var)
   return(out)
 }
@@ -55,7 +55,7 @@ beta_var <- function(df){
 #' @export
 #'
 beta_bias <- function(df, true_rr){
-  percent_bias <- 100 * (true_rr - mean(exp(df$est))) / true_rr
+  percent_bias <- 100 * (true_rr - mean(exp(df$Estimate))) / true_rr
   out <- data.frame(percent_bias)
   return(out)
 }

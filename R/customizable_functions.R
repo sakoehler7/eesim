@@ -210,8 +210,11 @@ fit_mods <- function(outcome, model, df_year = 7){
   else if(model == "casecrossover"){
     mods <- lapply(outcome, casecross_mod)
   }
-  datframe <- do.call("rbind", mods)
+  datframe <- data.frame(do.call("rbind", mods))
+  names(datframe) <- c("Estimate", "Std.Error", "t.value", "p.value", "lower_ci", "upper_ci")
   return(datframe)
 }
 
+#' Assessing models
+#'
 
