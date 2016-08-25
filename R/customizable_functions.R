@@ -215,6 +215,29 @@ fit_mods <- function(outcome, model, df_year = 7){
   return(datframe)
 }
 
-#' Assessing models
+#' Wrapper to do Everything
 #'
+#' This function generates exposures and outcomes, fits models, and evaluates them for many repetitions
+#'
+#' @examples
+#' eesim(n_reps = 3, n = 50, central = 100, sd = 10, exposure_type = "continuous",
+#' exposure_trend = "cos3", exposure_amp = .6, average_outcome = 22, rr = 1.01,
+#' model = "spline", df_year = 5)
+#'
+#' @export
+#'
+eesim <- function(n_reps, n, central, sd, exposure_type, exposure_trend, exposure_amp,
+                  average_outcome, outcome_trend = "no trend", outcome_amp, rr, start.date = "2000-01-01",
+                  cust_exp_func = NULL, cust_exp_args = NULL, cust_base_func = NULL,
+                  cust_lambda_func = NULL, cust_base_args = NULL, cust_lambda_args = NULL,
+                  model, df_year = NULL){
+  datasims <- create_sims(n_reps=n_reps, n=n, central=central, sd=sd, exposure_type=exposure_type, exposure_trend=exposure_trend, exposure_amp=exposure_amp,
+                          average_outcome=average_outcome, outcome_trend=outcome_trend, outcome_amp=outcome_amp, rr=rr, start.date = "2000-01-01",
+                          cust_exp_func = NULL, cust_exp_args = NULL, cust_base_func = NULL,
+                          cust_lambda_func = NULL, cust_base_args = NULL, cust_lambda_args = NULL)
+  mods <- fit_mods(datasims, model, df_year)
+  check <- check_sims(df = mods, true_rr = rr)
+  totalsims <- list(datasims, mods, check)
+  return(totalsims)
+}
 
