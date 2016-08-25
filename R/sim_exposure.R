@@ -75,6 +75,8 @@ calc_t <- function(n, trend = "no trend", amp = .6, custom_func = NULL, ...){
 #' @param p A numeric value giving the mean probability of exposure
 #' @param amp A numeric value specifying the amplitude of the seasonal trend.
 #'    Must be between 0 and .5.
+#' @param start.date A date of the format "yyyy-mm-dd" from which to begin
+#'    simulating values
 #' @inheritParams calc_t
 #'
 #' @return A numeric vector used to generate binary exposure data with seasonal
@@ -86,7 +88,7 @@ calc_t <- function(n, trend = "no trend", amp = .6, custom_func = NULL, ...){
 #' @export
 #'
 bin_t <- function(n, p, trend = "no trend", amp = .01, start.date = "2000-01-01",
-                  custom_func = NULL, ...){
+                  custom_func = NULL,...){
   day <- c(1:n)
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
@@ -95,7 +97,7 @@ bin_t <- function(n, p, trend = "no trend", amp = .01, start.date = "2000-01-01"
   else if (p > .5 & amp >1-p){
     stop(paste0("For p>.5, amp must be between 0 and 1-p."))
   }
-  else if (p < .5 & amp>p){
+  else if (p<.5 & amp >p){
     stop(paste0("For p<.5, amp must be between 0 and p."))
   }
   if (trend == "cos1"){
@@ -136,14 +138,14 @@ bin_t <- function(n, p, trend = "no trend", amp = .01, start.date = "2000-01-01"
 #' @return A data frame with the dates and daily exposure values from n days
 #'
 #' @examples
-#' binary_exposure(n = 5, p = 0.1, trend = "cos1", amp = .02,
-#'                 start.date = "2001-02-01")
+#' binary_exposure(n = 5, p = 0.1, trend = "cos1", amp = .02, start.date = "2001-02-01")
+#'
 #'
 #' @export
 #'
-binary_exposure <- function(n, p, trend = "no trend", amp = .01,
+binary_exposure <- function(n, p, trend = "no trend", amp,
                             start.date = "2000-01-01", custom_func = NULL, ...){
-  t <- bin_t(n, p, ...)
+  t <- bin_t(n=n, p=p, trend = trend, amp = amp, start.date = start.date, custom_func = custom_func)
   x <- rbinom(length(t), size = 1, prob = t)
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
