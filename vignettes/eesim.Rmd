@@ -20,32 +20,14 @@ This package allows you to simulate time series of environmental health data, to
 
 ## Basic example of using the package
 
+You can use the eesim function to generate data, fit models, and assess the models:
+
+```{r}
+eesim(n_reps = 1000, n = 1000, central = 100, sd = 10, exposure_type = "continuous", exposure_trend = "cos1", exposure_amp = .6, average_outcome = 22, rr = 1.01)
+
+## Comparing two models
+
 As a basic example, you can use this package to simulate a continuous environmental exposure with seasonal and year-round trends and a count outcome. You can then fit a case-crossover and GLM model to this data and compare performance.
 
-First, you would simulate the time series data:
-
-```{r}
-exposure_df <- sim_exposure(n = 1000, central = 55, sd = 10, 
-                            trend = "cos1", exposure_type = "continuous")
-head(exposure_df)
-ggplot(exposure_df, aes(x = date, y = x)) + geom_line()
-
-outcome_df <- sim_outcome(exposure_df, average_outcome = 20, rr = 1.005,
-                          trend = "linear")
-head(outcome_df)
-ggplot(outcome_df, aes(x = date, y = outcome)) + geom_line()
-```
-
-Next, you could fit the two models: 
-
-```{r}
-
-```
-
-Finally, you can assess the model performance for each model:
-
-```{r}
-
-```
 
 ## More detailed examples

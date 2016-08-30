@@ -1,10 +1,36 @@
-#' Pulls exposure series from Chicago NMMAPS data set
+#' Pull exposure series from data set
+#'
+#' By default, this function pulls exposure data from the Chicago NMMAPS data set in the dlnm
+#' package.  The user may specify a different data set from which to pull exposure
+#' values.
+#'
+#' @param n A numeric value specifying the number of days for which to obtain an exposure value.
+#' @param df Data frame from which to pull exposure values.
+#' @param metric A character string specifying the desired exposure metric.
+#'    Options are:
+#'    \itemize{
+#'      \item"cvd"
+#'      \item"resp"
+#'      \item"temp"
+#'      \item"dptp"
+#'      \item"rhum"
+#'      \item"pm10"
+#'      \item"o3"}
+#' @param start.date A date of the format "yyyy-mm-dd" from which to begin pulling exposure values
 #'
 #' @examples
-#' custom_exposure(n = 5, metric = "temp")
-custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, central = NA,
-                            metric = "temp"){
+#' custom_exposure(n = 5, metric = "temp", start.date = "1995-01-01")
+#'
+#' @export
+custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, metric = "temp", start.date = NULL){
+  if(!is.null(start.date)){
+    date1 <- which(df$date==start.date)
+    enddate <- date1+n
+    exposure <- df[date1:enddate, metric]
+  }
+  else{
   exposure <- df[1:n, metric]
+  }
   return(exposure)
 }
 
@@ -135,7 +161,7 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
                                 average_outcome = average_outcome,
                                 trend = trend,
                                 amp = amp)
-    lambda <- create_lambda(baseline = baseline,
+    lambda <- create_lambda(baseline,
                             exposure = exposure$x,
                             rr = rr)
     outcome <- rpois(n = nrow(exposure), lambda = lambda)
