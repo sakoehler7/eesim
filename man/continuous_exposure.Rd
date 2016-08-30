@@ -4,13 +4,15 @@
 \alias{continuous_exposure}
 \title{Simulate continuous exposure data}
 \usage{
-continuous_exposure(n, mu, trend = "no trend", amp = 0.6,
+continuous_exposure(n, mu, sd = 1, trend = "no trend", amp = 0.6,
   start.date = "2000-01-01", ...)
 }
 \arguments{
 \item{n}{A numeric value specifying the number of days to simulate.}
 
 \item{mu}{A numeric value giving the mean exposure.}
+
+\item{sd}{A numeric value giving the standard deviation of the exposure values around the trend line.}
 
 \item{trend}{A character string that specifies the desired trend function.
 Options are:

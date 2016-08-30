@@ -112,13 +112,10 @@ create_lambda <- function(baseline, exposure, rr, cust_lambda_func = NULL, ...){
 }
 #' @param cust_args A list of arguments and their values used in the user-specified custom functions
 #'
-#' @example
-#' sim_outcome(testexp, average_outcome = 22)
-#'
-#' sim_outcome(exposure=testexp, cust_base_func = custombase,
-#' cust_base_args = list(n=nrow(testexp), slope = .2, intercept = 55))
-#'
-#' sim_outcome(exposure = testexp, average_outcome = 22, cust_lambda_func = customlambda,
+#' @examples
+#' sim_outcome(exposure, cust_base_func = custombase,
+#' cust_base_args = list(n=nrow(exposure), slope = .2, intercept = 55))
+#' sim_outcome(exposure, p, average_outcome = 22, cust_lambda_func = customlambda,
 #' cust_lambda_args = list(exposure = testexp$x, rr=1.02, constant = 4))
 #'
 #' @export

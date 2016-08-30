@@ -27,6 +27,9 @@ are:
 \item{amp}{A numeric value specifying the amplitude of the seasonal trend.
 Must be between 0 and .5.}
 
+\item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
+simulating values}
+
 \item{custom_func}{A character string specifying a customized function from
 which to create a trend variable}
 }

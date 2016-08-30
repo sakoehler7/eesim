@@ -7,7 +7,7 @@
 mean_beta(df)
 }
 \arguments{
-\item{df}{A data frame of replicated simulations which must include a column titled "est"}
+\item{df}{A data frame of replicated simulations which must include a column titled "Estimate"}
 }
 \value{
 A data frame with the mean estimated coefficient and mean estimated relative risk

@@ -4,9 +4,12 @@
 \alias{sim_exposure}
 \title{Simulate random series of exposure values}
 \usage{
-sim_exposure(n, central = NULL, trend = "no trend", amp = 0.6,
-  exposure_type = NULL, start.date = "2001-01-01", custom_func = NULL,
-  cust_exp_args = NULL)
+sim_exposure(n, central = NULL, sd = NULL, trend = "no trend",
+  amp = 0.6, exposure_type = NULL, start.date = "2001-01-01",
+  cust_exp_func = NULL, cust_exp_args = NULL)
+}
+\arguments{
+\item{cust_exp_args}{A list of arguments used in the user-specified custom function}
 }
 \description{
 Simulate random series of exposure values
@@ -15,8 +18,8 @@ Simulate random series of exposure values
 sim_exposure(n = 5, central = 0.25, exposure_type = "binary", amp = .02)
 sim_exposure(n = 5, central = 100, sd = 10, amp = .6,
              exposure_type = "continuous")
-sim_exposure(n = 5, central = NA, custom_func = "custom_exposure",
-                    metric = "temp")
+sim_exposure(n = 5, cust_exp_func = "custom_exposure",
+                    cust_exp_args = metric = "temp")
 
 }
 

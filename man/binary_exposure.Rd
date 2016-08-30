@@ -4,8 +4,8 @@
 \alias{binary_exposure}
 \title{Simulate binary exposure data}
 \usage{
-binary_exposure(n, p, trend = "no trend", amp = 0.01,
-  start.date = "2000-01-01", custom_func = NULL, ...)
+binary_exposure(n, p, trend = "no trend", amp, start.date = "2000-01-01",
+  custom_func = NULL, ...)
 }
 \arguments{
 \item{n}{A numeric value specifying the number of days to simulate.}
@@ -41,8 +41,8 @@ Simulates a time series of binary exposure values with or without seasonal
 trends.
 }
 \examples{
-binary_exposure(n = 5, p = 0.1, trend = "cos1", amp = .02,
-                start.date = "2001-02-01")
+binary_exposure(n = 5, p = 0.1, trend = "cos1", amp = .02, start.date = "2001-02-01")
+
 
 }
 

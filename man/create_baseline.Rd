@@ -4,7 +4,7 @@
 \alias{create_baseline}
 \title{Create a series of baseline outcomes}
 \usage{
-create_baseline(n, average_outcome, trend, amp, custom_func = NULL, ...)
+create_baseline(n, average_outcome, trend, amp, cust_base_func = NULL, ...)
 }
 \description{
 Create a series of baseline outcomes

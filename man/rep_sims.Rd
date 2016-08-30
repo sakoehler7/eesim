@@ -24,6 +24,8 @@ increase in exposure}
 Options are "binary" and "continuous".}
 
 \item{mu}{A numeric value giving the mean exposure.}
+
+\item{sd}{A numeric value giving the standard deviation of the exposure values around the trend line.}
 }
 \value{
 A data frame with the summaries of the estimate of the log relative

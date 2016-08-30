@@ -7,7 +7,7 @@
 check_sims(df, true_rr)
 }
 \arguments{
-\item{df}{A data frame of replicated simulations which must include a column titled "est"}
+\item{df}{A data frame of replicated simulations which must include a column titled "Estimate"}
 
 \item{true_rr}{The true relative risk used to simulate your data}
 }
