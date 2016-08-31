@@ -24,6 +24,8 @@ You can use the eesim function to generate data, fit models, and assess the mode
 
 ```{r}
 eesim(n_reps = 1000, n = 1000, central = 100, sd = 10, exposure_type = "continuous", exposure_trend = "cos1", exposure_amp = .6, average_outcome = 22, rr = 1.01)
+```
+
 
 ## Comparing two models
 

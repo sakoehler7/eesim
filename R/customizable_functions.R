@@ -16,10 +16,13 @@
 #'      \item"rhum"
 #'      \item"pm10"
 #'      \item"o3"}
-#' @param start.date A date of the format "yyyy-mm-dd" from which to begin pulling exposure values
+#' @param start.date A date of the format "yyyy-mm-dd" from which to begin pulling exposure
+#' values.  Dates in the Chicago NMMAPS data set are from 1987-01-01 to 2000-12-31.
+#'
+#' @return A numeric vector of exposure values
 #'
 #' @examples
-#' custom_exposure(n = 5, metric = "temp", start.date = "1995-01-01")
+#' custom_exposure(n = 5, metric = "temp", start.date = "2000-01-01")
 #'
 #' @export
 custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, metric = "temp", start.date = NULL){
@@ -36,14 +39,21 @@ custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, metric = "temp", start.
 
 #' Simulate random series of exposure values
 #'
+#' This function simulates binary or continuous exposure values with or without seasonal trends.
+#' It also allows for a custom function for exposure trend.
+#'
+#' @param cust_exp_function The name of a function from which to generate custom exposure values
 #' @param cust_exp_args A list of arguments used in the user-specified custom function
+#' @inheritParams std_exposure
+#'
+#' @return A data frame with two columns: date and exposure values
 #'
 #' @examples
 #' sim_exposure(n = 5, central = 0.25, exposure_type = "binary", amp = .02)
 #' sim_exposure(n = 5, central = 100, sd = 10, amp = .6,
 #'              exposure_type = "continuous")
 #' sim_exposure(n = 5, cust_exp_func = "custom_exposure",
-#'                     cust_exp_args = metric = "temp")
+#'                     cust_exp_args = list(metric = "temp"))
 #'
 #' @export
 sim_exposure <- function(n, central = NULL, sd=NULL, trend = "no trend", amp = .6,
@@ -85,6 +95,8 @@ sim_exposure <- function(n, central = NULL, sd=NULL, trend = "no trend", amp = .
 
 
 #' Pull smoothed Chicago NMMAPS mortality data
+#'
+#'
 #'
 #' @examples
 #' custom_baseline(n = 5)
