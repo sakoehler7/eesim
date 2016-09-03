@@ -2,6 +2,7 @@
 % Please edit documentation in R/customizable_functions.R
 \name{sim_outcome}
 \alias{sim_outcome}
+\title{Simulate outcome}
 \usage{
 sim_outcome(exposure, average_outcome = NULL, trend = "no trend",
   amp = 0.6, rr = 1.01, start.date = "2000-01-01",
@@ -10,6 +11,9 @@ sim_outcome(exposure, average_outcome = NULL, trend = "no trend",
 }
 \arguments{
 \item{cust_args}{A list of arguments and their values used in the user-specified custom functions}
+}
+\description{
+Simulate outcome
 }
 \examples{
 sim_outcome(exposure, cust_base_func = custombase,
