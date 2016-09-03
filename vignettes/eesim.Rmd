@@ -26,11 +26,13 @@ First, you would simulate the time series data:
 
 ```{r}
 exposure_df <- sim_exposure(n = 1000, central = 55, sd = 10, 
-                            trend = "cos1", exposure_type = "continuous")
+                            trend = "cos1",
+                            exposure_type = "continuous")
 head(exposure_df)
 ggplot(exposure_df, aes(x = date, y = x)) + geom_line()
 
-outcome_df <- sim_outcome(exposure_df, average_outcome = 20, rr = 1.005,
+outcome_df <- sim_outcome(exposure_df, average_outcome = 20,
+                          rr = 1.005,
                           trend = "linear")
 head(outcome_df)
 ggplot(outcome_df, aes(x = date, y = outcome)) + geom_line()
