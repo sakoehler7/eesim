@@ -9,8 +9,6 @@
 #' @param metric A character string specifying the desired exposure metric.
 #'    Options are:
 #'    \itemize{
-#'      \item"cvd"
-#'      \item"resp"
 #'      \item"temp"
 #'      \item"dptp"
 #'      \item"rhum"
@@ -94,8 +92,20 @@ sim_exposure <- function(n, central = NULL, sd=NULL, trend = "no trend", amp = .
 }
 
 
-#' Pull smoothed Chicago NMMAPS mortality data
+#' Pull smoothed Chicago NMMAPS health outcome data
 #'
+#' By default, this function pulls smoothed data from the chicagoNMMAPS data set
+#' in the dlnm package.  The user may also input a different data set from which to pull
+#' data.
+#'
+#' @inheritParams custom_exposure
+#' @inheritParams std_exposure
+#' @param metric A character string specifying the desired health outcome metric.
+#'    Options are:
+#'    \itemize{
+#'      \item"death"
+#'      \item"cvd"
+#'      \item"resp"}
 #'
 #'
 #' @examples
