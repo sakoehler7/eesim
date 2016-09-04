@@ -101,6 +101,8 @@ sim_exposure <- function(n, central = NULL, sd=NULL, trend = "no trend", amp = .
 #' @examples
 #' custom_baseline(n = 5)
 #' custom_baseline(n = 5, outcome_type = "death")
+#'
+#' @export
 custom_baseline <- function(n, df = dlnm::chicagoNMMAPS, average_outcome = NA,
                             trend = NA, outcome_type = "cvd",
                             start.date = "2000-01-01"){

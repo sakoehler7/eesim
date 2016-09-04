@@ -231,6 +231,8 @@ std_exposure <- function(n, central, sd = NULL, trend = "no trend",
 #' @examples
 #' sim_baseline(n = 5, lambda = 100, trend = "cos1")
 #'
+#' @export
+#'
 sim_baseline <- function(n, lambda, trend = "no trend", amp = .6, start.date = "2000-01-01"){
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
