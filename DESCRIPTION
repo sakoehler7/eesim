@@ -20,7 +20,7 @@ LazyData: TRUE
 URL: http://github.com/sakoehler7/eesim
 BugReports: http://github.com/sakoehler7/eesim/issues
 Requires:
-    dplyr,
+    dplyr (>= 0.5.0),
     lubridate,
     splines
 RoxygenNote: 5.0.1
