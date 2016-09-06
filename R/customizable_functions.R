@@ -107,6 +107,7 @@ sim_exposure <- function(n, central = NULL, sd=NULL, trend = "no trend", amp = .
 #'      \item"cvd"
 #'      \item"resp"}
 #'
+#' @return A data frame with one column for date and one column for baseline outcome values
 #'
 #' @examples
 #' custom_baseline(n = 5)
@@ -127,10 +128,22 @@ custom_baseline <- function(n, df = dlnm::chicagoNMMAPS, average_outcome = NA,
 
 #' Create a series of baseline outcomes
 #'
+#' This function creates a time series of baseline outcome values and allows the user
+#' to input a custom function if desired to specify outcome trend.
+#'
+#' @inheritParams sim_baseline
+#' @param average_outcome A numeric value specifying the average outcome value
+#' @param cust_base_func A character string specifying a user-made custom function for
+#' baseline trend
+#'
+#' @return A numeric vector of baseline outcome values
+#'
 #' @examples
 #' create_baseline(n = 5, average_outcome = 22, trend = "linear")
 #' create_baseline(n = 5, average_outcome = NA, trend = NA, amp = NA,
 #'                 custom_func = "custom_baseline", outcome_type = "death")
+#'
+#' @export
 #'
 create_baseline <- function(n, average_outcome, trend, amp, cust_base_func = NULL,
                             ...){
@@ -146,6 +159,26 @@ create_baseline <- function(n, average_outcome, trend, amp, cust_base_func = NUL
   }
   return(baseline)
 }
+
+#' Create a series of mean outcome values
+#'
+#' This function relates exposure to baseline outcome values with the function
+#' lambda = log(baseline) + log(relative risk)*exposure to create a series
+#' of mean outcome values with or without incorporating a seasonal trend.  The user
+#' may input a custom function to relate exposure, relative risk, and baseline.
+#'
+#' @param baseline A numeric vector of baseline outcome values
+#' @param exposure A numeric vector of exposure values
+#' @param rr A numeric value specifying the relative risk
+#' @param cust_lambda_func A character string specifying a user-made custom function
+#' for relating baseline, relative risk, and exposure
+#'
+#' @return A numeric vector of mean outcome values
+#'
+#' @examples
+#' create_lambda(baseline, exposure, rr = 1.01)
+#'
+#' @export
 
 create_lambda <- function(baseline, exposure, rr, cust_lambda_func = NULL, ...){
   if(is.null(cust_lambda_func)){
@@ -163,7 +196,16 @@ create_lambda <- function(baseline, exposure, rr, cust_lambda_func = NULL, ...){
 
 #' Simulate outcome
 #'
-#' @param cust_args A list of arguments and their values used in the user-specified custom functions
+#' @param cust_lamba_args A list of arguments and their values used in the
+#' user-specified custom lambda function
+#' @param cust_base_args A list of arguments and their values used in the user-specified
+#' custom baseline function
+#' @param start.date A date of the format "yyyy-mm-dd" from which to begin
+#' simulating values
+#' @inheritParams create_baseline
+#' @inheritParams create_lambda
+#'
+#' @return
 #'
 #' @examples
 #' sim_outcome(exposure, cust_base_func = custombase,
