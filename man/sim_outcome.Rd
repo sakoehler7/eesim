@@ -10,7 +10,29 @@ sim_outcome(exposure, average_outcome = NULL, trend = "no trend",
   cust_lambda_args = list())
 }
 \arguments{
-\item{cust_args}{A list of arguments and their values used in the user-specified custom functions}
+\item{exposure}{A numeric vector of exposure values}
+
+\item{average_outcome}{A numeric value specifying the average outcome value}
+
+\item{rr}{A numeric value specifying the relative risk}
+
+\item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
+simulating values}
+
+\item{cust_base_func}{A character string specifying a user-made custom function for
+baseline trend}
+
+\item{cust_lambda_func}{A character string specifying a user-made custom function
+for relating baseline, relative risk, and exposure}
+
+\item{cust_base_args}{A list of arguments and their values used in the user-specified
+custom baseline function}
+
+\item{cust_lamba_args}{A list of arguments and their values used in the
+user-specified custom lambda function}
+}
+\value{
+
 }
 \description{
 Simulate outcome

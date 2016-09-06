@@ -23,7 +23,11 @@ This package allows you to simulate time series of environmental health data, to
 You can use the eesim function to generate data, fit models, and assess the models:
 
 ```{r}
-eesim(n_reps = 1000, n = 1000, central = 100, sd = 10, exposure_type = "continuous", exposure_trend = "cos1", exposure_amp = .6, average_outcome = 22, rr = 1.01)
+ex_sim <- eesim(n_reps = 10, n = 1000, central = 100, sd = 10,
+                exposure_type = "continuous", exposure_trend = "cos1",
+                exposure_amp = .6, average_outcome = 22, rr = 1.01,
+                model = "spline", df_year = 6)
+head(ex_sim[[1]][[1]])
 ```
 
 

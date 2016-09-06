@@ -6,8 +6,21 @@
 \usage{
 create_baseline(n, average_outcome, trend, amp, cust_base_func = NULL, ...)
 }
+\arguments{
+\item{n}{A numeric value specifying the number of days for which to simulate
+data}
+
+\item{average_outcome}{A numeric value specifying the average outcome value}
+
+\item{cust_base_func}{A character string specifying a user-made custom function for
+baseline trend}
+}
+\value{
+A numeric vector of baseline outcome values
+}
 \description{
-Create a series of baseline outcomes
+This function creates a time series of baseline outcome values and allows the user
+to input a custom function if desired to specify outcome trend.
 }
 \examples{
 create_baseline(n = 5, average_outcome = 22, trend = "linear")

@@ -2,15 +2,38 @@
 % Please edit documentation in R/customizable_functions.R
 \name{custom_exposure}
 \alias{custom_exposure}
-\title{Pulls exposure series from Chicago NMMAPS data set}
+\title{Pull exposure series from data set}
 \usage{
-custom_exposure(n, df = dlnm::chicagoNMMAPS, central = NA,
-  metric = "temp")
+custom_exposure(n, df = dlnm::chicagoNMMAPS, metric = "temp",
+  start.date = NULL)
+}
+\arguments{
+\item{n}{A numeric value specifying the number of days for which to obtain an exposure value.}
+
+\item{df}{Data frame from which to pull exposure values.}
+
+\item{metric}{A character string specifying the desired exposure metric.
+Options are:
+\itemize{
+  \item"temp"
+  \item"dptp"
+  \item"rhum"
+  \item"pm10"
+  \item"o3"}}
+
+\item{start.date}{A date of the format "yyyy-mm-dd" from which to begin pulling exposure
+values.  Dates in the Chicago NMMAPS data set are from 1987-01-01 to 2000-12-31.}
+}
+\value{
+A numeric vector of exposure values
 }
 \description{
-Pulls exposure series from Chicago NMMAPS data set
+By default, this function pulls exposure data from the Chicago NMMAPS data set in the dlnm
+package.  The user may specify a different data set from which to pull exposure
+values.
 }
 \examples{
-custom_exposure(n = 5, metric = "temp")
+custom_exposure(n = 5, metric = "temp", start.date = "2000-01-01")
+
 }
 
