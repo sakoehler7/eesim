@@ -21,8 +21,10 @@ URL: http://github.com/sakoehler7/eesim
 BugReports: http://github.com/sakoehler7/eesim/issues
 Requires:
     dplyr,
+    lubridate,
     splines
 RoxygenNote: 5.0.1
-Suggests: knitr,
+Suggests: ggplot2,
+    knitr,
     rmarkdown
 VignetteBuilder: knitr
