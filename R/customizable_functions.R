@@ -229,11 +229,7 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
                                 average_outcome = average_outcome,
                                 trend = trend,
                                 amp = amp)
-<<<<<<< HEAD
-    lambda <- create_lambda(baseline,
-=======
     lambda <- create_lambda(baseline = baseline$baseline,
->>>>>>> 06ee894799c0765fbe2baebeef5b8b6a9c78e841
                             exposure = exposure$x,
                             rr = rr)
     outcome <- rpois(n = nrow(exposure), lambda = lambda)
