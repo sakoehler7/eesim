@@ -160,6 +160,9 @@ create_lambda <- function(baseline, exposure, rr, cust_lambda_func = NULL, ...){
   }
   return(lambda)
 }
+
+#' Simulate outcome
+#'
 #' @param cust_args A list of arguments and their values used in the user-specified custom functions
 #'
 #' @examples
@@ -169,7 +172,6 @@ create_lambda <- function(baseline, exposure, rr, cust_lambda_func = NULL, ...){
 #' cust_lambda_args = list(exposure = testexp$x, rr=1.02, constant = 4))
 #'
 #' @export
-
 sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
                         amp = .6, rr = 1.01, start.date="2000-01-01",
                         cust_base_func = NULL, cust_lambda_func = NULL,
@@ -185,7 +187,11 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
                                 average_outcome = average_outcome,
                                 trend = trend,
                                 amp = amp)
+<<<<<<< HEAD
     lambda <- create_lambda(baseline,
+=======
+    lambda <- create_lambda(baseline = baseline$baseline,
+>>>>>>> 06ee894799c0765fbe2baebeef5b8b6a9c78e841
                             exposure = exposure$x,
                             rr = rr)
     outcome <- rpois(n = nrow(exposure), lambda = lambda)
