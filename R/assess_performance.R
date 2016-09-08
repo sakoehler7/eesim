@@ -167,8 +167,7 @@ power_calc <- function(varying, values, plot = FALSE, ...){
   }
 
   if(plot == TRUE){
-    library(ggplot2)
-    my_plot <- ggplot(out, aes(x = x, y = power)) +
+    my_plot <- ggplot2::ggplot(out, ggplot2::aes(x = x, y = power)) +
       geom_line() + theme_minimal() +
       xlab(varying)
     print(my_plot)

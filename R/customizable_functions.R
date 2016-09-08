@@ -132,6 +132,7 @@ custom_baseline <- function(n, df = dlnm::chicagoNMMAPS, average_outcome = NA,
 #' to input a custom function if desired to specify outcome trend.
 #'
 #' @inheritParams sim_baseline
+#' @param ... optional arguments to a custom baseline function
 #' @param average_outcome A numeric value specifying the average outcome value
 #' @param cust_base_func A character string specifying a user-made custom function for
 #' baseline trend
@@ -172,6 +173,7 @@ create_baseline <- function(n, average_outcome, trend, amp, cust_base_func = NUL
 #' @param rr A numeric value specifying the relative risk
 #' @param cust_lambda_func A character string specifying a user-made custom function
 #' for relating baseline, relative risk, and exposure
+#' @param ... optional arguments for a custom lambda function
 #'
 #' @return A numeric vector of mean outcome values
 #'

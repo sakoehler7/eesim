@@ -20,6 +20,7 @@
 #'    Must be between 0 and 1.
 #' @param custom_func A character string specifying a customized function from
 #'    which to create a trend variable
+#' @param ... optional arguments to a custom trend function
 #'
 #' @return A numeric vector used to generate data with seasonal trends.
 #'
@@ -110,8 +111,7 @@ bin_t <- function(n, p, trend = "no trend", amp = .01, start.date = "2000-01-01"
   } else if (trend == "linear"){
     seasont <- ifelse(p*(1 + day/n) <1, p*(1+day/n), 1)
   } else if (trend == "monthly"){
-    require(lubridate)
-    months <- month(date)
+    months <- lubridate::month(date)
     seasont <- p[months]
   } else if (trend == "no trend"){
     seasont <- rep(p, n)
