@@ -15,6 +15,8 @@ create_lambda(baseline, exposure, rr, cust_lambda_func = NULL, ...)
 
 \item{cust_lambda_func}{A character string specifying a user-made custom function
 for relating baseline, relative risk, and exposure}
+
+\item{...}{optional arguments for a custom lambda function}
 }
 \value{
 A numeric vector of mean outcome values

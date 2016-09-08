@@ -14,6 +14,8 @@ data}
 
 \item{cust_base_func}{A character string specifying a user-made custom function for
 baseline trend}
+
+\item{...}{optional arguments to a custom baseline function}
 }
 \value{
 A numeric vector of baseline outcome values

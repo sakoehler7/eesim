@@ -34,7 +34,7 @@ mean_beta <- function(df){
 #' @export
 #'
 beta_var <- function(df){
-  var_across_betas <- var(df$Estimate)
+  var_across_betas <- stats::var(df$Estimate)
   mean_beta_var <- mean(df$Std.Error^2)
   out <- data.frame(var_across_betas, mean_beta_var)
   return(out)
@@ -169,7 +169,7 @@ power_calc <- function(varying, values, plot = FALSE, ...){
   if(plot == TRUE){
     my_plot <- ggplot2::ggplot(out, ggplot2::aes(x = x, y = power)) +
       geom_line() + theme_minimal() +
-      xlab(varying)
+      ggplot2::xlab(varying)
     print(my_plot)
   }
 

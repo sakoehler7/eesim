@@ -22,7 +22,7 @@ spline_mod <- function(df, df_year = 7){
                    family = stats::quasipoisson(link = "log"))
 
   out_1 <- summary(mod)$coef[2, ]
-  out_2 <- confint.default(mod)[2, ]
+  out_2 <- stats::confint.default(mod)[2, ]
   out <- c(out_1, out_2)
   return(out)
 }
@@ -51,22 +51,22 @@ casecross_mod <- function(df){
     df <- subset(df, stratum %in% informative.strata)
 
     if(length(informative.strata) > 1){
-      mod <- glm(outcome ~ x + stratum,
+      mod <- stats::glm(outcome ~ x + stratum,
                  data = df,
-                 family = quasipoisson(link = "log"))
+                 family = stats::quasipoisson(link = "log"))
     } else {
-      mod <- glm(outcome ~ x,
+      mod <- stats::glm(outcome ~ x,
                  data = df,
-                 family = quasipoisson(link = "log"))
+                 family = stats::quasipoisson(link = "log"))
     }
   } else {
-    mod <- glm(outcome ~ x + stratum,
+    mod <- stats::glm(outcome ~ x + stratum,
                data = df,
-               family = quasipoisson(link = "log"))
+               family = stats::quasipoisson(link = "log"))
   }
 
   out_1 <- summary(mod)$coef[2, ]
-  out_2 <- confint.default(mod)[2, ]
+  out_2 <- stats::confint.default(mod)[2, ]
   out <- c(out_1, out_2)
   return(out)
 }
@@ -96,18 +96,18 @@ crossyear_mod <- function(df){
     df <- subset(df, stratum %in% informative.strata)
 
     if(length(informative.strata) > 1){
-      mod <- glm(y ~ x + stratum,
+      mod <- stats::glm(y ~ x + stratum,
                  data = df,
-                 family = quasipoisson(link = "log"))
+                 family = stats::quasipoisson(link = "log"))
     } else {
-      mod <- glm(y ~ x,
+      mod <- stats::glm(y ~ x,
                  data = df,
-                 family = quasipoisson(link = "log"))
+                 family = stats::quasipoisson(link = "log"))
     }
   } else {
-    mod <- glm(y ~ x + stratum,
+    mod <- stats::glm(y ~ x + stratum,
                data = df,
-               family = quasipoisson(link = "log"))
+               family = stats::quasipoisson(link = "log"))
   }
 
   out_1 <- summary(mod)$coef[2, ]

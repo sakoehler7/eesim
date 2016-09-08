@@ -234,14 +234,14 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
     lambda <- create_lambda(baseline = baseline$baseline,
                             exposure = exposure$x,
                             rr = rr)
-    outcome <- rpois(n = nrow(exposure), lambda = lambda)
+    outcome <- stats::rpois(n = nrow(exposure), lambda = lambda)
   }
   else if (is.null(cust_lambda_func) & !is.null(cust_base_func)){
     baseline <- do.call(cust_base_func, cust_base_args)
     lambda <- create_lambda(baseline = baseline,
                             exposure = exposure$x,
                             rr = rr)
-    outcome <- rpois(n = nrow(exposure), lambda = lambda)
+    outcome <- stats::rpois(n = nrow(exposure), lambda = lambda)
   }
   else if (is.null(cust_base_func) & !is.null(cust_lambda_func)){
     baseline <- create_baseline(n = nrow(exposure),
@@ -250,13 +250,13 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
                                 amp = amp)
     cust_lambda_args$baseline <- baseline
     lambda <- do.call(cust_lambda_func, cust_lambda_args)
-    outcome <- rpois(n = nrow(exposure), lambda = lambda)
+    outcome <- stats::rpois(n = nrow(exposure), lambda = lambda)
   }
   else {
     baseline <- do.call(cust_base_func, cust_base_args)
     cust_lambda_args$baseline <- baseline
     lambda <- do.call(cust_lambda_func, cust_lambda_args)
-    outcome <- rpois(n = nrow(exposure), lambda = lambda)
+    outcome <- stats::rpois(n = nrow(exposure), lambda = lambda)
   }
   df <- data.frame(date, x = exposure$x, outcome)
   return(df)

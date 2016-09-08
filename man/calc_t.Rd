@@ -27,6 +27,8 @@ Must be between 0 and 1.}
 
 \item{custom_func}{A character string specifying a customized function from
 which to create a trend variable}
+
+\item{...}{optional arguments to a custom trend function}
 }
 \value{
 A numeric vector used to generate data with seasonal trends.

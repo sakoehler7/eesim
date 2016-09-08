@@ -32,6 +32,8 @@ simulating daily exposures}
 
 \item{custom_func}{A character string specifying a customized function from
 which to create a trend variable}
+
+\item{...}{optional arguments to a custom trend function}
 }
 \value{
 A data frame with the dates and daily exposure values from n days

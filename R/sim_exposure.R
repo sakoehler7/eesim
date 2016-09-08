@@ -146,7 +146,7 @@ bin_t <- function(n, p, trend = "no trend", amp = .01, start.date = "2000-01-01"
 binary_exposure <- function(n, p, trend = "no trend", amp,
                             start.date = "2000-01-01", custom_func = NULL, ...){
   t <- bin_t(n=n, p=p, trend = trend, amp = amp, start.date = start.date, custom_func = custom_func)
-  x <- rbinom(length(t), size = 1, prob = t)
+  x <- stats::rbinom(length(t), size = 1, prob = t)
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
   df <- data.frame(date, x)
@@ -174,7 +174,7 @@ continuous_exposure <- function(n, mu, sd=1, trend = "no trend", amp = .6, start
   date <- seq(from = start.date, by = 1, length.out = n)
   t <- calc_t(n, trend, amp, start.date, ...)
   newmu <- mu * t
-  x <- rnorm(n, newmu, sd)
+  x <- stats::rnorm(n, newmu, sd)
   df <- data.frame(date, x)
   return(df)
 }

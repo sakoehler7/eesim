@@ -33,6 +33,8 @@ Choices are "binary" or "continuous".}
 
 \item{amp}{A numeric value specifying the amplitude of the seasonal trend.
 Must be between 0 and 1.}
+
+\item{...}{optional arguments to a custom trend function}
 }
 \value{
 A data frame with the dates and daily exposure values from n days
