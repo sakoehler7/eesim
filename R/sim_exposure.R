@@ -88,8 +88,8 @@ calc_t <- function(n, trend = "no trend", amp = .6, custom_func = NULL, ...){
 #'
 #' @export
 #'
-bin_t <- function(n, p, trend = "no trend", amp = .01, start.date = "2000-01-01",
-                  custom_func = NULL,...){
+bin_t <- function(n, p, trend = "no trend", amp = .01,
+                  start.date = "2000-01-01", custom_func = NULL,...){
   day <- c(1:n)
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
@@ -138,14 +138,16 @@ bin_t <- function(n, p, trend = "no trend", amp = .01, start.date = "2000-01-01"
 #' @return A data frame with the dates and daily exposure values from n days
 #'
 #' @examples
-#' binary_exposure(n = 5, p = 0.1, trend = "cos1", amp = .02, start.date = "2001-02-01")
+#' binary_exposure(n = 5, p = 0.1, trend = "cos1", amp = .02,
+#'                 start.date = "2001-02-01")
 #'
 #'
 #' @export
 #'
 binary_exposure <- function(n, p, trend = "no trend", amp,
                             start.date = "2000-01-01", custom_func = NULL, ...){
-  t <- bin_t(n=n, p=p, trend = trend, amp = amp, start.date = start.date, custom_func = custom_func)
+  t <- bin_t(n=n, p=p, trend = trend, amp = amp, start.date = start.date,
+             custom_func = custom_func)
   x <- stats::rbinom(length(t), size = 1, prob = t)
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
@@ -159,7 +161,8 @@ binary_exposure <- function(n, p, trend = "no trend", amp,
 #' seasonal trend.
 #'
 #' @param mu A numeric value giving the mean exposure.
-#' @param sd A numeric value giving the standard deviation of the exposure values around the trend line.
+#' @param sd A numeric value giving the standard deviation of the exposure
+#'    values around the trend line.
 #' @inheritParams calc_t
 #'
 #' @return A data frame with the dates and daily exposure values from n days
@@ -168,7 +171,8 @@ binary_exposure <- function(n, p, trend = "no trend", amp,
 #' continuous_exposure(n = 5, mu = 100, sd = 10, trend = "cos1")
 #'
 #' @export
-continuous_exposure <- function(n, mu, sd=1, trend = "no trend", amp = .6, start.date = "2000-01-01", ...){
+continuous_exposure <- function(n, mu, sd=1, trend = "no trend", amp = .6,
+                                start.date = "2000-01-01", ...){
   day <- c(1:n)
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
@@ -204,11 +208,13 @@ std_exposure <- function(n, central, sd = NULL, trend = "no trend",
                          start.date = "2000-01-01", ...){
   if(exposure_type=="binary"){
     p <- central
-    df <- binary_exposure(n=n, p=p, trend=trend, amp=amp, start.date=start.date, ...)
+    df <- binary_exposure(n=n, p=p, trend=trend, amp=amp, start.date=start.date,
+                          ...)
   }
   else if(exposure_type == "continuous"){
     mu <- central
-    df <- continuous_exposure(n=n, mu=mu, sd =sd, trend=trend, amp=amp, start.date=start.date, ...)
+    df <- continuous_exposure(n=n, mu=mu, sd =sd, trend=trend, amp=amp,
+                              start.date=start.date, ...)
   }
   return(df)
 }
@@ -233,7 +239,8 @@ std_exposure <- function(n, central, sd = NULL, trend = "no trend",
 #'
 #' @export
 #'
-sim_baseline <- function(n, lambda, trend = "no trend", amp = .6, start.date = "2000-01-01"){
+sim_baseline <- function(n, lambda, trend = "no trend", amp = .6,
+                         start.date = "2000-01-01"){
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
   t <- calc_t(n = n, trend = trend, amp = amp)

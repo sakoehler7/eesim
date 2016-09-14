@@ -1,10 +1,11 @@
 #' Pull exposure series from data set
 #'
-#' By default, this function pulls exposure data from the Chicago NMMAPS data set in the dlnm
-#' package.  The user may specify a different data set from which to pull exposure
-#' values.
+#' By default, this function pulls exposure data from the Chicago NMMAPS data
+#' set in the dlnm package.  The user may specify a different data set from
+#' which to pull exposure values.
 #'
-#' @param n A numeric value specifying the number of days for which to obtain an exposure value.
+#' @param n A numeric value specifying the number of days for which to obtain an
+#'    exposure value.
 #' @param df Data frame from which to pull exposure values.
 #' @param metric A character string specifying the desired exposure metric.
 #'    Options are:
@@ -14,8 +15,9 @@
 #'      \item"rhum"
 #'      \item"pm10"
 #'      \item"o3"}
-#' @param start.date A date of the format "yyyy-mm-dd" from which to begin pulling exposure
-#' values.  Dates in the Chicago NMMAPS data set are from 1987-01-01 to 2000-12-31.
+#' @param start.date A date of the format "yyyy-mm-dd" from which to begin
+#'    pulling exposure values. Dates in the Chicago NMMAPS data set are from
+#'    1987-01-01 to 2000-12-31.
 #'
 #' @return A numeric vector of exposure values
 #'
@@ -23,7 +25,8 @@
 #' custom_exposure(n = 5, metric = "temp", start.date = "2000-01-01")
 #'
 #' @export
-custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, metric = "temp", start.date = NULL){
+custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, metric = "temp",
+                            start.date = NULL){
   if(!is.null(start.date)){
     date1 <- which(df$date==start.date)
     enddate <- date1+n
@@ -37,11 +40,13 @@ custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, metric = "temp", start.
 
 #' Simulate random series of exposure values
 #'
-#' This function simulates binary or continuous exposure values with or without seasonal trends.
-#' It also allows for a custom function for exposure trend.
+#' This function simulates binary or continuous exposure values with or without
+#' seasonal trends. It also allows for a custom function for exposure trend.
 #'
-#' @param cust_exp_function The name of a function from which to generate custom exposure values
-#' @param cust_exp_args A list of arguments used in the user-specified custom function
+#' @param cust_exp_function The name of a function from which to generate custom
+#'    exposure values
+#' @param cust_exp_args A list of arguments used in the user-specified custom
+#'    function
 #' @inheritParams std_exposure
 #'
 #' @return A data frame with two columns: date and exposure values
@@ -54,8 +59,8 @@ custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, metric = "temp", start.
 #'                     cust_exp_args = list(metric = "temp"))
 #'
 #' @export
-sim_exposure <- function(n, central = NULL, sd=NULL, trend = "no trend", amp = .6,
-                         exposure_type = NULL,
+sim_exposure <- function(n, central = NULL, sd=NULL, trend = "no trend",
+                         amp = .6, exposure_type = NULL,
                          start.date = "2001-01-01", cust_exp_func = NULL,
                          cust_exp_args = NULL){
   if(is.null(cust_exp_args)){
@@ -67,7 +72,8 @@ sim_exposure <- function(n, central = NULL, sd=NULL, trend = "no trend", amp = .
 
   if(is.null(cust_exp_func)){
     if(is.null(central)){
-      stop(paste0("If a custom function is not used to generate exposure values, a central value must be specified."))
+      stop(paste0("If a custom function is not used to generate exposure values,
+                  a central value must be specified."))
     }
     arguments$central <- central
     arguments$trend <- trend
@@ -95,8 +101,8 @@ sim_exposure <- function(n, central = NULL, sd=NULL, trend = "no trend", amp = .
 #' Pull smoothed Chicago NMMAPS health outcome data
 #'
 #' By default, this function pulls smoothed data from the chicagoNMMAPS data set
-#' in the dlnm package.  The user may also input a different data set from which to pull
-#' data.
+#' in the dlnm package.  The user may also input a different data set from which
+#'    to pull data.
 #'
 #' @inheritParams custom_exposure
 #' @inheritParams std_exposure
@@ -107,7 +113,8 @@ sim_exposure <- function(n, central = NULL, sd=NULL, trend = "no trend", amp = .
 #'      \item"cvd"
 #'      \item"resp"}
 #'
-#' @return A data frame with one column for date and one column for baseline outcome values
+#' @return A data frame with one column for date and one column for baseline
+#'    outcome values
 #'
 #' @examples
 #' custom_baseline(n = 5)
@@ -128,14 +135,14 @@ custom_baseline <- function(n, df = dlnm::chicagoNMMAPS, average_outcome = NA,
 
 #' Create a series of baseline outcomes
 #'
-#' This function creates a time series of baseline outcome values and allows the user
-#' to input a custom function if desired to specify outcome trend.
+#' This function creates a time series of baseline outcome values and allows the
+#' user to input a custom function if desired to specify outcome trend.
 #'
 #' @inheritParams sim_baseline
 #' @param ... optional arguments to a custom baseline function
 #' @param average_outcome A numeric value specifying the average outcome value
-#' @param cust_base_func A character string specifying a user-made custom function for
-#' baseline trend
+#' @param cust_base_func A character string specifying a user-made custom
+#'    function for baseline trend
 #'
 #' @return A numeric vector of baseline outcome values
 #'
@@ -146,8 +153,8 @@ custom_baseline <- function(n, df = dlnm::chicagoNMMAPS, average_outcome = NA,
 #'
 #' @export
 #'
-create_baseline <- function(n, average_outcome, trend, amp, cust_base_func = NULL,
-                            ...){
+create_baseline <- function(n, average_outcome, trend, amp,
+                            cust_base_func = NULL, ...){
   if(is.null(cust_base_func)){
     lambda <- average_outcome
     baseline <- sim_baseline(n=n, lambda=lambda, trend=trend, amp=amp)
@@ -165,14 +172,15 @@ create_baseline <- function(n, average_outcome, trend, amp, cust_base_func = NUL
 #'
 #' This function relates exposure to baseline outcome values with the function
 #' lambda = log(baseline) + log(relative risk)*exposure to create a series
-#' of mean outcome values with or without incorporating a seasonal trend.  The user
-#' may input a custom function to relate exposure, relative risk, and baseline.
+#' of mean outcome values with or without incorporating a seasonal trend.  The
+#' user may input a custom function to relate exposure, relative risk, and
+#' baseline.
 #'
 #' @param baseline A numeric vector of baseline outcome values
 #' @param exposure A numeric vector of exposure values
 #' @param rr A numeric value specifying the relative risk
-#' @param cust_lambda_func A character string specifying a user-made custom function
-#' for relating baseline, relative risk, and exposure
+#' @param cust_lambda_func A character string specifying a user-made custom
+#'    function for relating baseline, relative risk, and exposure
 #' @param ... optional arguments for a custom lambda function
 #'
 #' @return A numeric vector of mean outcome values
@@ -199,11 +207,11 @@ create_lambda <- function(baseline, exposure, rr, cust_lambda_func = NULL, ...){
 #' Simulate outcome
 #'
 #' @param cust_lamba_args A list of arguments and their values used in the
-#' user-specified custom lambda function
-#' @param cust_base_args A list of arguments and their values used in the user-specified
-#' custom baseline function
+#'    user-specified custom lambda function
+#' @param cust_base_args A list of arguments and their values used in the
+#'    user-specified custom baseline function
 #' @param start.date A date of the format "yyyy-mm-dd" from which to begin
-#' simulating values
+#'    simulating values
 #' @inheritParams create_baseline
 #' @inheritParams create_lambda
 #'
@@ -212,8 +220,9 @@ create_lambda <- function(baseline, exposure, rr, cust_lambda_func = NULL, ...){
 #' @examples
 #' sim_outcome(exposure, cust_base_func = custombase,
 #' cust_base_args = list(n=nrow(exposure), slope = .2, intercept = 55))
-#' sim_outcome(exposure, p, average_outcome = 22, cust_lambda_func = customlambda,
-#' cust_lambda_args = list(exposure = testexp$x, rr=1.02, constant = 4))
+#' sim_outcome(exposure, p, average_outcome = 22, cust_lambda_func =
+#'             customlambda, cust_lambda_args = list(exposure = testexp$x,
+#'             rr=1.02, constant = 4))
 #'
 #' @export
 sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
@@ -264,36 +273,44 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
 
 #' Create simulated data for many repetitions
 #'
-#' @param A character string specifying the model to be used.  Options are "spline" and "casecrossover"
+#' @param A character string specifying the model to be used.  Options are
+#'    "spline" and "casecrossover"
 #'
 #' @return A list resulting from repetitions of simulations with data frames
-#' for date, exposure, and outcomes, and estimates from fitting models
+#'    for date, exposure, and outcomes, and estimates from fitting models
 #'
 #' @examples
-#' create_sims(n_reps=10, n=10, central = 100, sd = 10, exposure_type="continuous",
-#' exposure_trend = "cos1", exposure_amp = .6, average_outcome = 22, outcome_trend = "no trend",
-#' outcome_amp = .6, rr = 1.01)
+#' create_sims(n_reps=10, n=10, central = 100, sd = 10,
+#'             exposure_type="continuous", exposure_trend = "cos1",
+#'             exposure_amp = .6, average_outcome = 22,
+#'             outcome_trend = "no trend", outcome_amp = .6, rr = 1.01)
 #'
-#'
-create_sims <- function(n_reps, n, central, sd, exposure_type, exposure_trend, exposure_amp,
-                  average_outcome, outcome_trend, outcome_amp, rr, start.date = "2000-01-01",
-                  cust_exp_func = NULL, cust_exp_args = NULL, cust_base_func = NULL,
-                  cust_lambda_func = NULL, cust_base_args = NULL, cust_lambda_args = NULL){
-  exposure <- lapply(rep(n, times = n_reps), sim_exposure, central = central, sd = sd,
-                     exposure_type = exposure_type, amp = exposure_amp, trend = exposure_trend,
-                     start.date = start.date, cust_exp_func = cust_exp_func,
+create_sims <- function(n_reps, n, central, sd, exposure_type, exposure_trend,
+                        exposure_amp, average_outcome, outcome_trend,
+                        outcome_amp, rr, start.date = "2000-01-01",
+                        cust_exp_func = NULL, cust_exp_args = NULL,
+                        cust_base_func = NULL, cust_lambda_func = NULL,
+                        cust_base_args = NULL, cust_lambda_args = NULL){
+  exposure <- lapply(rep(n, times = n_reps), sim_exposure, central = central,
+                     sd = sd, exposure_type = exposure_type, amp = exposure_amp,
+                     trend = exposure_trend, start.date = start.date,
+                     cust_exp_func = cust_exp_func,
                      cust_exp_args = cust_exp_args)
   outcome <- lapply(exposure, sim_outcome, average_outcome = average_outcome,
-                    trend = outcome_trend, amp = outcome_amp, rr = rr, start.date = start.date,
-                    cust_base_func = cust_base_func, cust_lambda_func = cust_lambda_func,
-                    cust_base_args = cust_base_args, cust_lambda_args = cust_lambda_args)
+                    trend = outcome_trend, amp = outcome_amp, rr = rr,
+                    start.date = start.date, cust_base_func = cust_base_func,
+                    cust_lambda_func = cust_lambda_func,
+                    cust_base_args = cust_base_args,
+                    cust_lambda_args = cust_lambda_args)
   return(outcome)
 }
 
 #' Fit models
 #'
-#' @param outcome A list of simulated data sets which each include columns called "x" and "outcome"
-#' @param model A character string specifying model to be used.  Choices are "spline" and "casecrossover"
+#' @param outcome A list of simulated data sets which each include columns
+#'    called "x" and "outcome"
+#' @param model A character string specifying model to be used. Choices are
+#'    "spline" and "casecrossover"
 #'
 #' @export
 fit_mods <- function(outcome, model, df_year = 7){
@@ -304,30 +321,41 @@ fit_mods <- function(outcome, model, df_year = 7){
     mods <- lapply(outcome, casecross_mod)
   }
   datframe <- data.frame(do.call("rbind", mods))
-  names(datframe) <- c("Estimate", "Std.Error", "t.value", "p.value", "lower_ci", "upper_ci")
+  names(datframe) <- c("Estimate", "Std.Error", "t.value", "p.value",
+                       "lower_ci", "upper_ci")
   return(datframe)
 }
 
 #' Wrapper to do Everything
 #'
-#' This function generates exposures and outcomes, fits models, and evaluates them for many repetitions
+#' This function generates exposures and outcomes, fits models, and evaluates
+#' them for many repetitions
 #'
 #' @examples
-#' eesim(n_reps = 3, n = 50, central = 100, sd = 10, exposure_type = "continuous",
-#' exposure_trend = "cos3", exposure_amp = .6, average_outcome = 22, rr = 1.01,
-#' model = "spline", df_year = 5)
+#' eesim(n_reps = 3, n = 50, central = 100, sd = 10,
+#'       exposure_type = "continuous", exposure_trend = "cos3",
+#'       exposure_amp = .6, average_outcome = 22, rr = 1.01, model = "spline",
+#'       df_year = 5)
 #'
 #' @export
 #'
-eesim <- function(n_reps, n, central, sd, exposure_type, exposure_trend, exposure_amp,
-                  average_outcome, outcome_trend = "no trend", outcome_amp, rr, start.date = "2000-01-01",
-                  cust_exp_func = NULL, cust_exp_args = NULL, cust_base_func = NULL,
-                  cust_lambda_func = NULL, cust_base_args = NULL, cust_lambda_args = NULL,
-                  model, df_year = NULL){
-  datasims <- create_sims(n_reps=n_reps, n=n, central=central, sd=sd, exposure_type=exposure_type, exposure_trend=exposure_trend, exposure_amp=exposure_amp,
-                          average_outcome=average_outcome, outcome_trend=outcome_trend, outcome_amp=outcome_amp, rr=rr, start.date = "2000-01-01",
-                          cust_exp_func = NULL, cust_exp_args = NULL, cust_base_func = NULL,
-                          cust_lambda_func = NULL, cust_base_args = NULL, cust_lambda_args = NULL)
+eesim <- function(n_reps, n, central, sd, exposure_type, exposure_trend,
+                  exposure_amp, average_outcome, outcome_trend = "no trend",
+                  outcome_amp, rr, start.date = "2000-01-01",
+                  cust_exp_func = NULL, cust_exp_args = NULL,
+                  cust_base_func = NULL, cust_lambda_func = NULL,
+                  cust_base_args = NULL, cust_lambda_args = NULL, model,
+                  df_year = NULL){
+  datasims <- create_sims(n_reps=n_reps, n=n, central=central, sd=sd,
+                          exposure_type=exposure_type,
+                          exposure_trend=exposure_trend,
+                          exposure_amp=exposure_amp,
+                          average_outcome=average_outcome,
+                          outcome_trend=outcome_trend, outcome_amp=outcome_amp,
+                          rr=rr, start.date = "2000-01-01",
+                          cust_exp_func = NULL, cust_exp_args = NULL,
+                          cust_base_func = NULL, cust_lambda_func = NULL,
+                          cust_base_args = NULL, cust_lambda_args = NULL)
   mods <- fit_mods(datasims, model, df_year)
   check <- check_sims(df = mods, true_rr = rr)
   totalsims <- list(datasims, mods, check)
