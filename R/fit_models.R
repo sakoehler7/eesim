@@ -9,8 +9,10 @@
 #'    exposure
 #'
 #' @examples
-#' df <- constant_baseline(n = 600, lambda = 100)
-#' spline_mod(df)
+#' exp <- sim_exposure(n = 500, central = 100, sd = 10, trend = "cos1",
+#'                     amp = .6, exposure_type = "continuous")
+#' out <- sim_outcome(exposure = exp, average_outcome = 22, rr = 1.01)
+#' spline_mod(df = out)
 #'
 #' @export
 #'
@@ -37,7 +39,7 @@ spline_mod <- function(df, df_year = 7){
 #'    exposure
 #'
 #' @examples
-#' casecross_mod(df)
+#' casecross_mod(df = out)
 #'
 #' @export
 #'
@@ -81,7 +83,7 @@ casecross_mod <- function(df){
 #'    exposure
 #'
 #' @examples
-#' crossyear_mod(df)
+#' crossyear_mod(df = out)
 #'
 #' @export
 #'
@@ -113,42 +115,5 @@ crossyear_mod <- function(df){
   out_1 <- summary(mod)$coef[2, ]
   out_2 <- confint.default(mod)[2, ]
   out <- c(out_1, out_2)
-  return(out)
-}
-
-#' Run simulations
-#'
-#' This function runs many simulations for a given dataset and model.
-#'
-#' @param n_sims A numeric value specifying the number of repetitions of the
-#'    simulation to run
-#' @param model A character string specifying which model to use.  Options
-#'    include "spline_mod" and "casecross_mod"
-#' @param n A numeric value specifying the number of days for which to simulate
-#'    data
-#' @param rr A numeric value specifying the relative risk for each 1-unit
-#'    increase in exposure
-#' @param x_type A character string specifying the type of exposure data.
-#'    Options are "binary" and "continuous".
-#' @inheritParams continuous_exposure
-#' @inheritParams binary_exposure
-#'
-#' @return A data frame with the summaries of the estimate of the log relative
-#'    risk for each simulation run
-#'
-#' @examples
-#' rep_sims(n_sims = 3, model = "spline_mod")
-#'
-#' @export
-#'
-rep_sims <- function(n_sims, model, n = 5 * 365, rr = 1.01,
-                     x_type = "continuous", mu = 10, sd = 2, lambda = 100){
-  out <- replicate(n_sims, eval(call(model,
-                                     sim_data(n = n, rr = rr,
-                                              x_type = x_type,
-                                              mu = mu, sd = sd,
-                                              lambda = lambda))))
-  out <- as.data.frame(t(out))
-  names(out) <- c("est", "se", "t", "p", "lower_ci", "upper_ci")
   return(out)
 }
