@@ -247,7 +247,7 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
   }
   else if (is.null(cust_lambda_func) & !is.null(cust_base_func)){
     baseline <- do.call(cust_base_func, cust_base_args)
-    lambda <- create_lambda(baseline = baseline$baseline,
+    lambda <- create_lambda(baseline = baseline,
                             exposure = exposure$x,
                             rr = rr)
     outcome <- stats::rpois(n = nrow(exposure), lambda = lambda)
