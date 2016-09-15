@@ -1,17 +1,15 @@
 #' Average Estimated Coefficient
 #'
-#' This function gives the mean value of the \eqn{\hat{\beta}}s and the mean
-#' estimated relative risk over the n simulations.
+#' This function gives the mean value of the \eqn{\hat{\beta}}s and the mean estimated
+#' relative risk over the n simulations.
 #'
-#' @param df A data frame of replicated simulations which must include a column
-#'    titled "Estimate"
+#' @param df A data frame of replicated simulations which must include a column titled "Estimate"
 #'
 #' @return A data frame with the mean estimated coefficient and mean estimated
 #'    relative risk
 #'
 #' @examples
-#' mod <- spline_mod(df = out)
-#' mean_beta(df=mod)
+#' mean_beta(df)
 #'
 #' @export
 #'
