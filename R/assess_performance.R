@@ -6,7 +6,8 @@
 #' @param df A data frame of replicated simulations which must include a column
 #'    titled "Estimate"
 #'
-#' @return A data frame with the mean estimated coefficient and mean estimated relative risk
+#' @return A data frame with the mean estimated coefficient and mean estimated
+#'    relative risk
 #'
 #' @examples
 #' mod <- spline_mod(df = out)
@@ -23,11 +24,11 @@ mean_beta <- function(df){
 #'
 #' Standard Deviation of Estimated Coefficients
 #'
-#' This function gives the variance of the point estimates of $\hat{\beta}$ over the n simulations
-#' and the mean of the variances of each $\hat{\beta}$.
+#' This function gives the variance of the point estimates of $\hat{\beta}$ over
+#' the n simulations and the mean of the variances of each $\hat{\beta}$.
 #'
 #' @param df A data frame of replicated simulations which must include columns
-#'    titled "est" and "se".
+#'    titled "Estimate" and "Std.Error".
 #'
 #' @return A data frame of the variance across all values of \eqn{\hat{\beta}}
 #'    and the mean variance of the $\hat{\beta}$s
@@ -51,7 +52,8 @@ beta_var <- function(df){
 #' @inheritParams mean_beta
 #' @param true_rr The true relative risk used to simulate your data
 #'
-#' @return The percent bias of the mean of the estimated coefficients over n simulations
+#' @return The percent bias of the mean of the estimated coefficients over n
+#'    simulations
 #'
 #' @examples
 #' beta_bias(df, true_rr = 1.02)
@@ -68,10 +70,12 @@ beta_bias <- function(df, true_rr){
 #'
 #' This function gives the percent coverage of the true coefficient.
 #'
-#' @param df A data frame of replicated simulations which must include columns titled "lower_ci" and "upper_ci"
+#' @param df A data frame of replicated simulations which must include columns
+#'    titled "lower_ci" and "upper_ci"
 #' @param true_rr The true relative risk used to simulate your data
 #'
-#' @return The percent of confidence intervals for the estimated relative risk over n simulations which include the true relative risk
+#' @return The percent of confidence intervals for the estimated relative risk
+#'    over n simulations which include the true relative risk
 #'
 #' @examples
 #' coverage_beta(df, true_rr = 1.02)
@@ -91,7 +95,7 @@ coverage_beta <- function(df, true_rr){
 #'
 #' @inheritParams coverage_beta
 #'
-#' @return Power at 5% significance level
+#' @return Power at the 5% significance level
 #'
 #' @examples
 #' power_beta(df)
@@ -110,8 +114,8 @@ power_beta <- function(df){
 #'
 #' @inheritParams beta_bias
 #'
-#' @return Mean beta estimate, mean relative risk estimate, variance across betas, mean variance of
-#' the estimates, percent bias, coverage, and power.
+#' @return Mean beta estimate, mean relative risk estimate, variance across
+#'    betas, mean variance of the estimates, percent bias, coverage, and power.
 #'
 #' @examples
 #' check_sims(df, true_rr = 1.02)
@@ -137,17 +141,21 @@ check_sims <- function(df, true_rr){
 #'
 #' This function gives the power for a model with varying parameters.
 #'
-#' @param varying A character string of the parameter to be varied.  Choices are "n", "rr", or "lambda".
-#' @param values A numeric vector of the chosen values of the varying parameters.
+#' @param varying A character string of the parameter to be varied.  Choices are
+#'    "n", "rr", or "lambda"
+#' @param values A numeric vector of the chosen values of the varying parameters
 #' @param plot "TRUE" or "FALSE" for whether to produce a plot
 #' @inheritParams rep_sims
 #' @inheritParams power_beta
 #'
-#' @return Data fram with the value of the varying parameter and its corresponding power
+#' @return Data fram with the value of the varying parameter and its
+#'    corresponding power
 #'
 #' @examples
-#' power_calc(varying = "n", values = c(50 * (1:5)), n_sims = 50, model = "spline_mod", rr = 1.02)
-#' power_calc(varying = "rr", values = c(1.002, 1.005, 1.01, 1.02, 1.03, 1.05, 1.1), n_sims = 100, model = "spline_mod", n = 365, plot = TRUE)
+#' power_calc(varying = "n", values = c(50 * (1:5)), n_sims = 50,
+#'            model = "spline_mod", rr = 1.02)
+#' power_calc(varying = "rr", values = c(1.002, 1.005, 1.01, 1.02, 1.03, 1.05,
+#'            1.1), n_sims = 100, model = "spline_mod", n = 365, plot = TRUE)
 #'
 #' @export
 #'
