@@ -285,6 +285,8 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
 #'             exposure_amp = .6, average_outcome = 22,
 #'             outcome_trend = "no trend", outcome_amp = .6, rr = 1.01)
 #'
+#' @export
+#'
 create_sims <- function(n_reps, n, central, sd, exposure_type, exposure_trend,
                         exposure_amp, average_outcome, outcome_trend,
                         outcome_amp, rr, start.date = "2000-01-01",
@@ -311,6 +313,18 @@ create_sims <- function(n_reps, n, central, sd, exposure_type, exposure_trend,
 #'    called "x" and "outcome"
 #' @param model A character string specifying model to be used. Choices are
 #'    "spline" and "casecrossover"
+#' @inheritParams spline_mod
+#'
+#' @return A data frame in which each row includes an estimate of beta hat,
+#'    standard error, t-value, p-value, and 2.5% and 97.5% confidence bounds
+#'    for each repetition of the simulation
+#'
+#' @examples
+#' sims <- create_sims(n_reps=10, n=50, central = 100, sd = 10,
+#'             exposure_type="continuous", exposure_trend = "cos1",
+#'             exposure_amp = .6, average_outcome = 22,
+#'             outcome_trend = "no trend", outcome_amp = .6, rr = 1.01)
+#' fit_mods(outcome = sims, model = "spline")
 #'
 #' @export
 fit_mods <- function(outcome, model, df_year = 7){
@@ -326,10 +340,16 @@ fit_mods <- function(outcome, model, df_year = 7){
   return(datframe)
 }
 
-#' Wrapper to do Everything
+#' Simulate data, fit models, and assess models
 #'
 #' This function generates exposures and outcomes, fits models, and evaluates
-#' them for many repetitions
+#' them for many simulation repetitions
+#'
+#' @inheritParams create_sims
+#' @inheritParams sim_outcome
+#'
+#' @return A list object with summaries of each model fitted on the simulated
+#'    data sets and measures of model evaluation including coverage and power
 #'
 #' @examples
 #' eesim(n_reps = 3, n = 50, central = 100, sd = 10,
@@ -358,7 +378,7 @@ eesim <- function(n_reps, n, central, sd, exposure_type, exposure_trend,
                           cust_base_args = NULL, cust_lambda_args = NULL)
   mods <- fit_mods(datasims, model, df_year)
   check <- check_sims(df = mods, true_rr = rr)
-  totalsims <- list(datasims, mods, check)
+  totalsims <- list(mods, check)
   return(totalsims)
 }
 
