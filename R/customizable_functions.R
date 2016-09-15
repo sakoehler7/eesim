@@ -192,7 +192,7 @@ create_baseline <- function(n, average_outcome, trend, amp,
 
 create_lambda <- function(baseline, exposure, rr, cust_lambda_func = NULL, ...){
   if(is.null(cust_lambda_func)){
-    log_lambda <- log(baseline) + log(rr) * exposure
+    log_lambda <- log(baseline$baseline) + log(rr) * exposure
     lambda <- exp(log_lambda)
   } else {
     arguments <- list(...)
@@ -219,7 +219,7 @@ create_lambda <- function(baseline, exposure, rr, cust_lambda_func = NULL, ...){
 #'
 #' @examples
 #' sim_outcome(exposure, cust_base_func = custombase,
-#' cust_base_args = list(n=nrow(exposure), slope = .2, intercept = 55))
+#'    cust_base_args = list(n=nrow(exposure), slope = .2, intercept = 55))
 #' sim_outcome(exposure, p, average_outcome = 22, cust_lambda_func =
 #'             customlambda, cust_lambda_args = list(exposure = testexp$x,
 #'             rr=1.02, constant = 4))
@@ -247,7 +247,7 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
   }
   else if (is.null(cust_lambda_func) & !is.null(cust_base_func)){
     baseline <- do.call(cust_base_func, cust_base_args)
-    lambda <- create_lambda(baseline = baseline,
+    lambda <- create_lambda(baseline = baseline$baseline,
                             exposure = exposure$x,
                             rr = rr)
     outcome <- stats::rpois(n = nrow(exposure), lambda = lambda)
@@ -257,7 +257,7 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
                                 average_outcome = average_outcome,
                                 trend = trend,
                                 amp = amp)
-    cust_lambda_args$baseline <- baseline
+    cust_lambda_args$baseline <- baseline$baseline
     lambda <- do.call(cust_lambda_func, cust_lambda_args)
     outcome <- stats::rpois(n = nrow(exposure), lambda = lambda)
   }
