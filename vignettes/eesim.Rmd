@@ -97,6 +97,12 @@ smallamp <- sim_exposure(n=1000, central = 50, sd = 5, trend = "cos1linear",
 qplot(smallamp$date, smallamp$x)+geom_point()+coord_cartesian(ylim = c(0,110))
 ```
 
+Here is an example of generating binary exposure data with a "monthly" trend:
+
+```{r}
+testbin <- sim_exposure(n=400, central = c(.1,.1,.2,.3,.4,.4,.5,.6,.5,.3,.2,.1), trend = "monthly", exposure_type = "binary")
+qplot(testbin$date, testbin$x)+geom_point()
+```
 
 ## Comparing two models
 
