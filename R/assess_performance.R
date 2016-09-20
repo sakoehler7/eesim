@@ -16,6 +16,9 @@
 #' @export
 #'
 mean_beta <- function(df){
+  if (!is.data.frame(df)){
+    stop("Input must be a data frame")
+  }
   beta_hat <- mean(df$Estimate)
   rr_hat <- mean(exp(df$Estimate))
   out <- data.frame(beta_hat, rr_hat)
