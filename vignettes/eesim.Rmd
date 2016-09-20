@@ -79,9 +79,24 @@ data.frame(day = 1:1000) %>%
   theme_bw()
 ```
 
-```{r}
+Here is an example of generating continuous exposure data with a "cos1linear"" 
+trend:
 
+```{r}
+testexp <- sim_exposure(n=1000, central = 50, sd = 5, trend = "cos1linear",
+                        amp = .6, exposure_type = "continuous")
+qplot(testexp$date, testexp$x)+geom_point()+coord_cartesian(ylim = c(0,110))
 ```
+
+The default amplitude for the trend is .6, but we can adjust the "amp" parameter
+for a smaller or larger trend amplitude:
+
+```{r}
+smallamp <- sim_exposure(n=1000, central = 50, sd = 5, trend = "cos1linear",
+                        amp = .3, exposure_type = "continuous")
+qplot(smallamp$date, smallamp$x)+geom_point()+coord_cartesian(ylim = c(0,110))
+```
+
 
 ## Comparing two models
 
