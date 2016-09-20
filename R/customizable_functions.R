@@ -148,7 +148,7 @@ custom_baseline <- function(n, df = dlnm::chicagoNMMAPS, average_outcome = NA,
 #'
 #' @examples
 #' create_baseline(n = 5, average_outcome = 22, trend = "linear")
-#' create_baseline(n = 5, average_outcome = NA, trend = NA, amp = NA,
+#' create_baseline(n = 5, average_outcome = NA, trend = NA,
 #'                 custom_func = "custom_baseline", outcome_type = "death")
 #'
 #' @export
@@ -186,7 +186,10 @@ create_baseline <- function(n, average_outcome, trend, amp,
 #' @return A numeric vector of mean outcome values
 #'
 #' @examples
-#' create_lambda(baseline, exposure, rr = 1.01)
+#' base <- create_baseline(n = 5, average_outcome = 22, trend = "linear")
+#' exp <- sim_exposure(n = 5, central = 100, sd = 10, amp = .6,
+#'                     exposure_type = "continuous")
+#' create_lambda(baseline = base, exposure = exp, rr = 1.01)
 #'
 #' @export
 
@@ -218,11 +221,9 @@ create_lambda <- function(baseline, exposure, rr, cust_lambda_func = NULL, ...){
 #' @return
 #'
 #' @examples
-#' sim_outcome(exposure, cust_base_func = custombase,
-#'    cust_base_args = list(n=nrow(exposure), slope = .2, intercept = 55))
-#' sim_outcome(exposure, p, average_outcome = 22, cust_lambda_func =
-#'             customlambda, cust_lambda_args = list(exposure = testexp$x,
-#'             rr=1.02, constant = 4))
+#' exp <- sim_exposure(n = 5, central = 100, sd = 10, amp = .6,
+#'                     exposure_type = "continuous")
+#' sim_outcome(exposure = exp, average_outcome = 22, trend = "linear")
 #'
 #' @export
 sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
@@ -240,7 +241,7 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
                                 average_outcome = average_outcome,
                                 trend = trend,
                                 amp = amp)
-    lambda <- create_lambda(baseline = baseline$baseline,
+    lambda <- create_lambda(baseline = baseline,
                             exposure = exposure$x,
                             rr = rr)
     outcome <- stats::rpois(n = nrow(exposure), lambda = lambda)

@@ -9,7 +9,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r}
+```{r, echo = FALSE}
 library(eesim)
 library(ggplot2)
 ```
@@ -27,14 +27,18 @@ of the four steps.
 
 You can use the eesim function to generate data, fit models, and assess the 
 models. Using the eesim function is the most efficient way to make use of this 
-package as this one function performs all four main steps of the package.  
+package as this one function performs all four main steps of the package.  The 
+eesim function returns a slope estimate, standard error, t- and p-values, and 
+upper and lower 95% confidence bounds for each set of data simulated.  The 
+function also returns some measures of model assessment, including the mean beta
+and relative risk estimates across simulations.
 
-```{r}
-ex_sim <- eesim(n_reps = 10, n = 1000, central = 100, sd = 10,
+```{r, warning = FALSE, message = FALSE}
+ex_sim <- eesim(n_reps = 3, n = 10, central = 100, sd = 10,
                 exposure_type = "continuous", exposure_trend = "cos1",
                 exposure_amp = .6, average_outcome = 22, rr = 1.01,
-                model = "spline", df_year = 6)
-head(ex_sim[[1]][[1]])
+                model = "spline", df_year = 1)
+ex_sim
 ```
 
 ##Piece-by-piece breakdown of package utility
@@ -44,12 +48,36 @@ parts: exposure, outcome, fitting models, and evaluating models.
 
 ###Generating exposure data
 
-The first section of the package is concerned with generating air pollution 
+The first section of the package is designed to generate air pollution 
 exposure data (or potentially other types of exposure) that may have seasonal 
 trends. The user can specify whether they would like the exposure data to be
 binary or continuous, and what kind of trend they would like the data to 
 exhibit. We have built in several seasonal trends to choose from, which differ 
 slightly depending on whether binary or continuous data is desired.
+
+Below are plots of the built-in trends for continuous exposure data the user may
+choose from. The trend options are similar for binary exposure, but exclude 
+"curvilinear" and "cos1linear" and include a "monthly" trend, for which the user
+enters a vector of 12 probabilities of exposure, one for each month.
+
+```{r fig.width = 7, fig.height = 4, echo = FALSE, message = FALSE}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+data.frame(day = 1:1000) %>%
+  mutate(none = calc_t(n = 1000, trend = "no trend"),
+         cos1 = calc_t(n = 1000, trend = "cos1"),
+         cos2 = calc_t(n = 1000, trend = "cos2"),
+         cos3 = calc_t(n = 1000, trend = "cos3"),
+         linear = calc_t(n = 1000, trend = "linear"),
+         curvilinear = calc_t(n = 1000, trend = "curvilinear"),
+         cos1linear = calc_t(n = 1000, trend = "cos1linear")) %>%
+  gather(trend_method, trend_value, -day) %>%
+  ggplot(aes(x = day, y = trend_value)) + 
+  geom_line() + facet_wrap(~ trend_method, ncol = 4) + 
+  theme_bw()
+```
 
 ```{r}
 
