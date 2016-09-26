@@ -10,20 +10,21 @@ create_sims(n_reps, n, central, sd, exposure_type, exposure_trend, exposure_amp,
   cust_lambda_func = NULL, cust_base_args = NULL, cust_lambda_args = NULL)
 }
 \arguments{
-\item{A}{character string specifying the model to be used.  Options are "spline" and "casecrossover"}
+\item{A}{character string specifying the model to be used.  Options are
+"spline" and "casecrossover"}
 }
 \value{
 A list resulting from repetitions of simulations with data frames
-for date, exposure, and outcomes, and estimates from fitting models
+   for date, exposure, and outcomes, and estimates from fitting models
 }
 \description{
 Create simulated data for many repetitions
 }
 \examples{
-create_sims(n_reps=10, n=10, central = 100, sd = 10, exposure_type="continuous",
-exposure_trend = "cos1", exposure_amp = .6, average_outcome = 22, outcome_trend = "no trend",
-outcome_amp = .6, rr = 1.01)
-
+create_sims(n_reps=10, n=10, central = 100, sd = 10,
+            exposure_type="continuous", exposure_trend = "cos1",
+            exposure_amp = .6, average_outcome = 22,
+            outcome_trend = "no trend", outcome_amp = .6, rr = 1.01)
 
 }
 

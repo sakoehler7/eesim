@@ -12,7 +12,8 @@ continuous_exposure(n, mu, sd = 1, trend = "no trend", amp = 0.6,
 
 \item{mu}{A numeric value giving the mean exposure.}
 
-\item{sd}{A numeric value giving the standard deviation of the exposure values around the trend line.}
+\item{sd}{A numeric value giving the standard deviation of the exposure
+values around the trend line.}
 
 \item{trend}{A character string that specifies the desired trend function.
 Options are:

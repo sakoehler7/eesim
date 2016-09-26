@@ -7,11 +7,28 @@
 fit_mods(outcome, model, df_year = 7)
 }
 \arguments{
-\item{outcome}{A list of simulated data sets which each include columns called "x" and "outcome"}
+\item{outcome}{A list of simulated data sets which each include columns
+called "x" and "outcome"}
 
-\item{model}{A character string specifying model to be used.  Choices are "spline" and "casecrossover"}
+\item{model}{A character string specifying model to be used. Choices are
+"spline" and "casecrossover"}
+
+\item{df_year}{A numeric value specifying the degrees of freedom per year}
+}
+\value{
+A data frame in which each row includes an estimate of beta hat,
+   standard error, t-value, p-value, and 2.5% and 97.5% confidence bounds
+   for each repetition of the simulation
 }
 \description{
 Fit models
+}
+\examples{
+sims <- create_sims(n_reps=10, n=50, central = 100, sd = 10,
+            exposure_type="continuous", exposure_trend = "cos1",
+            exposure_amp = .6, average_outcome = 22,
+            outcome_trend = "no trend", outcome_amp = .6, rr = 1.01)
+fit_mods(outcome = sims, model = "spline")
+
 }
 

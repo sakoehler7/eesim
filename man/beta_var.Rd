@@ -7,14 +7,16 @@
 beta_var(df)
 }
 \arguments{
-\item{df}{A data frame of replicated simulations which must include columns titled "est" and "se".}
+\item{df}{A data frame of replicated simulations which must include columns
+titled "Estimate" and "Std.Error".}
 }
 \value{
-A data frame of the variance across all values of \eqn{\hat{\beta}} and the mean variance of the $\hat{\beta}$s
+A data frame of the variance across all values of beta hat
+   and the mean variance of the beta hats
 }
 \description{
-This function gives the variance of the point estimates of $\hat{\beta}$ over the n simulations
-and the mean of the variances of each $\hat{\beta}$.
+This function gives the variance of the point estimates of beta hat over
+the n simulations and the mean of the variances of each beta hat.
 }
 \examples{
 beta_var(df)

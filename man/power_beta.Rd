@@ -7,10 +7,11 @@
 power_beta(df)
 }
 \arguments{
-\item{df}{A data frame of replicated simulations which must include columns titled "lower_ci" and "upper_ci"}
+\item{df}{A data frame of replicated simulations which must include columns
+titled "lower_ci" and "upper_ci"}
 }
 \value{
-Power at 5% significance level
+Power at the 5% significance level
 }
 \description{
 This function gives the power of the test at a 5% siginificance level.

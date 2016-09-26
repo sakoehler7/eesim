@@ -17,7 +17,7 @@ Summary of the estimated log relative risk for a 1-unit increase in
 This function fits a case-crossover model to your data.
 }
 \examples{
-casecross_mod(df)
+casecross_mod(df = out)
 
 }
 

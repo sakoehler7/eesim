@@ -7,12 +7,14 @@
 coverage_beta(df, true_rr)
 }
 \arguments{
-\item{df}{A data frame of replicated simulations which must include columns titled "lower_ci" and "upper_ci"}
+\item{df}{A data frame of replicated simulations which must include columns
+titled "lower_ci" and "upper_ci"}
 
 \item{true_rr}{The true relative risk used to simulate your data}
 }
 \value{
-The percent of confidence intervals for the estimated relative risk over n simulations which include the true relative risk
+The percent of confidence intervals for the estimated relative risk
+   over n simulations which include the true relative risk
 }
 \description{
 This function gives the percent coverage of the true coefficient.

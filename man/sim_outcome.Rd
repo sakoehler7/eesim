@@ -19,14 +19,14 @@ sim_outcome(exposure, average_outcome = NULL, trend = "no trend",
 \item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
 simulating values}
 
-\item{cust_base_func}{A character string specifying a user-made custom function for
-baseline trend}
+\item{cust_base_func}{A character string specifying a user-made custom
+function for baseline trend}
 
-\item{cust_lambda_func}{A character string specifying a user-made custom function
-for relating baseline, relative risk, and exposure}
+\item{cust_lambda_func}{A character string specifying a user-made custom
+function for relating baseline, relative risk, and exposure}
 
-\item{cust_base_args}{A list of arguments and their values used in the user-specified
-custom baseline function}
+\item{cust_base_args}{A list of arguments and their values used in the
+user-specified custom baseline function}
 
 \item{cust_lamba_args}{A list of arguments and their values used in the
 user-specified custom lambda function}
@@ -38,10 +38,9 @@ user-specified custom lambda function}
 Simulate outcome
 }
 \examples{
-sim_outcome(exposure, cust_base_func = custombase,
-cust_base_args = list(n=nrow(exposure), slope = .2, intercept = 55))
-sim_outcome(exposure, p, average_outcome = 22, cust_lambda_func = customlambda,
-cust_lambda_args = list(exposure = testexp$x, rr=1.02, constant = 4))
+exp <- sim_exposure(n = 5, central = 100, sd = 10, amp = .6,
+                    exposure_type = "continuous")
+sim_outcome(exposure = exp, average_outcome = 22, trend = "linear")
 
 }
 

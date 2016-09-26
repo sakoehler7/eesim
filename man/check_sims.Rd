@@ -7,13 +7,14 @@
 check_sims(df, true_rr)
 }
 \arguments{
-\item{df}{A data frame of replicated simulations which must include a column titled "Estimate"}
+\item{df}{A data frame of replicated simulations which must include a column
+titled "Estimate"}
 
 \item{true_rr}{The true relative risk used to simulate your data}
 }
 \value{
-Mean beta estimate, mean relative risk estimate, variance across betas, mean variance of
-the estimates, percent bias, coverage, and power.
+Mean beta estimate, mean relative risk estimate, variance across
+   betas, mean variance of the estimates, percent bias, coverage, and power.
 }
 \description{
 This function gives several measures of model performance.
