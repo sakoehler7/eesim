@@ -82,6 +82,7 @@ sim_exposure <- function(n, central = NULL, sd=NULL, trend = "no trend",
     arguments$amp <- amp
     arguments$exposure_type <- exposure_type
     arguments$sd <- sd
+    arguments$start.date <- start.date
     exposure <- do.call("std_exposure", arguments)
   } else if (!(is.null(cust_exp_func))){
     if (!is.null(central)){
