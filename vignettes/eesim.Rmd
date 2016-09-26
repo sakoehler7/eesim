@@ -119,10 +119,10 @@ The values of lambda are then used to randomize the outcome values around the ba
 
 Here is an example of generating health outcome data with an upward linear trend using exposure data with a "cos1" trend:
 
-```{r}
+```{r fig.width = 5, fig.height = 3, fig.align = "center"}
 testexp2 <- sim_exposure(n=1000, central = 100, sd = 10, trend = "cos1", exposure_type = "continuous")
 testout <- sim_outcome(exposure = testexp2, average_outcome = 22, trend = "linear", rr = 1.01)
-qplot(testout$date, testout$outcome)+geom_point()+labs(title = "Health outcomes with a linear trend")
+qplot(testout$date, testout$outcome)+geom_point()+labs(title = "Health outcomes with a linear trend") + theme_bw()
 ```
 
 ###Fitting models
