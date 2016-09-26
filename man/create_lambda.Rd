@@ -13,8 +13,8 @@ create_lambda(baseline, exposure, rr, cust_lambda_func = NULL, ...)
 
 \item{rr}{A numeric value specifying the relative risk}
 
-\item{cust_lambda_func}{A character string specifying a user-made custom function
-for relating baseline, relative risk, and exposure}
+\item{cust_lambda_func}{A character string specifying a user-made custom
+function for relating baseline, relative risk, and exposure}
 
 \item{...}{optional arguments for a custom lambda function}
 }
@@ -24,11 +24,15 @@ A numeric vector of mean outcome values
 \description{
 This function relates exposure to baseline outcome values with the function
 lambda = log(baseline) + log(relative risk)*exposure to create a series
-of mean outcome values with or without incorporating a seasonal trend.  The user
-may input a custom function to relate exposure, relative risk, and baseline.
+of mean outcome values with or without incorporating a seasonal trend.  The
+user may input a custom function to relate exposure, relative risk, and
+baseline.
 }
 \examples{
-create_lambda(baseline, exposure, rr = 1.01)
+base <- create_baseline(n = 5, average_outcome = 22, trend = "linear")
+exp <- sim_exposure(n = 5, central = 100, sd = 10, amp = .6,
+                    exposure_type = "continuous")
+create_lambda(baseline = base, exposure = exp, rr = 1.01)
 
 }
 

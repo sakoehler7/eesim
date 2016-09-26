@@ -13,7 +13,8 @@ std_exposure(n, central, sd = NULL, trend = "no trend",
 \item{central}{A numeric value specifying the mean probability of exposure
 (for binary data) or the mean exposure value (for continuous data)}
 
-\item{sd}{A numeric value giving the standard deviation of the exposure values around the trend line.}
+\item{sd}{A numeric value giving the standard deviation of the exposure
+values around the trend line.}
 
 \item{trend}{A character string that specifies the desired trend function.
 Options are:

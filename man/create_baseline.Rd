@@ -12,8 +12,8 @@ data}
 
 \item{average_outcome}{A numeric value specifying the average outcome value}
 
-\item{cust_base_func}{A character string specifying a user-made custom function for
-baseline trend}
+\item{cust_base_func}{A character string specifying a user-made custom
+function for baseline trend}
 
 \item{...}{optional arguments to a custom baseline function}
 }
@@ -21,12 +21,12 @@ baseline trend}
 A numeric vector of baseline outcome values
 }
 \description{
-This function creates a time series of baseline outcome values and allows the user
-to input a custom function if desired to specify outcome trend.
+This function creates a time series of baseline outcome values and allows the
+user to input a custom function if desired to specify outcome trend.
 }
 \examples{
 create_baseline(n = 5, average_outcome = 22, trend = "linear")
-create_baseline(n = 5, average_outcome = NA, trend = NA, amp = NA,
+create_baseline(n = 5, average_outcome = NA, trend = NA,
                 custom_func = "custom_baseline", outcome_type = "death")
 
 }

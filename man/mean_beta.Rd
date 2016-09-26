@@ -7,17 +7,20 @@
 mean_beta(df)
 }
 \arguments{
-\item{df}{A data frame of replicated simulations which must include a column titled "Estimate"}
+\item{df}{A data frame of replicated simulations which must include a column
+titled "Estimate"}
 }
 \value{
-A data frame with the mean estimated coefficient and mean estimated relative risk
+A data frame with the mean estimated coefficient and mean estimated
+   relative risk
 }
 \description{
-This function gives the mean value of the \eqn{\hat{\beta}}s and the mean estimated
-relative risk over the n simulations.
+This function gives the mean value of the \eqn{\hat{\beta}}s and the mean
+estimated relative risk over the n simulations.
 }
 \examples{
-mean_beta(df)
+mod <- spline_mod(df = out)
+mean_beta(df=mod)
 
 }
 

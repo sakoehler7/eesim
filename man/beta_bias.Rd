@@ -7,12 +7,14 @@
 beta_bias(df, true_rr)
 }
 \arguments{
-\item{df}{A data frame of replicated simulations which must include a column titled "Estimate"}
+\item{df}{A data frame of replicated simulations which must include a column
+titled "Estimate"}
 
 \item{true_rr}{The true relative risk used to simulate your data}
 }
 \value{
-The percent bias of the mean of the estimated coefficients over n simulations
+The percent bias of the mean of the estimated coefficients over n
+   simulations
 }
 \description{
 This function returns the relative bias of the mean of the estimated coefficients.

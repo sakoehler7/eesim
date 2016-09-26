@@ -2,7 +2,7 @@
 % Please edit documentation in R/customizable_functions.R
 \name{eesim}
 \alias{eesim}
-\title{Wrapper to do Everything}
+\title{Simulate data, fit models, and assess models}
 \usage{
 eesim(n_reps, n, central, sd, exposure_type, exposure_trend, exposure_amp,
   average_outcome, outcome_trend = "no trend", outcome_amp, rr,
@@ -10,13 +10,36 @@ eesim(n_reps, n, central, sd, exposure_type, exposure_trend, exposure_amp,
   cust_base_func = NULL, cust_lambda_func = NULL, cust_base_args = NULL,
   cust_lambda_args = NULL, model, df_year = NULL)
 }
+\arguments{
+\item{average_outcome}{A numeric value specifying the average outcome value}
+
+\item{rr}{A numeric value specifying the relative risk}
+
+\item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
+simulating values}
+
+\item{cust_base_func}{A character string specifying a user-made custom
+function for baseline trend}
+
+\item{cust_lambda_func}{A character string specifying a user-made custom
+function for relating baseline, relative risk, and exposure}
+
+\item{cust_base_args}{A list of arguments and their values used in the
+user-specified custom baseline function}
+}
+\value{
+A list object with summaries of each model fitted on the simulated
+   data sets and measures of model evaluation including coverage and power
+}
 \description{
-This function generates exposures and outcomes, fits models, and evaluates them for many repetitions
+This function generates exposures and outcomes, fits models, and evaluates
+them for many simulation repetitions
 }
 \examples{
-eesim(n_reps = 3, n = 50, central = 100, sd = 10, exposure_type = "continuous",
-exposure_trend = "cos3", exposure_amp = .6, average_outcome = 22, rr = 1.01,
-model = "spline", df_year = 5)
+eesim(n_reps = 3, n = 50, central = 100, sd = 10,
+      exposure_type = "continuous", exposure_trend = "cos3",
+      exposure_amp = .6, average_outcome = 22, rr = 1.01, model = "spline",
+      df_year = 5)
 
 }
 

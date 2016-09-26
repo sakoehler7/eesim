@@ -15,16 +15,18 @@ sim_exposure(n, central = NULL, sd = NULL, trend = "no trend",
 \item{exposure_type}{A character string specifying the type of exposure.
 Choices are "binary" or "continuous".}
 
-\item{cust_exp_args}{A list of arguments used in the user-specified custom function}
+\item{cust_exp_args}{A list of arguments used in the user-specified custom
+function}
 
-\item{cust_exp_function}{The name of a function from which to generate custom exposure values}
+\item{cust_exp_function}{The name of a function from which to generate custom
+exposure values}
 }
 \value{
 A data frame with two columns: date and exposure values
 }
 \description{
-This function simulates binary or continuous exposure values with or without seasonal trends.
-It also allows for a custom function for exposure trend.
+This function simulates binary or continuous exposure values with or without
+seasonal trends. It also allows for a custom function for exposure trend.
 }
 \examples{
 sim_exposure(n = 5, central = 0.25, exposure_type = "binary", amp = .02)
