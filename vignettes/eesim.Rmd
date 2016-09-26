@@ -146,7 +146,7 @@ Lastly, eesim evaluates model performance with several different measures.  The 
 
 Here is an example of the use of the check_sims function:
 
-```{}
+```{r}
 check_sims(fits, true_rr = 1.01)
 ```
 
