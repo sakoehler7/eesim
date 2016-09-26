@@ -23,7 +23,7 @@ bin_t is similar.
 
 ```{r}
 binary_exposure(n=5, p = .2, y = .1, trend = "custom", custom_func = sintrend)
-plot(binary_exposure(n=400, p = .2, y = .1, trend = "custom", custom_func = sintrend))
+plot(binary_exposure(n=400, p = .2, y = .1, amp = .01, trend = "custom", custom_func = sintrend))
 
 continuous_exposure(n = 5, y = .6, mu = 100, sd = 10, trend = "custom", custom_func = sintrend)
 plot(continuous_exposure(n=1000, y = .6, mu = 5, sd = .5, trend = "custom", custom_func = sintrend))

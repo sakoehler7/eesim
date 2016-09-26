@@ -152,8 +152,34 @@ check_sims(fits, true_rr = 1.01)
 
 ##Using custom functions
 
+An important feature of eesim is that the user may input custom functions for any part of the simulation process.  For example, the user may wish to generate exposure data with a custom trend, then automate the process of generating outcomes, fitting models, and evaluating performance using the built-in features of eesim. Functions the user has the option to customize within the eesim framework are exposure trend, outcome baseline, and outcome lambda. A custom model may also be used as long as returns the necessary output if the model assessmen tools in eesim are to be used.
 
+To use custom functions within eesim, the user must input the name of the custom function as well as a list of all arguments for the custom function and their values. Many inputs for the eesim functions may no longer be necessary when a custom function is used, in which case they can simply be left out.  
 
+###Custom exposure trend
+
+Here is an example of using a custom function to specify an exposure trend that is not built in to eesim:
+
+```{r}
+sintrend <- function(n, mu, y){
+  day <- c(1:n)
+  base <- mu + y * sin(2 * pi * (day / 365))
+  rnorm(n, mean = base, sd = 1)
+}
+customexp <- sim_exposure(n=1000, exposure_type = "continuous", cust_exp_func = sintrend, cust_exp_args = list(n=1000, mu = 75, y=3))
+head(customexp)
+qplot(customexp$date, customexp$x)+geom_point()+labs(title = "Exposure values with a custom trend")
+```
+
+###Custom outcomes
+
+There are two ways to customize the simulated outcome data: creating a custom baseline for outcome values or customizing the relationship between outcome and exposure.  
+
+The outcome baseline is the values the user expects the outcomes to take on without exposure factored in. The user may write a function to specify the trend of the baseline, then use it as an input in sim_outcome or eesim. Here is an example of creating a custom baseline:
+
+```{r}
+
+```
 
 ## Comparing two models
 
