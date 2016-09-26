@@ -27,14 +27,14 @@ mean_beta <- function(df){
 #'
 #' Standard Deviation of Estimated Coefficients
 #'
-#' This function gives the variance of the point estimates of $\hat{\beta}$ over
-#' the n simulations and the mean of the variances of each $\hat{\beta}$.
+#' This function gives the variance of the point estimates of beta hat over
+#' the n simulations and the mean of the variances of each beta hat.
 #'
 #' @param df A data frame of replicated simulations which must include columns
 #'    titled "Estimate" and "Std.Error".
 #'
-#' @return A data frame of the variance across all values of \eqn{\hat{\beta}}
-#'    and the mean variance of the $\hat{\beta}$s
+#' @return A data frame of the variance across all values of beta hat
+#'    and the mean variance of the beta hats
 #'
 #' @examples
 #' beta_var(df)

@@ -136,14 +136,23 @@ sims <- create_sims(n_reps=10, n=100, central = 100, sd = 10,
              exposure_type="continuous", exposure_trend = "cos1",
              exposure_amp = .6, average_outcome = 22,
              outcome_trend = "no trend", outcome_amp = .6, rr = 1.01)
-fit_mods(outcome = sims, model = "spline", df_year = 7)
+fits <- fit_mods(outcome = sims, model = "spline", df_year = 7)
+fits
 ```
 
 ###Evaluating the models
 
-```{}
+Lastly, eesim evaluates model performance with several different measures.  The check_sims function takes the true relative risk as input and returns mean beta and relative risk estimates across all simulated data sets, variance of the estimates of beta, the mean of the variances of each beta hat, the relative bias of the mean of the beta hats, the percent coverage of the true beta, and the power of the test at the 5% significance level. 
 
+Here is an example of the use of the check_sims function:
+
+```{}
+check_sims(fits, true_rr = 1.01)
 ```
+
+##Using custom functions
+
+
 
 
 ## Comparing two models
