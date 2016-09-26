@@ -63,6 +63,8 @@ sim_exposure <- function(n, central = NULL, sd=NULL, trend = "no trend",
                          amp = .6, exposure_type = NULL,
                          start.date = "2001-01-01", cust_exp_func = NULL,
                          cust_exp_args = NULL){
+  start.date <- as.Date(start.date)
+  date <- seq(from = start.date, by = 1, length.out = n)
   if(is.null(cust_exp_args)){
     arguments <- vector(mode = "list")
   } else {
@@ -85,8 +87,6 @@ sim_exposure <- function(n, central = NULL, sd=NULL, trend = "no trend",
     if (!is.null(central)){
       arguments$central <- central
     }
-    start.date <- as.Date(start.date)
-    date <- seq(from = start.date, by = 1, length.out = n)
     x <- do.call(cust_exp_func, arguments)
     exposure <- data.frame(date, x)
   } else {

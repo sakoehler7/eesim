@@ -44,16 +44,17 @@ ex_sim
 ##Piece-by-piece breakdown of package utility
 
 To demonstrate how eesim works, here is a breakdown of each of the four main 
-parts: exposure, outcome, fitting models, and evaluating models.
+parts: generating exposure data, generating outcome data, fitting models, and 
+evaluating models.
 
 ###Generating exposure data
 
-The first section of the package is designed to generate air pollution 
-exposure data (or potentially other types of exposure) that may have seasonal 
-trends. The user can specify whether they would like the exposure data to be
-binary or continuous, and what kind of trend they would like the data to 
-exhibit. We have built in several seasonal trends to choose from, which differ 
-slightly depending on whether binary or continuous data is desired.
+The first task of the package is generating air pollution exposure data (or 
+potentially other types of exposure) that may have seasonal trends. The user can
+specify whether they would like the exposure data to bebinary or continuous, and
+what kind of trend they would like the data to exhibit. We have built in several
+seasonal trends to choose from, which differ slightly depending on whether 
+binary or continuous data is desired.
 
 Below are plots of the built-in trends for continuous exposure data the user may
 choose from. The trend options are similar for binary exposure, but exclude 
@@ -85,6 +86,7 @@ trend:
 ```{r}
 testexp <- sim_exposure(n=1000, central = 50, sd = 5, trend = "cos1linear",
                         amp = .6, exposure_type = "continuous")
+head(testexp)
 qplot(testexp$date, testexp$x)+geom_point()+coord_cartesian(ylim = c(0,110))
 ```
 
@@ -93,16 +95,56 @@ for a smaller or larger trend amplitude:
 
 ```{r}
 smallamp <- sim_exposure(n=1000, central = 50, sd = 5, trend = "cos1linear",
-                        amp = .3, exposure_type = "continuous")
+                        amp = .2, exposure_type = "continuous")
 qplot(smallamp$date, smallamp$x)+geom_point()+coord_cartesian(ylim = c(0,110))
 ```
 
-Here is an example of generating binary exposure data with a "monthly" trend:
+Here is an example of generating binary exposure data with a "monthly" trend 
+starting from June 1, 2002.  The probabilities for the central parameter are for
+each month of the year, starting in January.
+
+```{r, message = FALSE}
+testbin <- sim_exposure(n=400, central = c(.1,.1,.2,.3,.4,.4,.5,.6,.5,.3,.2,.1),
+                        trend = "monthly", exposure_type = "binary", 
+                        start.date = "2002-06-01")
+head(testbin)
+qplot(testbin$date, testbin$x)+geom_point()+labs(title = "Binary exposure data with montly trend")
+```
+
+###Generating outcome data
+
+Next, the eesim package uses the exposure data to generate health outcome data with or without seasonal trends. eesim creates "baseline" values for outcome based on the user-specified trend and average outcome. Next it uses the following function to relate exposure and relative risk to outcomes:
+$$\lambda = e^{\log{(baseline)}+\log{(relative risk)}*exposure}$$
+The values of lambda are then used to randomize the outcome values around the baseline with a Poisson($\lambda\$) distribution.
+
+Here is an example of generating health outcome data with an upward linear trend using exposure data with a "cos1" trend:
 
 ```{r}
-testbin <- sim_exposure(n=400, central = c(.1,.1,.2,.3,.4,.4,.5,.6,.5,.3,.2,.1), trend = "monthly", exposure_type = "binary")
-qplot(testbin$date, testbin$x)+geom_point()
+testexp2 <- sim_exposure(n=1000, central = 100, sd = 10, trend = "cos1", exposure_type = "continuous")
+testout <- sim_outcome(exposure = testexp2, average_outcome = 22, trend = "linear", rr = 1.01)
+qplot(testout$date, testout$outcome)+geom_point()+labs(title = "Health outcomes with a linear trend")
 ```
+
+###Fitting models
+
+eesim next uses many generated data sets to fit statistical models to relate exposure to outcome and estimate relative risk.  The built-in model choices are a spline model and a case-crossover model. The fit_mods function outputs a data frame with estimates of the log relative risk, p-values, and upper and lower 95% confidence bounds for each simulated data set.
+
+Here is an example of fitting the spline model with 7 degrees of freedom:
+
+```{r}
+sims <- create_sims(n_reps=10, n=100, central = 100, sd = 10,
+             exposure_type="continuous", exposure_trend = "cos1",
+             exposure_amp = .6, average_outcome = 22,
+             outcome_trend = "no trend", outcome_amp = .6, rr = 1.01)
+fit_mods(outcome = sims, model = "spline", df_year = 7)
+```
+
+###Evaluating the models
+
+```{}
+
+```
+
 
 ## Comparing two models
 
