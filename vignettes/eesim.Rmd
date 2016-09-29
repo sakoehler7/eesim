@@ -83,7 +83,7 @@ data.frame(day = 1:1000) %>%
 Here is an example of generating continuous exposure data with a "cos1linear"" 
 trend:
 
-```{r}
+```{r, fig.width = 5, fig.height = 3, fig.align = "center"}
 testexp <- sim_exposure(n=1000, central = 50, sd = 5, trend = "cos1linear",
                         amp = .6, exposure_type = "continuous")
 head(testexp)
@@ -93,7 +93,7 @@ qplot(testexp$date, testexp$x)+geom_point()+coord_cartesian(ylim = c(0,110))
 The default amplitude for the trend is .6, but we can adjust the "amp" parameter
 for a smaller or larger trend amplitude:
 
-```{r}
+```{r, fig.width = 5, fig.height = 3, fig.align = "center"}
 smallamp <- sim_exposure(n=1000, central = 50, sd = 5, trend = "cos1linear",
                         amp = .2, exposure_type = "continuous")
 qplot(smallamp$date, smallamp$x)+geom_point()+coord_cartesian(ylim = c(0,110))
@@ -103,7 +103,7 @@ Here is an example of generating binary exposure data with a "monthly" trend
 starting from June 1, 2002.  The probabilities for the central parameter are for
 each month of the year, starting in January.
 
-```{r, message = FALSE}
+```{r, message = FALSE, fig.width = 5, fig.height = 3, fig.align = "center"}
 testbin <- sim_exposure(n=400, central = c(.1,.1,.2,.3,.4,.4,.5,.6,.5,.3,.2,.1),
                         trend = "monthly", exposure_type = "binary", 
                         start.date = "2002-06-01")
@@ -160,7 +160,7 @@ To use custom functions within eesim, the user must input the name of the custom
 
 Here is an example of using a custom function to specify an exposure trend that is not built in to eesim:
 
-```{r}
+```{r, fig.width = 5, fig.height = 3, fig.align = "center"}
 sintrend <- function(n, mu, y){
   day <- c(1:n)
   base <- mu + y * sin(2 * pi * (day / 365))
@@ -171,19 +171,48 @@ head(customexp)
 qplot(customexp$date, customexp$x)+geom_point()+labs(title = "Exposure values with a custom trend")
 ```
 
+This custom exposure function can be called with eesim:
+
+```{r, warning=F}
+ex_sim2 <- eesim(n_reps = 3, n = 10, central = 100, sd = 10,
+                exposure_type = "continuous", exposure_trend = "custom", 
+                exposure_amp = .6, cust_exp_func = sintrend,
+                cust_exp_args = list(n=10, mu=75,y=3),
+                average_outcome = 22, rr = 1.01, 
+                model = "spline", df_year = 1)
+ex_sim2
+```
+
+
 ###Custom outcomes
 
 There are two ways to customize the simulated outcome data: creating a custom baseline for outcome values or customizing the relationship between outcome and exposure.  
 
-The outcome baseline is the values the user expects the outcomes to take on without exposure factored in. The user may write a function to specify the trend of the baseline, then use it as an input in sim_outcome or eesim. Here is an example of creating a custom baseline:
+The outcome baseline is comprised of the values the user expects the outcomes to take on without exposure factored in. The user may write a function to specify the trend of the baseline, then use it as an input in sim\_outcome or eesim. Here is an example of creating a custom baseline function and using it in the eesim function:
 
-```{r}
+```{r, warning = F}
+custombase <- function(n, slope, intercept){
+  day <- c(1:n)
+  baseline <- day*slope + intercept
+  return(baseline)
+}
 
+#Example:
+custombase(n=5, slope = .3, intercept = 55)
+
+ex_sim3 <- eesim(n_reps = 3, n = 10, central = 100, sd = 10,
+                exposure_type = "continuous", exposure_trend = "cos1",
+                exposure_amp = .6, average_outcome = 22, rr = 1.01, 
+                cust_base_func = custombase, cust_base_args = list(n=10, slope = .5,                        intercept = 12), model = "spline", df_year = 1)
+ex_sim3
 ```
 
-## Comparing two models
+Here is an example of creating a custom lambda, meaning a custom function relating relative risk and exposure to outcomes, and using it in eesim with the custom baseline function created above:
 
-As a basic example, you can use this package to simulate a continuous environmental exposure with seasonal and year-round trends and a count outcome. You can then fit a case-crossover and GLM model to this data and compare performance.
+```{r, warning = F}
+customlambda <- function(exposure, rr, constant, baseline){
+  log_lambda <- log(baseline) + log(rr) * exposure + constant
+  lambda <- exp(log_lambda)
+  return(lambda)
+}
 
-
-## More detailed examples

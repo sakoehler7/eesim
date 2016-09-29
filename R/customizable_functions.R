@@ -361,9 +361,10 @@ fit_mods <- function(outcome, model, df_year = 7){
 #'
 #' @export
 #'
-eesim <- function(n_reps, n, central, sd, exposure_type, exposure_trend,
-                  exposure_amp, average_outcome, outcome_trend = "no trend",
-                  outcome_amp, rr, start.date = "2000-01-01",
+eesim <- function(n_reps, n, central, sd, exposure_type, exposure_trend = NULL,
+                  exposure_amp = NULL, average_outcome = NULL,
+                  outcome_trend = "no trend",
+                  outcome_amp = NULL, rr, start.date = "2000-01-01",
                   cust_exp_func = NULL, cust_exp_args = NULL,
                   cust_base_func = NULL, cust_lambda_func = NULL,
                   cust_base_args = NULL, cust_lambda_args = NULL, model,
