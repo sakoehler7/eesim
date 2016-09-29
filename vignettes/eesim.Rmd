@@ -87,7 +87,7 @@ trend:
 testexp <- sim_exposure(n=1000, central = 50, sd = 5, trend = "cos1linear",
                         amp = .6, exposure_type = "continuous")
 head(testexp)
-qplot(testexp$date, testexp$x)+geom_point()+coord_cartesian(ylim = c(0,110))
+qplot(testexp$date, testexp$x)+geom_point()+coord_cartesian(ylim = c(0,110)) + labs(title = "Exposure with a cos1linear trend", x = "Date", y="Exposure")+theme_bw()
 ```
 
 The default amplitude for the trend is .6, but we can adjust the "amp" parameter
@@ -96,7 +96,7 @@ for a smaller or larger trend amplitude:
 ```{r, fig.width = 5, fig.height = 3, fig.align = "center"}
 smallamp <- sim_exposure(n=1000, central = 50, sd = 5, trend = "cos1linear",
                         amp = .2, exposure_type = "continuous")
-qplot(smallamp$date, smallamp$x)+geom_point()+coord_cartesian(ylim = c(0,110))
+qplot(smallamp$date, smallamp$x)+geom_point()+coord_cartesian(ylim = c(0,110))+labs(title = "Cos1linear exposure with smaller amplitude", x="Date", y="Exposure") + theme_bw()
 ```
 
 Here is an example of generating binary exposure data with a "monthly" trend 
@@ -108,7 +108,7 @@ testbin <- sim_exposure(n=400, central = c(.1,.1,.2,.3,.4,.4,.5,.6,.5,.3,.2,.1),
                         trend = "monthly", exposure_type = "binary", 
                         start.date = "2002-06-01")
 head(testbin)
-qplot(testbin$date, testbin$x)+geom_point()+labs(title = "Binary exposure data with montly trend")
+qplot(testbin$date, testbin$x)+geom_point()+labs(title = "Binary exposure data with monthly trend", x="Date", y="Exposure")+theme_bw()
 ```
 
 ###Generating outcome data
@@ -122,7 +122,7 @@ Here is an example of generating health outcome data with an upward linear trend
 ```{r fig.width = 5, fig.height = 3, fig.align = "center"}
 testexp2 <- sim_exposure(n=1000, central = 100, sd = 10, trend = "cos1", exposure_type = "continuous")
 testout <- sim_outcome(exposure = testexp2, average_outcome = 22, trend = "linear", rr = 1.01)
-qplot(testout$date, testout$outcome)+geom_point()+labs(title = "Health outcomes with a linear trend") + theme_bw()
+qplot(testout$date, testout$outcome)+geom_point()+labs(title = "Health outcomes with a linear trend", x="Date", y="Outcome") + theme_bw()
 ```
 
 ###Fitting models
@@ -168,7 +168,7 @@ sintrend <- function(n, mu, y){
 }
 customexp <- sim_exposure(n=1000, exposure_type = "continuous", cust_exp_func = sintrend, cust_exp_args = list(n=1000, mu = 75, y=3))
 head(customexp)
-qplot(customexp$date, customexp$x)+geom_point()+labs(title = "Exposure values with a custom trend")
+qplot(customexp$date, customexp$x)+geom_point()+labs(title = "Exposure values with a custom trend", x="Date", y="Exposure")+theme_bw()
 ```
 
 This custom exposure function can be called with eesim:
