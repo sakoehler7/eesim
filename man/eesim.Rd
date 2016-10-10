@@ -4,19 +4,28 @@
 \alias{eesim}
 \title{Simulate data, fit models, and assess models}
 \usage{
-eesim(n_reps, n, central, sd, exposure_type, exposure_trend, exposure_amp,
-  average_outcome, outcome_trend = "no trend", outcome_amp, rr,
-  start.date = "2000-01-01", cust_exp_func = NULL, cust_exp_args = NULL,
-  cust_base_func = NULL, cust_lambda_func = NULL, cust_base_args = NULL,
-  cust_lambda_args = NULL, model, df_year = NULL)
+eesim(n_reps, n, central, sd, exposure_type, exposure_trend = NULL,
+  exposure_amp = NULL, average_outcome = NULL, outcome_trend = "no trend",
+  outcome_amp = NULL, rr, start.date = "2000-01-01", cust_exp_func = NULL,
+  cust_exp_args = NULL, cust_base_func = NULL, cust_lambda_func = NULL,
+  cust_base_args = NULL, cust_lambda_args = NULL, model, df_year = NULL)
 }
 \arguments{
+\item{central}{A numeric value specifying the mean probability of exposure
+(for binary data) or the mean exposure value (for continuous data)}
+
+\item{exposure_type}{A character string specifying the type of exposure.
+Choices are "binary" or "continuous".}
+
 \item{average_outcome}{A numeric value specifying the average outcome value}
 
 \item{rr}{A numeric value specifying the relative risk}
 
 \item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
 simulating values}
+
+\item{cust_exp_args}{A list of arguments used in the user-specified custom
+function}
 
 \item{cust_base_func}{A character string specifying a user-made custom
 function for baseline trend}
