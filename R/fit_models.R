@@ -15,7 +15,6 @@
 #' spline_mod(df = out)
 #'
 #' @export
-#'
 spline_mod <- function(df, df_year = 7){
   dgrs_free <- df_year * as.numeric(diff(df[c(1, nrow(df)), "date"])) / 365.4
   df$time <- scale(df$date, center = TRUE, scale = FALSE)
@@ -42,7 +41,6 @@ spline_mod <- function(df, df_year = 7){
 #' casecross_mod(df = out)
 #'
 #' @export
-#'
 casecross_mod <- function(df){
   df$stratum <- factor(format(df$date, "%Y.%m"))
 
@@ -86,7 +84,6 @@ casecross_mod <- function(df){
 #' crossyear_mod(df = out)
 #'
 #' @export
-#'
 crossyear_mod <- function(df){
   df$stratum <- factor(format(df$date, "%j"))
   df$year <- factor(format(df$date, "%Y"))

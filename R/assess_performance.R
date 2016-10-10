@@ -14,7 +14,6 @@
 #' mean_beta(df=mod)
 #'
 #' @export
-#'
 mean_beta <- function(df){
   if (!is.data.frame(df)){
     stop("Input must be a data frame")
@@ -24,7 +23,7 @@ mean_beta <- function(df){
   out <- data.frame(beta_hat, rr_hat)
   return(out)
 }
-#'
+
 #' Standard Deviation of Estimated Coefficients
 #'
 #' This function gives the variance of the point estimates of beta hat over
@@ -40,14 +39,13 @@ mean_beta <- function(df){
 #' beta_var(df)
 #'
 #' @export
-#'
 beta_var <- function(df){
   var_across_betas <- stats::var(df$Estimate)
   mean_beta_var <- mean(df$Std.Error^2)
   out <- data.frame(var_across_betas, mean_beta_var)
   return(out)
 }
-#'
+
 #' Percent Bias of Estimated Coefficient
 #'
 #' This function returns the relative bias of the mean of the estimated coefficients.
@@ -62,7 +60,6 @@ beta_var <- function(df){
 #' beta_bias(df, true_rr = 1.02)
 #'
 #' @export
-#'
 beta_bias <- function(df, true_rr){
   percent_bias <- 100 * (true_rr - mean(exp(df$Estimate))) / true_rr
   out <- data.frame(percent_bias)
@@ -84,14 +81,13 @@ beta_bias <- function(df, true_rr){
 #' coverage_beta(df, true_rr = 1.02)
 #'
 #' @export
-#'
 coverage_beta <- function(df, true_rr){
   true_beta <- log(true_rr)
   coverage <- df$lower_ci <= true_beta & df$upper_ci >= true_beta
   out <- data.frame(coverage = sum(coverage) / nrow(df))
   return(out)
 }
-#'
+
 #' Power
 #'
 #' This function gives the power of the test at a 5% siginificance level.
@@ -104,13 +100,12 @@ coverage_beta <- function(df, true_rr){
 #' power_beta(df)
 #'
 #' @export
-#'
 power_beta <- function(df){
   no_zero <- df$lower_ci >= 0 | df$upper_ci <= 0
   out <- data.frame(power = sum(no_zero) / nrow(df))
   return(out)
 }
-#'
+
 #' Model Performance Assessment
 #'
 #' This function gives several measures of model performance.
@@ -127,7 +122,6 @@ power_beta <- function(df){
 #' }
 #'
 #' @export
-#'
 check_sims <- function(df, true_rr){
   a <- mean_beta(df)
   b <- beta_var(df)
@@ -139,7 +133,6 @@ check_sims <- function(df, true_rr){
   return(out)
 }
 
-#'
 #' Power Calculations
 #'
 #' This function gives the power for a model with varying parameters.
@@ -161,7 +154,6 @@ check_sims <- function(df, true_rr){
 #'            1.1), n_sims = 100, model = "spline_mod", n = 365, plot = TRUE)
 #'
 #' @export
-#'
 power_calc <- function(varying, values, plot = FALSE, ...){
   out <- data.frame(x = values, power = NA)
   if(varying == "n"){
@@ -191,12 +183,3 @@ power_calc <- function(varying, values, plot = FALSE, ...){
   colnames(out)[1] <- varying
   return(out)
 }
-#'
-#'
-#'
-#'
-#'
-#'
-#'
-#'
-#'

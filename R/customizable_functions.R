@@ -98,7 +98,6 @@ sim_exposure <- function(n, central = NULL, sd=NULL, trend = "no trend",
   return(exposure)
 }
 
-
 #' Pull smoothed Chicago NMMAPS health outcome data
 #'
 #' By default, this function pulls smoothed data from the chicagoNMMAPS data set
@@ -348,6 +347,7 @@ fit_mods <- function(outcome, model, df_year = 7){
 #' them for many simulation repetitions
 #'
 #' @inheritParams create_sims
+#' @inheritParams sim_exposure
 #' @inheritParams sim_outcome
 #'
 #' @return A list object with summaries of each model fitted on the simulated
@@ -360,7 +360,6 @@ fit_mods <- function(outcome, model, df_year = 7){
 #'       df_year = 5)
 #'
 #' @export
-#'
 eesim <- function(n_reps, n, central, sd, exposure_type, exposure_trend = NULL,
                   exposure_amp = NULL, average_outcome = NULL,
                   outcome_trend = "no trend",

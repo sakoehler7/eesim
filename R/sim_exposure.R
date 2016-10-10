@@ -56,7 +56,7 @@ calc_t <- function(n, trend = "no trend", amp = .6, custom_func = NULL, ...){
   seasont <- seasont / mean(seasont)
   return(seasont)
 }
-#'
+
 #' Create a trend variable
 #'
 #' Creates a trend variable for binary exposure data which is centered at p.
@@ -87,7 +87,6 @@ calc_t <- function(n, trend = "no trend", amp = .6, custom_func = NULL, ...){
 #' bin_t(n = 5, p = .3, trend = "cos1", amp = .3)
 #'
 #' @export
-#'
 bin_t <- function(n, p, trend = "no trend", amp = .01,
                   start.date = "2000-01-01", custom_func = NULL,...){
   day <- c(1:n)
@@ -125,7 +124,7 @@ bin_t <- function(n, p, trend = "no trend", amp = .01,
   }
   return(seasont)
 }
-#'
+
 #' Simulate binary exposure data
 #'
 #' Simulates a time series of binary exposure values with or without seasonal
@@ -143,7 +142,6 @@ bin_t <- function(n, p, trend = "no trend", amp = .01,
 #'
 #'
 #' @export
-#'
 binary_exposure <- function(n, p, trend = "no trend", amp,
                             start.date = "2000-01-01", custom_func = NULL, ...){
   t <- bin_t(n=n, p=p, trend = trend, amp = amp, start.date = start.date,
@@ -182,7 +180,7 @@ continuous_exposure <- function(n, mu, sd=1, trend = "no trend", amp = .6,
   df <- data.frame(date, x)
   return(df)
 }
-#'
+
 #' Simulate exposure data
 #'
 #' Simulates binary or continuous exposure data with or without seasonal trends.
@@ -202,7 +200,6 @@ continuous_exposure <- function(n, mu, sd=1, trend = "no trend", amp = .6,
 #'              exposure_type = "continuous", start.date = "2001-04-01")
 #'
 #' @export
-#'
 std_exposure <- function(n, central, sd = NULL, trend = "no trend",
                          exposure_type = "binary", amp,
                          start.date = "2000-01-01", ...){
@@ -218,8 +215,7 @@ std_exposure <- function(n, central, sd = NULL, trend = "no trend",
   }
   return(df)
 }
-#'
-#'
+
 #' Expected baseline health outcomes
 #'
 #' Generates expected baseline health outcomes.
@@ -238,7 +234,6 @@ std_exposure <- function(n, central, sd = NULL, trend = "no trend",
 #' sim_baseline(n = 5, lambda = 100, trend = "cos1")
 #'
 #' @export
-#'
 sim_baseline <- function(n, lambda, trend = "no trend", amp = .6,
                          start.date = "2000-01-01"){
   start.date <- as.Date(start.date)
