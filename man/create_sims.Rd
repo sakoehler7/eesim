@@ -10,8 +10,70 @@ create_sims(n_reps, n, central, sd, exposure_type, exposure_trend, exposure_amp,
   cust_lambda_func = NULL, cust_base_args = NULL, cust_lambda_args = NULL)
 }
 \arguments{
-\item{A}{character string specifying the model to be used.  Options are
-"spline" and "casecrossover"}
+\item{n_reps}{A numeric value specifying the number of simulation repititions
+to be performed}
+
+\item{central}{A numeric value specifying the mean probability of exposure
+(for binary data) or the mean exposure value (for continuous data)}
+
+\item{exposure_type}{A character string specifying the type of exposure.
+Choices are "binary" or "continuous".}
+
+\item{exposure_trend}{A character string specifying the seasonal trend for
+    exposure. Options for continuous exposure are:
+    \itemize{
+  \item{"cos1"}
+  \item{"cos2"}
+  \item{"cos3"}
+  \item{"linear"}
+  \item{"curvilinear"}
+  \item{"cos1linear"}
+  \item{"no trend"}
+  \item{"custom"}
+  }
+   Options for binary exposure are:
+   \itemize{
+  \item{"cos1"}
+  \item{"cos2"}
+  \item{"cos3"}
+  \item{"linear"}
+  \item{"monthly"}
+  \item{"no trend"}
+  \item{"custom"}
+}}
+
+\item{exposure_amp}{A numeric value specifying the amplitude of the exposure
+trend. Must be between 0 and 1 for continuous exposure or between 0
+and .5 for binary exposure.}
+
+\item{average_outcome}{A numeric value specifying the average outcome value}
+
+\item{outcome_trend}{A character string specifying the seasonal trend in
+health outcomes.  Options are the same as for continuous exposure
+data.}
+
+\item{outcome_amp}{A numeric value specifying the amplitude of the outcome
+trend.  Must be between 0 and 1.}
+
+\item{rr}{A numeric value specifying the relative risk}
+
+\item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
+simulating values}
+
+\item{cust_exp_func}{A character string specifying the name of a custom
+trend function to generate exposure data}
+
+\item{cust_exp_args}{A list of arguments and their values for the
+user-specified custom exposure function.}
+
+\item{cust_base_func}{A character string specifying a user-made custom
+function for baseline trend}
+
+\item{cust_lambda_func}{A character string specifying a user-made custom
+function for relating baseline, relative risk, and exposure}
+
+\item{cust_base_args}{A list of arguments and their values used in the
+user-specified custom baseline function}
 }
 \value{
 A list resulting from repetitions of simulations with data frames
