@@ -274,8 +274,44 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
 
 #' Create simulated data for many repetitions
 #'
-#' @param A character string specifying the model to be used.  Options are
-#'    "spline" and "casecrossover"
+#' @param n_reps A numeric value specifying the number of simulation repititions
+#'        to be performed
+#' @param exposure_trend A character string specifying the seasonal trend for
+#'        exposure. Options for continuous exposure are:
+#'        \itemize{
+#'      \item{"cos1"}
+#'      \item{"cos2"}
+#'      \item{"cos3"}
+#'      \item{"linear"}
+#'      \item{"curvilinear"}
+#'      \item{"cos1linear"}
+#'      \item{"no trend"}
+#'      \item{"custom"}
+#'      }
+#'       Options for binary exposure are:
+#'       \itemize{
+#'      \item{"cos1"}
+#'      \item{"cos2"}
+#'      \item{"cos3"}
+#'      \item{"linear"}
+#'      \item{"monthly"}
+#'      \item{"no trend"}
+#'      \item{"custom"}
+#'    }
+#' @param exposure_amp A numeric value specifying the amplitude of the exposure
+#'        trend. Must be between 0 and 1 for continuous exposure or between 0
+#'        and .5 for binary exposure.
+#' @param outcome_trend A character string specifying the seasonal trend in
+#'        health outcomes.  Options are the same as for continuous exposure
+#'        data.
+#' @param outcome_amp A numeric value specifying the amplitude of the outcome
+#'        trend.  Must be between 0 and 1.
+#' @param cust_exp_func A character string specifying the name of a custom
+#'        trend function to generate exposure data
+#' @param cust_exp_args A list of arguments and their values for the
+#'        user-specified custom exposure function.
+#' @inheritParams std_exposure
+#' @inheritParams sim_outcome
 #'
 #' @return A list resulting from repetitions of simulations with data frames
 #'    for date, exposure, and outcomes, and estimates from fitting models
@@ -349,6 +385,8 @@ fit_mods <- function(outcome, model, df_year = 7){
 #' @inheritParams create_sims
 #' @inheritParams sim_exposure
 #' @inheritParams sim_outcome
+#' @inheritParams std_exposure
+#' @inheritParams fit_mods
 #'
 #' @return A list object with summaries of each model fitted on the simulated
 #'    data sets and measures of model evaluation including coverage and power
