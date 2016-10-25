@@ -4,7 +4,7 @@ author: "Sarah Koehler and Brooke Anderson"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{Using eesim}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -36,7 +36,7 @@ The `eesim` function requires [required inputs]. The function returns the estima
 
 For example, you can use the following call to (1) generate 10 observations of a continuous exposure with mean 100 and standard deviation 10, with a seasonal trend in expected value; (2) generate 10 associated outcome values, where the outcome has an average value of 20 and a relative risk of 1.10 for every one-unit increase in the exposure; (3) fit a generalized linear model that controls for long-term and seasonal trends with a natural cubic spline with 1 degree of freedom per year; and (4) evaluate the performace of that model on the simulated data:
 
-[To do-- increase `n` and `n_reps`, but wait until we've edited the vignette, because that will increase time to render.]
+[To do-- increase `n` and `n_reps`, but wait until we've edited the vignette, because that will increase time to render. We could change `df` then, too (and maybe change to case-crossover? That may be easier for a first example)]
 
 ```{r, warning = FALSE, message = FALSE}
 ex_sim <- eesim(n_reps = 3, n = 10, central = 100, sd = 10,
