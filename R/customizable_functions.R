@@ -127,8 +127,8 @@ custom_baseline <- function(n, df = dlnm::chicagoNMMAPS, average_outcome = NA,
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
   df$outcome <- df[ , outcome_type]
-  smooth_mod <- glm(outcome ~ splines::ns(time, 7 * 14), data = df)
-  baseline <- predict(smooth_mod)[1:n]
+  smooth_mod <- stats::glm(outcome ~ splines::ns(time, 7 * 14), data = df)
+  baseline <- stats::predict(smooth_mod)[1:n]
   df2 <- data.frame(date, baseline)
   return(df2)
 }
@@ -218,7 +218,8 @@ create_lambda <- function(baseline, exposure, rr, cust_lambda_func = NULL, ...){
 #' @inheritParams create_baseline
 #' @inheritParams create_lambda
 #'
-#' @return
+#' @return A dataframe with a simulated time series, with columns for
+#'    \code{date}, \code{x} (exposure), and \code{outcome}.
 #'
 #' @examples
 #' exp <- sim_exposure(n = 5, central = 100, sd = 10, amp = .6,

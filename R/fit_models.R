@@ -48,16 +48,14 @@ casecross_mod <- function(df){
     event.check <- as.matrix(table(df$stratum, df$x))
     informative.strata <- rownames(event.check)[apply(event.check,
                                                       1, prod) > 0]
-    df <- subset(df, stratum %in% informative.strata)
+    df <- dplyr::filter_(df, ~ stratum %in% informative.strata)
 
     if(length(informative.strata) > 1){
-      mod <- stats::glm(outcome ~ x + stratum,
-                 data = df,
-                 family = stats::quasipoisson(link = "log"))
+      mod <- stats::glm(outcome ~ x + stratum, data = df,
+                        family = stats::quasipoisson(link = "log"))
     } else {
-      mod <- stats::glm(outcome ~ x,
-                 data = df,
-                 family = stats::quasipoisson(link = "log"))
+      mod <- stats::glm(outcome ~ x, data = df,
+                        family = stats::quasipoisson(link = "log"))
     }
   } else {
     mod <- stats::glm(outcome ~ x + stratum,
@@ -110,7 +108,7 @@ crossyear_mod <- function(df){
   }
 
   out_1 <- summary(mod)$coef[2, ]
-  out_2 <- confint.default(mod)[2, ]
+  out_2 <- stats::confint.default(mod)[2, ]
   out <- c(out_1, out_2)
   return(out)
 }
