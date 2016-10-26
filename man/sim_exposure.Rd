@@ -12,6 +12,9 @@ sim_exposure(n, central = NULL, sd = NULL, trend = "no trend",
 \item{central}{A numeric value specifying the mean probability of exposure
 (for binary data) or the mean exposure value (for continuous data)}
 
+\item{sd}{A numeric value giving the standard deviation of the exposure
+values around the trend line.}
+
 \item{exposure_type}{A character string specifying the type of exposure.
 Choices are "binary" or "continuous".}
 
