@@ -48,6 +48,7 @@ custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, metric = "temp",
 #' @param cust_exp_args A list of arguments used in the user-specified custom
 #'    function
 #' @inheritParams std_exposure
+#' @inheritParams continuous_exposure
 #'
 #' @return A data frame with two columns: date and exposure values
 #'
@@ -59,7 +60,7 @@ custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, metric = "temp",
 #'                     cust_exp_args = list(metric = "temp"))
 #'
 #' @export
-sim_exposure <- function(n, central = NULL, sd=NULL, trend = "no trend",
+sim_exposure <- function(n, central = NULL, sd = NULL, trend = "no trend",
                          amp = .6, exposure_type = NULL,
                          start.date = "2001-01-01", cust_exp_func = NULL,
                          cust_exp_args = NULL){
