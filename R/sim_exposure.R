@@ -94,10 +94,10 @@ bin_t <- function(n, p, trend = "no trend", amp = .01,
   date <- seq(from = start.date, by = 1, length.out = n)
   if (trend == "monthly"){
   }
-  else if (p > .5 & amp >1-p){
+  else if (p > .5 & amp >1-p & !(trend == "no trend")){
     stop(paste0("For p>.5, amp must be between 0 and 1-p."))
   }
-  else if (p<.5 & amp >p){
+  else if (p<.5 & amp >p & !(trend == "no trend")){
     stop(paste0("For p<.5, amp must be between 0 and p."))
   }
   if (trend == "cos1"){
