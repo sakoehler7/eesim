@@ -202,16 +202,15 @@ continuous_exposure <- function(n, mu, sd=1, trend = "no trend", amp = .6,
 #' @export
 std_exposure <- function(n, central, sd = NULL, trend = "no trend",
                          exposure_type = "binary", amp,
-                         start.date = "2000-01-01", ...){
+                         start.date = "2000-01-01"){
   if(exposure_type=="binary"){
     p <- central
-    df <- binary_exposure(n=n, p=p, trend=trend, amp=amp, start.date=start.date,
-                          ...)
+    df <- binary_exposure(n=n, p=p, trend=trend, amp=amp, start.date=start.date)
   }
   else if(exposure_type == "continuous"){
     mu <- central
     df <- continuous_exposure(n=n, mu=mu, sd =sd, trend=trend, amp=amp,
-                              start.date=start.date, ...)
+                              start.date=start.date)
   }
   return(df)
 }
