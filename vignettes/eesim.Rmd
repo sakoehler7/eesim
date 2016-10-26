@@ -1,17 +1,19 @@
 ---
-title: "Using `eesim`"
+title: "Using the `eesim` package"
 author: "Sarah Koehler and Brooke Anderson"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Using eesim}
+  %\VignetteIndexEntry{Using the eesim package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, message = FALSE}
 library(eesim)
 library(ggplot2)
+library(dplyr)
+library(tidyr)
 ```
 
 ## Overview of package
@@ -21,12 +23,14 @@ perform simulation-based power analyses and other measures of model performance.
 The package includes four main parts: 
 
 1. Generation of exposure data; 
-2. Generatio of outcome data;
+2. Generation of outcome data;
 3. Fitting models to simulated data; and 
 4. Evaluating model performance on simulated data.
 
 The user has the option to customize different aspects of the simulation at each
 of these steps.
+
+The package creates time series that are relevant for environmental epidemiology studies of ambient exposures (e.g., studies of acute mortality risks associated with daily air pollution concentration, daily temperature, or occurance of a community-wide extreme event like a heat wave).
 
 ## Basic example of using the package
 
@@ -48,29 +52,28 @@ ex_sim
 
 ##Piece-by-piece breakdown of package utility
 
-To demonstrate how eesim works, here is a breakdown of each of the four main 
-parts: generating exposure data, generating outcome data, fitting models, and 
-evaluating models.
+To demonstrate how the`eesim` functionworks, here is a breakdown of each of the four main parts: generating exposure data, generating outcome data, fitting models, and evaluating models. The helper functions used for each step are described in detail in this section.
 
 ###Generating exposure data
 
-The first task of the package is generating air pollution exposure data (or 
-potentially other types of exposure) that may have seasonal trends. The user can
-specify whether they would like the exposure data to bebinary or continuous, and
-what kind of trend they would like the data to exhibit. We have built in several
-seasonal trends to choose from, which differ slightly depending on whether 
-binary or continuous data is desired.
+The first task of the package is generating exposure data. This can be dones with the `sim_exposure` function. In this function, the user can specify whether they would like the exposure data to be binary or continuous. For continuous exposure data, the user can specify the mean and standard deviation of the exposure data: 
 
-Below are plots of the built-in trends for continuous exposure data the user may
-choose from. The trend options are similar for binary exposure, but exclude 
-"curvilinear" and "cos1linear" and include a "monthly" trend, for which the user
-enters a vector of 12 probabilities of exposure, one for each month.
+```{r}
+sim_exposure(n = 1000, central = 50, sd = 5, exposure_type = "continuous") %>%
+  slice(1:5)
+```
+
+For binary exposure data, 
+
+```{r}
+sim_exposure(n = 1000, central = 0.1, exposure_type = "binary") %>%
+  slice(1:5)
+```
+
+
+For environmental epidemiology applications, exposure data often has a seasonal trend and / or long-term trend. We have built in several time trends from which a user can to choose to simulate changing exposure data. These trend patterns differ slightly depending on whether the user is simulating binary or continuous data. [add reference for Schwartz paper where we got some of the trend equations] Below are plots of the built-in trends for continuous exposure data the user may choose from. The trend options are similar for binary exposure, but exclude  "curvilinear" and "cos1linear" and include a "monthly" trend, for which the user enters a vector of 12 probabilities of exposure, one for each month.
 
 ```{r fig.width = 7, fig.height = 4, echo = FALSE, message = FALSE}
-library(dplyr)
-library(tidyr)
-library(ggplot2)
-
 data.frame(day = 1:1000) %>%
   mutate(none = calc_t(n = 1000, trend = "no trend"),
          cos1 = calc_t(n = 1000, trend = "cos1"),
