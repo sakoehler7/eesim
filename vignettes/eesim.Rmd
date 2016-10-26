@@ -82,13 +82,13 @@ For environmental epidemiology applications, exposure data often has a seasonal 
 
 ```{r fig.width = 7, fig.height = 4, echo = FALSE, message = FALSE}
 data.frame(day = 1:1000) %>%
-  mutate(none = calc_t(n = 1000, trend = "no trend"),
-         cos1 = calc_t(n = 1000, trend = "cos1"),
-         cos2 = calc_t(n = 1000, trend = "cos2"),
-         cos3 = calc_t(n = 1000, trend = "cos3"),
-         linear = calc_t(n = 1000, trend = "linear"),
-         curvilinear = calc_t(n = 1000, trend = "curvilinear"),
-         cos1linear = calc_t(n = 1000, trend = "cos1linear")) %>%
+  mutate(`"no trend"` = calc_t(n = 1000, trend = "no trend"),
+         `"cos1"` = calc_t(n = 1000, trend = "cos1"),
+         `"cos2"` = calc_t(n = 1000, trend = "cos2"),
+         `"cos3"` = calc_t(n = 1000, trend = "cos3"),
+         `"linear"` = calc_t(n = 1000, trend = "linear"),
+         `"curvilinear"` = calc_t(n = 1000, trend = "curvilinear"),
+         `"cos1linear"` = calc_t(n = 1000, trend = "cos1linear")) %>%
   gather(trend_method, trend_value, -day) %>%
   ggplot(aes(x = day, y = trend_value)) + 
   geom_line() + facet_wrap(~ trend_method, ncol = 4) + 
