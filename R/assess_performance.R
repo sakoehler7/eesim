@@ -36,7 +36,15 @@ mean_beta <- function(df){
 #'    and the mean variance of the beta hats
 #'
 #' @examples
-#' beta_var(df)
+#' sims <- create_sims(n_reps = 10, n = 600, central = 100,
+#'                     sd = 10, exposure_type = "continuous",
+#'                     exposure_trend = "cos1",
+#'                     exposure_amp = 0.6,
+#'                     average_outcome = 20,
+#'                     outcome_trend = "no trend",
+#'                     rr = 1.01)
+#' fits <- fit_mods(outcome = sims, model = "spline", df_year = 1)
+#' beta_var(fits)
 #'
 #' @export
 beta_var <- function(df){
@@ -57,7 +65,15 @@ beta_var <- function(df){
 #'    simulations
 #'
 #' @examples
-#' beta_bias(df, true_rr = 1.02)
+#' sims <- create_sims(n_reps = 10, n = 600, central = 100,
+#'                     sd = 10, exposure_type = "continuous",
+#'                     exposure_trend = "cos1",
+#'                     exposure_amp = 0.6,
+#'                     average_outcome = 20,
+#'                     outcome_trend = "no trend",
+#'                     rr = 1.01)
+#' fits <- fit_mods(outcome = sims, model = "spline", df_year = 1)
+#' beta_bias(fits, true_rr = 1.02)
 #'
 #' @export
 beta_bias <- function(df, true_rr){
@@ -97,7 +113,15 @@ coverage_beta <- function(df, true_rr){
 #' @return Power at the 5% significance level
 #'
 #' @examples
-#' power_beta(df)
+#' sims <- create_sims(n_reps = 10, n = 600, central = 100,
+#'                     sd = 10, exposure_type = "continuous",
+#'                     exposure_trend = "cos1",
+#'                     exposure_amp = 0.6,
+#'                     average_outcome = 20,
+#'                     outcome_trend = "no trend",
+#'                     rr = 1.01)
+#' fits <- fit_mods(outcome = sims, model = "spline", df_year = 1)
+#' power_beta(fits)
 #'
 #' @export
 power_beta <- function(df){
