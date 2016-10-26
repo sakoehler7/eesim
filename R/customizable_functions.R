@@ -38,7 +38,7 @@ custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, metric = "temp",
   return(exposure)
 }
 
-#' Simulate random series of exposure values
+#' Simulate time series of exposure values
 #'
 #' Simulates a time series of binary or continuous exposure values with or
 #' without seasonal trends. It also allows the user to use a custom function for
@@ -52,7 +52,8 @@ custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, metric = "temp",
 #' @inheritParams continuous_exposure
 #' @inheritParams calc_t
 #'
-#' @return A data frame with two columns: date and exposure values
+#' @return A data frame with two columns: date (\code{date}) and simulated
+#'    exposure values (\code{x}).
 #'
 #' @examples
 #' sim_exposure(n = 5, central = 0.25, exposure_type = "binary")
