@@ -20,7 +20,15 @@ The percent bias of the mean of the estimated coefficients over n
 This function returns the relative bias of the mean of the estimated coefficients.
 }
 \examples{
-beta_bias(df, true_rr = 1.02)
+sims <- create_sims(n_reps = 10, n = 600, central = 100,
+                    sd = 10, exposure_type = "continuous",
+                    exposure_trend = "cos1",
+                    exposure_amp = 0.6,
+                    average_outcome = 20,
+                    outcome_trend = "no trend",
+                    rr = 1.01)
+fits <- fit_mods(outcome = sims, model = "spline", df_year = 1)
+beta_bias(fits, true_rr = 1.02)
 
 }
 

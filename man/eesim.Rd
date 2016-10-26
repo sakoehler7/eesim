@@ -17,7 +17,10 @@ to be performed}
 \item{n}{A numeric value specifying the number of days to simulate.}
 
 \item{central}{A numeric value specifying the mean probability of exposure
-(for binary data) or the mean exposure value (for continuous data)}
+(for binary data) or the mean exposure value (for continuous data).}
+
+\item{sd}{A numeric value giving the standard deviation of the exposure
+values around the trend line.}
 
 \item{sd}{A numeric value giving the standard deviation of the exposure
 values around the trend line.}

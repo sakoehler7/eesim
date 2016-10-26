@@ -19,7 +19,15 @@ This function gives the variance of the point estimates of beta hat over
 the n simulations and the mean of the variances of each beta hat.
 }
 \examples{
-beta_var(df)
+sims <- create_sims(n_reps = 10, n = 600, central = 100,
+                    sd = 10, exposure_type = "continuous",
+                    exposure_trend = "cos1",
+                    exposure_amp = 0.6,
+                    average_outcome = 20,
+                    outcome_trend = "no trend",
+                    rr = 1.01)
+fits <- fit_mods(outcome = sims, model = "spline", df_year = 1)
+beta_var(fits)
 
 }
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/sim_exposure.R
 \name{std_exposure}
 \alias{std_exposure}
-\title{Simulate exposure data}
+\title{Simulate exposure data using default methods}
 \usage{
 std_exposure(n, central, sd = NULL, trend = "no trend",
   exposure_type = "binary", amp, start.date = "2000-01-01", ...)
@@ -11,7 +11,7 @@ std_exposure(n, central, sd = NULL, trend = "no trend",
 \item{n}{A numeric value specifying the number of days to simulate.}
 
 \item{central}{A numeric value specifying the mean probability of exposure
-(for binary data) or the mean exposure value (for continuous data)}
+(for binary data) or the mean exposure value (for continuous data).}
 
 \item{sd}{A numeric value giving the standard deviation of the exposure
 values around the trend line.}
@@ -27,7 +27,9 @@ Options are:
   \item{"cos1linear"}
   \item{"no trend"}
   \item{"custom"}
-}}
+}
+See the package vignette for examples of the shapes of these trends.
+Default is "no trend".}
 
 \item{exposure_type}{A character string specifying the type of exposure.
 Choices are "binary" or "continuous".}
@@ -35,16 +37,21 @@ Choices are "binary" or "continuous".}
 \item{amp}{A numeric value specifying the amplitude of the seasonal trend.
 Must be between 0 and 1.}
 
+\item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
+simulating daily exposures}
+
 \item{...}{optional arguments to a custom trend function}
 }
 \value{
-A data frame with the dates and daily exposure values from n days
+A data frame with two columns: date (\code{date}) and simulated
+   exposure values (\code{x}).
 }
 \description{
-Simulates binary or continuous exposure data with or without seasonal trends.
+Simulates binary or continuous exposure data with or without seasonal trends
+using default functions.
 }
 \examples{
-std_exposure(n=5, central = .1, trend = "cos1", amp = .02)
+std_exposure(n = 5, central = .1, trend = "cos1", amp = .02)
 std_exposure(n = 5, central = 50, sd = 5, trend = "cos3", amp = .6,
              exposure_type = "continuous", start.date = "2001-04-01")
 

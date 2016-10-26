@@ -32,7 +32,8 @@ user-specified custom baseline function}
 user-specified custom lambda function}
 }
 \value{
-
+A dataframe with a simulated time series, with columns for
+   \code{date}, \code{x} (exposure), and \code{outcome}.
 }
 \description{
 Simulate outcome

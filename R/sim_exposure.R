@@ -15,11 +15,12 @@
 #'      \item{"no trend"}
 #'      \item{"custom"}
 #'    }
-#'
+#'    See the package vignette for examples of the shapes of these trends.
+#'    Default is "no trend".
 #' @param amp A numeric value specifying the amplitude of the seasonal trend.
 #'    Must be between 0 and 1.
 #' @param custom_func A character string specifying a customized function from
-#'    which to create a trend variable
+#'    which to create a trend variable.
 #' @param ... optional arguments to a custom trend function
 #'
 #' @return A numeric vector used to generate data with seasonal trends.
@@ -94,10 +95,10 @@ bin_t <- function(n, p, trend = "no trend", amp = .01,
   date <- seq(from = start.date, by = 1, length.out = n)
   if (trend == "monthly"){
   }
-  else if (p > .5 & amp >1-p){
+  else if (p > .5 & amp >1-p & !(trend == "no trend")){
     stop(paste0("For p>.5, amp must be between 0 and 1-p."))
   }
-  else if (p<.5 & amp >p){
+  else if (p<.5 & amp >p & !(trend == "no trend")){
     stop(paste0("For p<.5, amp must be between 0 and p."))
   }
   if (trend == "cos1"){
@@ -162,6 +163,7 @@ binary_exposure <- function(n, p, trend = "no trend", amp,
 #' @param sd A numeric value giving the standard deviation of the exposure
 #'    values around the trend line.
 #' @inheritParams calc_t
+#' @inheritParams binary_exposure
 #'
 #' @return A data frame with the dates and daily exposure values from n days
 #'
@@ -169,7 +171,7 @@ binary_exposure <- function(n, p, trend = "no trend", amp,
 #' continuous_exposure(n = 5, mu = 100, sd = 10, trend = "cos1")
 #'
 #' @export
-continuous_exposure <- function(n, mu, sd=1, trend = "no trend", amp = .6,
+continuous_exposure <- function(n, mu, sd = 1, trend = "no trend", amp = .6,
                                 start.date = "2000-01-01", ...){
   day <- c(1:n)
   start.date <- as.Date(start.date)
@@ -181,21 +183,23 @@ continuous_exposure <- function(n, mu, sd=1, trend = "no trend", amp = .6,
   return(df)
 }
 
-#' Simulate exposure data
+#' Simulate exposure data using default methods
 #'
-#' Simulates binary or continuous exposure data with or without seasonal trends.
+#' Simulates binary or continuous exposure data with or without seasonal trends
+#' using default functions.
 #'
 #' @param central A numeric value specifying the mean probability of exposure
-#'    (for binary data) or the mean exposure value (for continuous data)
+#'    (for binary data) or the mean exposure value (for continuous data).
 #' @param exposure_type A character string specifying the type of exposure.
 #'    Choices are "binary" or "continuous".
-#'
 #' @inheritParams continuous_exposure
+#' @inheritParams binary_exposure
 #'
-#' @return A data frame with the dates and daily exposure values from n days
+#' @return A data frame with two columns: date (\code{date}) and simulated
+#'    exposure values (\code{x}).
 #'
 #' @examples
-#' std_exposure(n=5, central = .1, trend = "cos1", amp = .02)
+#' std_exposure(n = 5, central = .1, trend = "cos1", amp = .02)
 #' std_exposure(n = 5, central = 50, sd = 5, trend = "cos3", amp = .6,
 #'              exposure_type = "continuous", start.date = "2001-04-01")
 #'

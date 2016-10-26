@@ -2,38 +2,70 @@
 % Please edit documentation in R/customizable_functions.R
 \name{sim_exposure}
 \alias{sim_exposure}
-\title{Simulate random series of exposure values}
+\title{Simulate time series of exposure values}
 \usage{
 sim_exposure(n, central = NULL, sd = NULL, trend = "no trend",
   amp = 0.6, exposure_type = NULL, start.date = "2001-01-01",
   cust_exp_func = NULL, cust_exp_args = NULL)
 }
 \arguments{
+\item{n}{A numeric value specifying the number of days to simulate.}
+
 \item{central}{A numeric value specifying the mean probability of exposure
-(for binary data) or the mean exposure value (for continuous data)}
+(for binary data) or the mean exposure value (for continuous data).}
+
+\item{sd}{A numeric value giving the standard deviation of the exposure
+values around the trend line.}
+
+\item{trend}{A character string that specifies the desired trend function.
+Options are:
+\itemize{
+  \item{"cos1"}
+  \item{"cos2"}
+  \item{"cos3"}
+  \item{"linear"}
+  \item{"curvilinear"}
+  \item{"cos1linear"}
+  \item{"no trend"}
+  \item{"custom"}
+}
+See the package vignette for examples of the shapes of these trends.
+Default is "no trend".}
+
+\item{amp}{A numeric value specifying the amplitude of the seasonal trend.
+Must be between 0 and 1.}
 
 \item{exposure_type}{A character string specifying the type of exposure.
 Choices are "binary" or "continuous".}
 
-\item{cust_exp_args}{A list of arguments used in the user-specified custom
-function}
+\item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
+simulating daily exposures}
 
-\item{cust_exp_function}{The name of a function from which to generate custom
-exposure values}
+\item{cust_exp_func}{The name of a function to use to generate custom
+exposure values.}
+
+\item{cust_exp_args}{A list of arguments used in the user-specified custom
+function.}
 }
 \value{
-A data frame with two columns: date and exposure values
+A data frame with two columns: date (\code{date}) and simulated
+   exposure values (\code{x}).
 }
 \description{
-This function simulates binary or continuous exposure values with or without
-seasonal trends. It also allows for a custom function for exposure trend.
+Simulates a time series of binary or continuous exposure values with or
+without seasonal trends. It also allows the user to use a custom function for
+the shape of the exposure trend.
 }
 \examples{
-sim_exposure(n = 5, central = 0.25, exposure_type = "binary", amp = .02)
-sim_exposure(n = 5, central = 100, sd = 10, amp = .6,
-             exposure_type = "continuous")
-sim_exposure(n = 5, cust_exp_func = "custom_exposure",
-                    cust_exp_args = list(metric = "temp"))
-
+sim_exposure(n = 5, central = 0.25, exposure_type = "binary")
+sim_exposure(n = 5, central = 100, sd = 10, exposure_type = "continuous")
+library(ggplot2)
+x_cont <- sim_exposure(n = 1000, central = 100, sd = 10,
+                       exposure_type = "continuous",
+                       trend = "cos1linear", amp = 0.6)
+ggplot(x_cont, aes(x = date, y = x)) + geom_point()
+x_cust <- sim_exposure(n = 1000, cust_exp_func = "custom_exposure",
+                       cust_exp_args = list(metric = "temp"))
+ggplot(x_cust, aes(x = date, y = x)) + geom_point()
 }
 

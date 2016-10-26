@@ -38,28 +38,37 @@ custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, metric = "temp",
   return(exposure)
 }
 
-#' Simulate random series of exposure values
+#' Simulate time series of exposure values
 #'
-#' This function simulates binary or continuous exposure values with or without
-#' seasonal trends. It also allows for a custom function for exposure trend.
+#' Simulates a time series of binary or continuous exposure values with or
+#' without seasonal trends. It also allows the user to use a custom function for
+#' the shape of the exposure trend.
 #'
-#' @param cust_exp_function The name of a function from which to generate custom
-#'    exposure values
+#' @param cust_exp_func The name of a function to use to generate custom
+#'    exposure values.
 #' @param cust_exp_args A list of arguments used in the user-specified custom
-#'    function
+#'    function.
 #' @inheritParams std_exposure
+#' @inheritParams continuous_exposure
+#' @inheritParams binary_exposure
+#' @inheritParams calc_t
 #'
-#' @return A data frame with two columns: date and exposure values
+#' @return A data frame with two columns: date (\code{date}) and simulated
+#'    exposure values (\code{x}).
 #'
 #' @examples
-#' sim_exposure(n = 5, central = 0.25, exposure_type = "binary", amp = .02)
-#' sim_exposure(n = 5, central = 100, sd = 10, amp = .6,
-#'              exposure_type = "continuous")
-#' sim_exposure(n = 5, cust_exp_func = "custom_exposure",
-#'                     cust_exp_args = list(metric = "temp"))
-#'
+#' sim_exposure(n = 5, central = 0.25, exposure_type = "binary")
+#' sim_exposure(n = 5, central = 100, sd = 10, exposure_type = "continuous")
+#' library(ggplot2)
+#' x_cont <- sim_exposure(n = 1000, central = 100, sd = 10,
+#'                        exposure_type = "continuous",
+#'                        trend = "cos1linear", amp = 0.6)
+#' ggplot(x_cont, aes(x = date, y = x)) + geom_point()
+#' x_cust <- sim_exposure(n = 1000, cust_exp_func = "custom_exposure",
+#'                        cust_exp_args = list(metric = "temp"))
+#' ggplot(x_cust, aes(x = date, y = x)) + geom_point()
 #' @export
-sim_exposure <- function(n, central = NULL, sd=NULL, trend = "no trend",
+sim_exposure <- function(n, central = NULL, sd = NULL, trend = "no trend",
                          amp = .6, exposure_type = NULL,
                          start.date = "2001-01-01", cust_exp_func = NULL,
                          cust_exp_args = NULL){
@@ -127,8 +136,8 @@ custom_baseline <- function(n, df = dlnm::chicagoNMMAPS, average_outcome = NA,
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
   df$outcome <- df[ , outcome_type]
-  smooth_mod <- glm(outcome ~ splines::ns(time, 7 * 14), data = df)
-  baseline <- predict(smooth_mod)[1:n]
+  smooth_mod <- stats::glm(outcome ~ splines::ns(time, 7 * 14), data = df)
+  baseline <- stats::predict(smooth_mod)[1:n]
   df2 <- data.frame(date, baseline)
   return(df2)
 }
@@ -218,7 +227,8 @@ create_lambda <- function(baseline, exposure, rr, cust_lambda_func = NULL, ...){
 #' @inheritParams create_baseline
 #' @inheritParams create_lambda
 #'
-#' @return
+#' @return A dataframe with a simulated time series, with columns for
+#'    \code{date}, \code{x} (exposure), and \code{outcome}.
 #'
 #' @examples
 #' exp <- sim_exposure(n = 5, central = 100, sd = 10, amp = .6,

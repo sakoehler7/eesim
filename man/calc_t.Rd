@@ -20,13 +20,15 @@ Options are:
   \item{"cos1linear"}
   \item{"no trend"}
   \item{"custom"}
-}}
+}
+See the package vignette for examples of the shapes of these trends.
+Default is "no trend".}
 
 \item{amp}{A numeric value specifying the amplitude of the seasonal trend.
 Must be between 0 and 1.}
 
 \item{custom_func}{A character string specifying a customized function from
-which to create a trend variable}
+which to create a trend variable.}
 
 \item{...}{optional arguments to a custom trend function}
 }
