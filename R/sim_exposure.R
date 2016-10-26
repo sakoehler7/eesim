@@ -19,7 +19,7 @@
 #' @param amp A numeric value specifying the amplitude of the seasonal trend.
 #'    Must be between 0 and 1.
 #' @param custom_func A character string specifying a customized function from
-#'    which to create a trend variable
+#'    which to create a trend variable.
 #' @param ... optional arguments to a custom trend function
 #'
 #' @return A numeric vector used to generate data with seasonal trends.
@@ -186,10 +186,9 @@ continuous_exposure <- function(n, mu, sd=1, trend = "no trend", amp = .6,
 #' Simulates binary or continuous exposure data with or without seasonal trends.
 #'
 #' @param central A numeric value specifying the mean probability of exposure
-#'    (for binary data) or the mean exposure value (for continuous data)
+#'    (for binary data) or the mean exposure value (for continuous data).
 #' @param exposure_type A character string specifying the type of exposure.
 #'    Choices are "binary" or "continuous".
-#'
 #' @inheritParams continuous_exposure
 #'
 #' @return A data frame with the dates and daily exposure values from n days

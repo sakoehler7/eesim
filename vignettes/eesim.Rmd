@@ -59,18 +59,26 @@ To demonstrate how the`eesim` functionworks, here is a breakdown of each of the 
 The first task of the package is generating exposure data. This can be dones with the `sim_exposure` function. In this function, the user can specify whether they would like the exposure data to be binary or continuous (`exposure_type`). For continuous exposure data, the user can specify the mean (`central`) and standard deviation (`sd`) of the exposure data: 
 
 ```{r}
-sim_exposure(n = 1000, central = 50, sd = 5, exposure_type = "continuous") %>%
-  slice(1:5)
+x_cont <- sim_exposure(n = 1000, central = 50, sd = 5,
+                      exposure_type = "continuous") 
+x_cont %>% slice(1:5)
+```
+```{r fig.width = 4, fig.height = 2, fig.align = "center"}
+ggplot(x_cont, aes(x = date, y = x)) + geom_point(alpha = 0.2)
 ```
 
 For binary exposure data, the `central` argument gives the probability of exposure on a study day:
 
 ```{r}
-sim_exposure(n = 1000, central = 0.1, exposure_type = "binary") %>%
-  slice(1:5)
+x_bin <- sim_exposure(n = 1000, central = 0.1,
+                      exposure_type = "binary")
+x_bin %>% slice(1:5)
+```
+```{r fig.width = 4, fig.height = 2, fig.align = "center"}
+ggplot(x_bin, aes(x = date, y = x)) + geom_point(alpha = 0.2)
 ```
 
-For environmental epidemiology applications, exposure data often has a seasonal trend and / or long-term trend. The default for `sim_exposure` is to simulate the exposure data without a time trend (`trend = "no trend"`). However, we have also built in several time trends from which a user can to choose to simulate exposure data with a time trend, either seasonal or long-term or both. These trend patterns differ slightly depending on whether the user is simulating binary or continuous data. [add reference for Schwartz paper where we got some of the trend equations] Below are plots of the built-in trends for continuous exposure data the user may choose from. The trend options are similar for binary exposure, but exclude  "curvilinear" and "cos1linear" and include a "monthly" trend, for which the user enters a vector of 12 probabilities of exposure, one for each month.
+For environmental epidemiology applications, exposure data often has a seasonal trend and / or long-term trend. The default for `sim_exposure` is to simulate the exposure data without a time trend (`trend = "no trend"`). However, we have also built in several time trends from which a user can to choose to simulate exposure data with a time trend, either seasonal or long-term or both. These trend patterns differ slightly depending on whether the user is simulating binary or continuous data. [add reference for Schwartz paper where we got some of the trend equations] Below are plots of the built-in trends for continuous exposure data from which the user may choose. 
 
 ```{r fig.width = 7, fig.height = 4, echo = FALSE, message = FALSE}
 data.frame(day = 1:1000) %>%
@@ -86,6 +94,8 @@ data.frame(day = 1:1000) %>%
   geom_line() + facet_wrap(~ trend_method, ncol = 4) + 
   theme_bw()
 ```
+
+The trend options are similar for binary exposure, but exclude  "curvilinear" and "cos1linear" and include a "monthly" trend, for which the user enters a vector of 12 probabilities of exposure, one for each month.
 
 Here is an example of generating continuous exposure data with a "cos1linear"" 
 trend:
