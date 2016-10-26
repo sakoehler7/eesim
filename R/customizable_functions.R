@@ -43,12 +43,13 @@ custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, metric = "temp",
 #' This function simulates binary or continuous exposure values with or without
 #' seasonal trends. It also allows for a custom function for exposure trend.
 #'
-#' @param cust_exp_function The name of a function from which to generate custom
+#' @param cust_exp_func The name of a function from which to generate custom
 #'    exposure values
 #' @param cust_exp_args A list of arguments used in the user-specified custom
 #'    function
 #' @inheritParams std_exposure
 #' @inheritParams continuous_exposure
+#' @inheritParams calc_t
 #'
 #' @return A data frame with two columns: date and exposure values
 #'

@@ -9,20 +9,38 @@ sim_exposure(n, central = NULL, sd = NULL, trend = "no trend",
   cust_exp_func = NULL, cust_exp_args = NULL)
 }
 \arguments{
+\item{n}{A numeric value specifying the number of days to simulate.}
+
 \item{central}{A numeric value specifying the mean probability of exposure
 (for binary data) or the mean exposure value (for continuous data)}
 
 \item{sd}{A numeric value giving the standard deviation of the exposure
 values around the trend line.}
 
+\item{trend}{A character string that specifies the desired trend function.
+Options are:
+\itemize{
+  \item{"cos1"}
+  \item{"cos2"}
+  \item{"cos3"}
+  \item{"linear"}
+  \item{"curvilinear"}
+  \item{"cos1linear"}
+  \item{"no trend"}
+  \item{"custom"}
+}}
+
+\item{amp}{A numeric value specifying the amplitude of the seasonal trend.
+Must be between 0 and 1.}
+
 \item{exposure_type}{A character string specifying the type of exposure.
 Choices are "binary" or "continuous".}
 
+\item{cust_exp_func}{The name of a function from which to generate custom
+exposure values}
+
 \item{cust_exp_args}{A list of arguments used in the user-specified custom
 function}
-
-\item{cust_exp_function}{The name of a function from which to generate custom
-exposure values}
 }
 \value{
 A data frame with two columns: date and exposure values
