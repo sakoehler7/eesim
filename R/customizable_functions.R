@@ -50,6 +50,7 @@ custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, metric = "temp",
 #'    function.
 #' @inheritParams std_exposure
 #' @inheritParams continuous_exposure
+#' @inheritParams binary_exposure
 #' @inheritParams calc_t
 #'
 #' @return A data frame with two columns: date (\code{date}) and simulated

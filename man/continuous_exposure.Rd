@@ -26,10 +26,15 @@ Options are:
   \item{"cos1linear"}
   \item{"no trend"}
   \item{"custom"}
-}}
+}
+See the package vignette for examples of the shapes of these trends.
+Default is "no trend".}
 
 \item{amp}{A numeric value specifying the amplitude of the seasonal trend.
 Must be between 0 and 1.}
+
+\item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
+simulating daily exposures}
 
 \item{...}{optional arguments to a custom trend function}
 }

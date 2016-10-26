@@ -2,7 +2,7 @@
 % Please edit documentation in R/customizable_functions.R
 \name{sim_exposure}
 \alias{sim_exposure}
-\title{Simulate random series of exposure values}
+\title{Simulate time series of exposure values}
 \usage{
 sim_exposure(n, central = NULL, sd = NULL, trend = "no trend",
   amp = 0.6, exposure_type = NULL, start.date = "2001-01-01",
@@ -28,13 +28,18 @@ Options are:
   \item{"cos1linear"}
   \item{"no trend"}
   \item{"custom"}
-}}
+}
+See the package vignette for examples of the shapes of these trends.
+Default is "no trend".}
 
 \item{amp}{A numeric value specifying the amplitude of the seasonal trend.
 Must be between 0 and 1.}
 
 \item{exposure_type}{A character string specifying the type of exposure.
 Choices are "binary" or "continuous".}
+
+\item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
+simulating daily exposures}
 
 \item{cust_exp_func}{The name of a function to use to generate custom
 exposure values.}
@@ -43,7 +48,8 @@ exposure values.}
 function.}
 }
 \value{
-A data frame with two columns: date and exposure values
+A data frame with two columns: date (\code{date}) and simulated
+   exposure values (\code{x}).
 }
 \description{
 Simulates a time series of binary or continuous exposure values with or
