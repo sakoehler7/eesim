@@ -12,6 +12,22 @@ data}
 
 \item{average_outcome}{A numeric value specifying the average outcome value}
 
+\item{trend}{outcome_trend A character string specifying the seasonal trend in
+    health outcomes.  Options are Options are:
+\itemize{
+  \item{"cos1"}
+  \item{"cos2"}
+  \item{"cos3"}
+  \item{"linear"}
+  \item{"curvilinear"}
+  \item{"cos1linear"}
+  \item{"no trend"}
+  \item{"custom"}
+}}
+
+\item{amp}{A numeric value specifying the amplitude of the seasonal trend.
+Must be between 0 and 1.}
+
 \item{cust_base_func}{A character string specifying a user-made custom
 function for baseline trend}
 

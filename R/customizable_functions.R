@@ -170,7 +170,7 @@ custom_baseline <- function(n, df = dlnm::chicagoNMMAPS, outcome_type = "cvd",
 #'
 #' @examples
 #' create_baseline(n = 5, average_outcome = 22, trend = "linear")
-#' create_baseline(n = 5, average_outcome = NA, trend = NA,
+#' create_baseline(n = 5, average_outcome = NULL, trend = NULL,
 #'                 custom_func = "custom_baseline", outcome_type = "death")
 #'
 #' @export
@@ -336,7 +336,7 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
 #'        trend function to generate exposure data
 #' @param cust_exp_args A list of arguments and their values for the
 #'        user-specified custom exposure function.
-#' @param cust_lamba_args A list of arguments and their values used in the
+#' @param cust_lambda_args A list of arguments and their values used in the
 #'    user-specified custom lambda function
 #' @inheritParams std_exposure
 #' @inheritParams sim_outcome

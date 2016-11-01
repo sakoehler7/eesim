@@ -4,8 +4,8 @@
 \alias{custom_baseline}
 \title{Pull smoothed Chicago NMMAPS health outcome data}
 \usage{
-custom_baseline(n, df = dlnm::chicagoNMMAPS, average_outcome = NA,
-  trend = NA, outcome_type = "cvd", start.date = "2000-01-01")
+custom_baseline(n, df = dlnm::chicagoNMMAPS, outcome_type = "cvd",
+  start.date = "2000-01-01")
 }
 \arguments{
 \item{n}{A numeric value specifying the number of days for which to obtain an
@@ -13,16 +13,16 @@ exposure value.}
 
 \item{df}{Data frame from which to pull exposure values.}
 
-\item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
-pulling exposure values. Dates in the Chicago NMMAPS data set are from
-1987-01-01 to 2000-12-31.}
-
-\item{metric}{A character string specifying the desired health outcome metric.
+\item{outcome_type}{A character string specifying the desired health outcome metric.
 Options are:
 \itemize{
   \item"death"
   \item"cvd"
   \item"resp"}}
+
+\item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
+pulling exposure values. Dates in the Chicago NMMAPS data set are from
+1987-01-01 to 2000-12-31.}
 }
 \value{
 A data frame with one column for date and one column for baseline

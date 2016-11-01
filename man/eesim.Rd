@@ -81,6 +81,9 @@ function for relating baseline, relative risk, and exposure}
 \item{cust_base_args}{A list of arguments and their values used in the
 user-specified custom baseline function}
 
+\item{cust_lambda_args}{A list of arguments and their values used in the
+user-specified custom lambda function}
+
 \item{model}{A character string specifying model to be used. Choices are
 "spline" and "casecrossover"}
 

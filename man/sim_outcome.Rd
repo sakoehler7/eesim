@@ -14,6 +14,22 @@ sim_outcome(exposure, average_outcome = NULL, trend = "no trend",
 
 \item{average_outcome}{A numeric value specifying the average outcome value}
 
+\item{trend}{outcome_trend A character string specifying the seasonal trend in
+    health outcomes.  Options are Options are:
+\itemize{
+  \item{"cos1"}
+  \item{"cos2"}
+  \item{"cos3"}
+  \item{"linear"}
+  \item{"curvilinear"}
+  \item{"cos1linear"}
+  \item{"no trend"}
+  \item{"custom"}
+}}
+
+\item{amp}{A numeric value specifying the amplitude of the seasonal trend.
+Must be between 0 and 1.}
+
 \item{rr}{A numeric value specifying the relative risk}
 
 \item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
@@ -28,7 +44,7 @@ function for relating baseline, relative risk, and exposure}
 \item{cust_base_args}{A list of arguments and their values used in the
 user-specified custom baseline function}
 
-\item{cust_lamba_args}{A list of arguments and their values used in the
+\item{cust_lambda_args}{A list of arguments and their values used in the
 user-specified custom lambda function}
 }
 \value{
