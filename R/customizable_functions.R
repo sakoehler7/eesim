@@ -115,7 +115,7 @@ sim_exposure <- function(n, central = NULL, sd = NULL, trend = "no trend",
 #'
 #' @inheritParams custom_exposure
 #' @inheritParams std_exposure
-#' @param metric A character string specifying the desired health outcome metric.
+#' @param outcome_type A character string specifying the desired health outcome metric.
 #'    Options are:
 #'    \itemize{
 #'      \item"death"
@@ -130,8 +130,7 @@ sim_exposure <- function(n, central = NULL, sd = NULL, trend = "no trend",
 #' custom_baseline(n = 5, outcome_type = "death")
 #'
 #' @export
-custom_baseline <- function(n, df = dlnm::chicagoNMMAPS, average_outcome = NA,
-                            trend = NA, outcome_type = "cvd",
+custom_baseline <- function(n, df = dlnm::chicagoNMMAPS, outcome_type = "cvd",
                             start.date = "2000-01-01"){
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
@@ -148,6 +147,20 @@ custom_baseline <- function(n, df = dlnm::chicagoNMMAPS, average_outcome = NA,
 #' user to input a custom function if desired to specify outcome trend.
 #'
 #' @inheritParams sim_baseline
+#' @param trend outcome_trend A character string specifying the seasonal trend in
+#'        health outcomes.  Options are Options are:
+#'    \itemize{
+#'      \item{"cos1"}
+#'      \item{"cos2"}
+#'      \item{"cos3"}
+#'      \item{"linear"}
+#'      \item{"curvilinear"}
+#'      \item{"cos1linear"}
+#'      \item{"no trend"}
+#'      \item{"custom"}
+#'    }
+#' @param amp A numeric value specifying the amplitude of the seasonal trend.
+#'    Must be between 0 and 1.
 #' @param ... optional arguments to a custom baseline function
 #' @param average_outcome A numeric value specifying the average outcome value
 #' @param cust_base_func A character string specifying a user-made custom
@@ -218,7 +231,7 @@ create_lambda <- function(baseline, exposure, rr, cust_lambda_func = NULL, ...){
 
 #' Simulate outcome
 #'
-#' @param cust_lamba_args A list of arguments and their values used in the
+#' @param cust_lambda_args A list of arguments and their values used in the
 #'    user-specified custom lambda function
 #' @param cust_base_args A list of arguments and their values used in the
 #'    user-specified custom baseline function
@@ -323,6 +336,8 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
 #'        trend function to generate exposure data
 #' @param cust_exp_args A list of arguments and their values for the
 #'        user-specified custom exposure function.
+#' @param cust_lamba_args A list of arguments and their values used in the
+#'    user-specified custom lambda function
 #' @inheritParams std_exposure
 #' @inheritParams sim_outcome
 #'

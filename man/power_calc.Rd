@@ -8,21 +8,21 @@ power_calc(varying, values, plot = FALSE, ...)
 }
 \arguments{
 \item{varying}{A character string of the parameter to be varied.  Choices are
-"n", "rr", or "lambda"}
+"n" or "rr"}
 
 \item{values}{A numeric vector of the chosen values of the varying parameters}
 
 \item{plot}{"TRUE" or "FALSE" for whether to produce a plot}
 }
 \value{
-Data fram with the value of the varying parameter and its
+Data frame with the value of the varying parameter and its
    corresponding power
 }
 \description{
 This function gives the power for a model with varying parameters.
 }
 \examples{
-power_calc(varying = "n", values = c(50 * (1:5)), n_sims = 50,
+power_calc(varying = "n", values = c(50 * (1:5)), n_reps = 50,
            model = "spline_mod", rr = 1.02)
 power_calc(varying = "rr", values = c(1.002, 1.005, 1.01, 1.02, 1.03, 1.05,
            1.1), n_sims = 100, model = "spline_mod", n = 365, plot = TRUE)
