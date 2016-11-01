@@ -22,9 +22,6 @@ to be performed}
 \item{sd}{A numeric value giving the standard deviation of the exposure
 values around the trend line.}
 
-\item{sd}{A numeric value giving the standard deviation of the exposure
-values around the trend line.}
-
 \item{exposure_type}{A character string specifying the type of exposure.
 Choices are "binary" or "continuous".}
 

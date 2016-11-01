@@ -162,17 +162,17 @@ check_sims <- function(df, true_rr){
 #' This function gives the power for a model with varying parameters.
 #'
 #' @param varying A character string of the parameter to be varied.  Choices are
-#'    "n", "rr", or "lambda"
+#'    "n" or "rr"
 #' @param values A numeric vector of the chosen values of the varying parameters
 #' @param plot "TRUE" or "FALSE" for whether to produce a plot
 #' @inheritParams rep_sims
 #' @inheritParams power_beta
 #'
-#' @return Data fram with the value of the varying parameter and its
+#' @return Data frame with the value of the varying parameter and its
 #'    corresponding power
 #'
 #' @examples
-#' power_calc(varying = "n", values = c(50 * (1:5)), n_sims = 50,
+#' power_calc(varying = "n", values = c(50 * (1:5)), n_reps = 50,
 #'            model = "spline_mod", rr = 1.02)
 #' power_calc(varying = "rr", values = c(1.002, 1.005, 1.01, 1.02, 1.03, 1.05,
 #'            1.1), n_sims = 100, model = "spline_mod", n = 365, plot = TRUE)
@@ -182,21 +182,17 @@ power_calc <- function(varying, values, plot = FALSE, ...){
   out <- data.frame(x = values, power = NA)
   if(varying == "n"){
     for(i in 1:nrow(out)){
-      rep_df <- rep_sims(n = out$x[i], ...)
-      out$power[i] <- power_beta(rep_df)[1,1]
+      rep_df <- create_sims(n = out$x[i], ...)
+      fits <- fit_mods(outcome = rep_df, ...)
+      out$power[i] <- power_beta(fits)[1,1]
     }
   } else if(varying == "rr"){
     for(i in 1:nrow(out)){
-      rep_df <- rep_sims(rr = out$x[i], ...)
-      out$power[i] <- power_beta(rep_df)[1,1]
-    }
-  } else if(varying == "lambda"){
-    for(i in 1:nrow(out)){
-      rep_df <- rep_sims(lambda = out$x[i], ...)
-      out$power[i] <- power_beta(rep_df)[1,1]
+      rep_df <- create_sims(rr = out$x[i], ...)
+      fits <- fit_mods(outcome = rep_df, ...)
+      out$power[i] <- power_beta(fits)[1,1]
     }
   }
-
   if(plot == TRUE){
     my_plot <- ggplot2::ggplot(out, ggplot2::aes_(x = ~ x, y = ~ power)) +
       ggplot2::geom_line() + ggplot2::theme_minimal() +
