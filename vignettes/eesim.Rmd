@@ -268,11 +268,11 @@ qplot(testout$date, testout$outcome)+geom_point()+labs(title = "Health outcomes 
 ```
 
 ```{r fig.align = "center", fig.width = 8, fig.height = 2.5}
-testexp2 %>% 
+testout %>% 
   mutate(Weekday = lubridate::wday(date), 
          Month = lubridate::month(date, label = TRUE),
          Year = lubridate::year(date),
-         Exposure = x) %>% 
+         Exposure = outcome) %>% 
   group_by(Year, Month) %>%
   dplyr::mutate(saturday = lag(Weekday) == 7,
                 saturday = ifelse(is.na(saturday), 0, saturday),
