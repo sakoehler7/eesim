@@ -29,5 +29,6 @@ Suggests:
     ggplot2 (>= 2.1.0),
     knitr,
     rmarkdown,
-    tidyr
+    tidyr,
+    viridisLite
 VignetteBuilder: knitr
