@@ -41,7 +41,7 @@ calc_t <- function(n, trend = "no trend", amp = .6, custom_func = NULL, ...){
     } else if (trend == "linear"){
       seasont <- 1 + (day / n)
     } else if (trend == "curvilinear"){
-      seasont <- 1+ day * (2 / n) + day^2 * (-1 / n^2)
+      seasont <- 1 + day * (2 / n) + day^2 * (-1 / n^2)
     } else if (trend == "cos1linear"){
       seasont <- (1 + (day / n)) * (1 + amp * cos(2 * pi * (day / 365)))
     } else if (trend == "no trend"){

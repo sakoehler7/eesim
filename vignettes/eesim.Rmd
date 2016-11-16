@@ -161,6 +161,14 @@ data.frame(day = 1:1000) %>%
          `"curvilinear"` = calc_t(n = 1000, trend = "curvilinear"),
          `"cos1linear"` = calc_t(n = 1000, trend = "cos1linear")) %>%
   gather(trend_method, trend_value, -day) %>%
+  mutate(trend_method = factor(trend_method,
+                               levels = c('"no trend"', 
+                                          '"linear"',
+                                          '"curvilinear"',
+                                          '"cos1"',
+                                          '"cos1linear"',
+                                          '"cos2"',
+                                          '"cos3"'))) %>%
   ggplot(aes(x = day, y = trend_value)) + 
   geom_line() + facet_wrap(~ trend_method, ncol = 4) + 
   theme_bw()
@@ -268,11 +276,11 @@ qplot(testout$date, testout$outcome)+geom_point()+labs(title = "Health outcomes 
 ```
 
 ```{r fig.align = "center", fig.width = 8, fig.height = 2.5}
-testexp2 %>% 
+testout %>% 
   mutate(Weekday = lubridate::wday(date), 
          Month = lubridate::month(date, label = TRUE),
          Year = lubridate::year(date),
-         Exposure = x) %>% 
+         Exposure = outcome) %>% 
   group_by(Year, Month) %>%
   dplyr::mutate(saturday = lag(Weekday) == 7,
                 saturday = ifelse(is.na(saturday), 0, saturday),
