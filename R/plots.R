@@ -21,6 +21,8 @@
 #'           model = "spline", df_year = 1)
 #' coverage_plot(ex_sim[[1]], true_param = 1.10)
 #'
+#' @export
+#'
 coverage_plot <- function(summarystats, true_param){
 summarystats %>%
   arrange(Estimate) %>%
@@ -41,7 +43,56 @@ summarystats %>%
   scale_x_discrete(breaks = NULL) + xlab("")
 }
 #'
+#' Calendar Plot
 #'
+#' This plot displays daily values of a binary or continuous variable on a
+#' calendar via color.
+#'
+#' @param df Data frame with one column for date with entries in the format
+#' "yyyy-mm-dd" and one column for the daily values of the variable.
+#' @param type Character string specifying whether the exposure is continuous or
+#' discrete
+#' @param labels Vector of character strings naming the levels of a discrete
+#' variable
+#'
+#' @examples
+#' testdat <- sim_exposure(n = 1000, central = 0.1,
+#'            exposure_type = "binary")
+#' testdat$x[c(89,101,367,500,502,598,678,700,895)] <- 3
+#' calendar_plot(testdat, type = "discrete", labels = c("no", "yes", "maybe"))
+#'
+#'
+calendar_plot <- function(df, type = "continuous", labels = NULL){
+  names(df) <- c("date", "x")
+  if(type=="continuous"){
+    Exposure<- df$x
+  }
+  else if(type=="discrete"){
+    Exposure <- factor(df$x, levels = levels(factor(df$x)), labels = labels)
+  }
+  plot <- df %>%
+  mutate(Weekday = lubridate::wday(date),
+         Month = lubridate::month(date, label = TRUE),
+         Year = lubridate::year(date),
+         Exposure) %>%
+  group_by(Year, Month) %>%
+  dplyr::mutate(saturday = lag(Weekday) == 7,
+                saturday = ifelse(is.na(saturday), 0, saturday),
+                Week = 1 + cumsum(saturday)) %>%
+  ungroup() %>%
+  ggplot(aes(x = Weekday, y = Week, fill = Exposure)) +
+  geom_tile(colour = "white") +
+  facet_grid(Year ~ Month, scales = "free")
+  if(type=="continuous"){
+    newplot <- plot + scale_fill_gradientn(colours = viridis(256)) +
+      scale_y_reverse() + theme_void()
+  }
+  else if(type=="discrete"){
+    newplot <- plot + viridis::scale_color_viridis(discrete=TRUE) +
+      scale_y_reverse() + theme_void()
+  }
+  return(newplot)
+}
 #'
 #'
 #'
