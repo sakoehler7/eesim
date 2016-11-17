@@ -15,6 +15,7 @@ library(ggplot2)
 library(dplyr)
 library(tidyr)
 library(viridisLite)
+library(gridExtra)
 ```
 
 ## Overview of package
@@ -92,7 +93,7 @@ knitr::kable(eesim_overall_output, col.names = c("Variable", "Description"))
 
 To demonstrate how the `eesim` function works, here is a breakdown of each of the four main parts: generating exposure data, generating outcome data, fitting models, and evaluating models. The helper functions used for each step are described in detail in this section.
 
-###Generating exposure data
+### Generating exposure data
 
 The first task of the package is generating exposure data. This can be dones with the `sim_exposure` function. In this function, the user can specify whether they would like the exposure data to be binary or continuous (`exposure_type`). For continuous exposure data, the user can specify the mean (`central`) and standard deviation (`sd`) of the exposure data: 
 
@@ -261,7 +262,26 @@ testbin %>%
   scale_y_reverse() + theme_void()
 ```
 
-###Generating outcome data
+The following figure shows the steps taken in simulating exposure ...
+
+```{r echo = FALSE, fig.width = 8, fig.height = 3}
+# binary_trend 
+# binary_continuous
+continuous_trend <- data_frame(t = calc_t(n = 1000, trend = "cos1")) %>%
+  mutate(x = 100 * t,
+         date = seq(from = as.Date("2000-01-01"),
+                    by = 1, length.out = 1000)) %>%
+  ggplot(aes(x = date, y = x)) + geom_point() + theme_minimal() + 
+  ylim(c(0, 200))
+continuous_simulated <- continuous_exposure(n = 1000, mu = 100,
+                                            sd = 10, trend = "cos1") %>%
+  ggplot(aes(x = date, y = x)) + geom_point() + theme_minimal() + 
+  ylim(c(0, 200))
+grid.arrange(continuous_trend, continuous_simulated, ncol = 2)
+```
+
+
+### Generating outcome data
 
 Next, the eesim package uses the exposure data to generate health outcome data with or without seasonal trends. eesim creates "baseline" values for outcome based on the user-specified trend and average outcome. Next it uses the following function to relate exposure and relative risk to outcomes:
 $$\lambda = e^{\log{(baseline)}+\log{(relative risk)}*exposure}$$
