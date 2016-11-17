@@ -1,3 +1,5 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^writing$
+^README\.Rmd$
+^README-.*\.png$

@@ -1,0 +1,427 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "README-"
+)
+```
+
+```{r, echo = FALSE, message = FALSE}
+library(eesim)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(viridisLite)
+library(gridExtra)
+```
+
+## Overview of package
+
+This package allows you to simulate time series of environmental health data and perform simulation-based power analyses and other measures of model performance. The package includes four main parts: 
+
+1. Generation of exposure data; 
+2. Generation of outcome data;
+3. Fitting models to simulated data; and 
+4. Evaluating model performance on simulated data.
+
+The user has the option to customize different aspects of the simulation at each of these steps.
+
+The package creates time series that are relevant for environmental epidemiology studies of ambient exposures (e.g., studies of acute mortality risks associated with daily air pollution concentration, daily temperature, or occurance of a community-wide extreme event like a heat wave).
+
+## Basic example of using the package
+
+The main function of this package is the `eesim` function. You can use the `eesim` function to conduct all four steps of the simulation process at once (simulate exposure data, simulate outcome data, fit models to simulated data, and evaluate model performance). 
+
+The `eesim` function requires [required inputs]. The function returns a list with two elements. The first element gives simulation-specific results: the estimated effect, standard error, t- and p-values, and upper and lower 95% confidence bounds when a model was applied to each set of simulated data. The second element gives some measures of model assessment, assessed over all simulations, including the mean beta and relative risk estimates across simulations.
+
+For example, you can use the following call to (1) generate 10 observations of a continuous exposure with mean 100 and standard deviation 10, with a seasonal trend in expected value; (2) generate 10 associated outcome values, where the outcome has an average value of 20 and a relative risk of 1.10 per one-unit increase in the exposure; (3) fit a generalized linear model that controls for long-term and seasonal trends with a natural cubic spline with 1 degree of freedom per year; and (4) evaluate the performace of that model on the simulated data:
+
+[To do-- increase `n` and `n_reps`, but wait until we've edited the vignette, because that will increase time to render. We could change `df` then, too (and maybe change to case-crossover? That may be easier for a first example)]
+
+```{r, warning = FALSE, message = FALSE}
+ex_sim <- eesim(n_reps = 100, n = 10, central = 100, sd = 10,
+                exposure_type = "continuous", 
+                average_outcome = 20, rr = 1.10,
+                model = "spline", df_year = 1)
+head(ex_sim[[1]])
+ex_sim[[2]]
+```
+
+The first element of the returned object can be used to explore the behavior of individual simulations. For example, to look at the relative risk point estimate and 95% confidence interval from each of the 100 simulations, as well as which 95% confidence intervals include the true relative risk using the following call:
+
+```{r fig.width = 4, fig.height = 5, fig.align = "center"}
+ex_sim[[1]] %>%
+  arrange(Estimate) %>%
+  mutate(index = 1:n(),
+         rr = exp(Estimate),
+         lower_rr = exp(lower_ci),
+         upper_rr = exp(upper_ci),
+         includes_true = lower_rr < 1.10 & 1.10 < upper_rr) %>%
+  ggplot(aes(x = index, y = rr, color = includes_true)) + 
+  coord_flip() + 
+  geom_point() + 
+  geom_errorbar(aes(ymin = lower_rr, ymax = upper_rr)) + 
+  geom_hline(yintercept = 1.10, linetype = 2) + 
+  scale_color_manual(values = c("red", "darkgray")) +
+  theme(legend.position="none",
+        panel.background = element_rect(fill='white', colour='white')) + 
+  ylab("Relative risk") +
+  scale_x_discrete(breaks = NULL) + xlab("") 
+```
+
+The second element of the returned object gives the following overall summaries of model performance across all simulations: 
+
+```{r echo = FALSE}
+eesim_overall_output <- data_frame(element = paste0("`",
+                                                    colnames(ex_sim[[2]]),
+                                                    "`"),
+                                   desc = c("The mean estimated effect (log relative risk) over all simulations",
+                                            "The mean relative risk over all simulations",
+                                            "Variance of the point estimates of the estimated effect over all simulations",
+                                            "The mean across simulations of the variances of each estimated effect",
+                                            "Relative bias of the mean of the estimated coefficients",
+                                            "Percent of simulations for which the 95% confidence interval estimate includes the true value",
+                                            NA))
+knitr::kable(eesim_overall_output, col.names = c("Variable", "Description"))
+```
+
+
+##Piece-by-piece breakdown of package utility
+
+To demonstrate how the `eesim` function works, here is a breakdown of each of the four main parts: generating exposure data, generating outcome data, fitting models, and evaluating models. The helper functions used for each step are described in detail in this section.
+
+### Generating exposure data
+
+The first task of the package is generating exposure data. This can be dones with the `sim_exposure` function. In this function, the user can specify whether they would like the exposure data to be binary or continuous (`exposure_type`). For continuous exposure data, the user can specify the mean (`central`) and standard deviation (`sd`) of the exposure data: 
+
+```{r}
+x_cont <- sim_exposure(n = 1000, central = 50, sd = 5,
+                      exposure_type = "continuous") 
+x_cont %>% slice(1:5)
+```
+```{r fig.width = 4, fig.height = 2, fig.align = "center"}
+ggplot(x_cont, aes(x = date, y = x)) + geom_point(alpha = 0.2)
+```
+
+```{r fig.align = "center", fig.width = 8, fig.height = 2.5}
+x_cont %>% 
+  mutate(Weekday = lubridate::wday(date), 
+         Month = lubridate::month(date, label = TRUE),
+         Year = lubridate::year(date),
+         Exposure = x) %>% 
+  group_by(Year, Month) %>%
+  dplyr::mutate(saturday = lag(Weekday) == 7,
+                saturday = ifelse(is.na(saturday), 0, saturday),
+                Week = 1 + cumsum(saturday)) %>%
+  ungroup() %>%
+  ggplot(aes(x = Weekday, y = Week, fill = Exposure)) + 
+   geom_tile(colour = "white") + 
+   facet_grid(Year ~ Month, scales = "free") + 
+  scale_fill_gradientn(colours = viridis(256)) + 
+  scale_y_reverse() + theme_void()
+```
+
+For binary exposure data, the `central` argument gives the probability of exposure on a study day:
+
+```{r}
+x_bin <- sim_exposure(n = 1000, central = 0.1,
+                      exposure_type = "binary")
+x_bin %>% slice(1:5)
+```
+```{r fig.align = "center", fig.width = 8, fig.height = 2.5}
+x_bin %>% 
+  mutate(Weekday = lubridate::wday(date), 
+         Month = lubridate::month(date, label = TRUE),
+         Year = lubridate::year(date),
+         Exposure = factor(x, levels = c(0, 1), 
+                    labels = c("Not exposed", "Exposed"))) %>% 
+  group_by(Year, Month) %>%
+  dplyr::mutate(saturday = lag(Weekday) == 7,
+                saturday = ifelse(is.na(saturday), 0, saturday),
+                Week = 1 + cumsum(saturday)) %>%
+  ungroup() %>%
+  ggplot(aes(x = Weekday, y = Week, fill = Exposure)) + 
+   geom_tile(colour = "white") + 
+   facet_grid(Year ~ Month, scales = "free") + 
+  scale_fill_manual(values = c("#414487FF", "#7AD151FF")) + 
+  scale_y_reverse() + theme_void()
+```
+
+For environmental epidemiology applications, exposure data often has a seasonal trend and / or long-term trend. The default for `sim_exposure` is to simulate the exposure data without a time trend (`trend = "no trend"`). However, we have also built in several time trends from which a user can to choose to simulate exposure data with a time trend, either seasonal or long-term or both. These trend patterns differ slightly depending on whether the user is simulating binary or continuous data. [add reference for Schwartz paper where we got some of the trend equations] Below are plots of the built-in trends for continuous exposure data from which the user may choose. 
+
+```{r fig.width = 7, fig.height = 4, echo = FALSE, message = FALSE}
+data.frame(day = 1:1000) %>%
+  mutate(`"no trend"` = calc_t(n = 1000, trend = "no trend"),
+         `"cos1"` = calc_t(n = 1000, trend = "cos1"),
+         `"cos2"` = calc_t(n = 1000, trend = "cos2"),
+         `"cos3"` = calc_t(n = 1000, trend = "cos3"),
+         `"linear"` = calc_t(n = 1000, trend = "linear"),
+         `"curvilinear"` = calc_t(n = 1000, trend = "curvilinear"),
+         `"cos1linear"` = calc_t(n = 1000, trend = "cos1linear")) %>%
+  gather(trend_method, trend_value, -day) %>%
+  mutate(trend_method = factor(trend_method,
+                               levels = c('"no trend"', 
+                                          '"linear"',
+                                          '"curvilinear"',
+                                          '"cos1"',
+                                          '"cos1linear"',
+                                          '"cos2"',
+                                          '"cos3"'))) %>%
+  ggplot(aes(x = day, y = trend_value)) + 
+  geom_line() + facet_wrap(~ trend_method, ncol = 4) + 
+  theme_bw()
+```
+
+The trend options are similar for binary exposure, but exclude  "curvilinear" and "cos1linear" and include a "monthly" trend, for which the user enters a vector of 12 probabilities of exposure, one for each month.
+
+Here is an example of generating continuous exposure data with a "cos1linear"" 
+trend:
+
+```{r, fig.width = 5, fig.height = 3, fig.align = "center"}
+testexp <- sim_exposure(n=1000, central = 50, sd = 5, trend = "cos1linear",
+                        amp = .6, exposure_type = "continuous")
+head(testexp)
+qplot(testexp$date, testexp$x)+geom_point()+coord_cartesian(ylim = c(0,110)) + labs(title = "Exposure with a cos1linear trend", x = "Date", y="Exposure")+theme_bw()
+```
+
+```{r fig.align = "center", fig.width = 8, fig.height = 2.5}
+testexp %>% 
+  mutate(Weekday = lubridate::wday(date), 
+         Month = lubridate::month(date, label = TRUE),
+         Year = lubridate::year(date),
+         Exposure = x) %>% 
+  group_by(Year, Month) %>%
+  dplyr::mutate(saturday = lag(Weekday) == 7,
+                saturday = ifelse(is.na(saturday), 0, saturday),
+                Week = 1 + cumsum(saturday)) %>%
+  ungroup() %>%
+  ggplot(aes(x = Weekday, y = Week, fill = Exposure)) + 
+   geom_tile(colour = "white") + 
+   facet_grid(Year ~ Month, scales = "free") + 
+  scale_fill_gradientn(colours = viridis(256)) + 
+  scale_y_reverse() + theme_void()
+```
+
+The default amplitude for the trend is .6, but we can adjust the "amp" parameter
+for a smaller or larger trend amplitude:
+
+```{r, fig.width = 5, fig.height = 3, fig.align = "center"}
+smallamp <- sim_exposure(n=1000, central = 50, sd = 5, trend = "cos1linear",
+                        amp = .2, exposure_type = "continuous")
+qplot(smallamp$date, smallamp$x)+geom_point()+coord_cartesian(ylim = c(0,110))+labs(title = "Cos1linear exposure with smaller amplitude", x="Date", y="Exposure") + theme_bw()
+```
+
+```{r fig.align = "center", fig.width = 8, fig.height = 2.5}
+smallamp %>% 
+  mutate(Weekday = lubridate::wday(date), 
+         Month = lubridate::month(date, label = TRUE),
+         Year = lubridate::year(date),
+         Exposure = x) %>% 
+  group_by(Year, Month) %>%
+  dplyr::mutate(saturday = lag(Weekday) == 7,
+                saturday = ifelse(is.na(saturday), 0, saturday),
+                Week = 1 + cumsum(saturday)) %>%
+  ungroup() %>%
+  ggplot(aes(x = Weekday, y = Week, fill = Exposure)) + 
+   geom_tile(colour = "white") + 
+   facet_grid(Year ~ Month, scales = "free") + 
+  scale_fill_gradientn(colours = viridis(256)) + 
+  scale_y_reverse() + theme_void()
+```
+
+Here is an example of generating binary exposure data with a "monthly" trend 
+starting from June 1, 2002.  The probabilities for the central parameter are for each month of the year, starting in January.
+
+```{r, message = FALSE, fig.width = 5, fig.height = 3, fig.align = "center"}
+testbin <- sim_exposure(n=1000, central = c(.1,.1,.2,.3,.4,.4,.5,.6,.5,.3,.2,.1),
+                        trend = "monthly", exposure_type = "binary", 
+                        start.date = "2002-06-01")
+head(testbin)
+qplot(testbin$date, testbin$x)+geom_point()+labs(title = "Binary exposure data with monthly trend", x="Date", y="Exposure")+theme_bw()
+```
+
+```{r fig.align = "center", fig.width = 8, fig.height = 2.5}
+testbin %>% 
+  mutate(Weekday = lubridate::wday(date), 
+         Month = lubridate::month(date, label = TRUE),
+         Year = lubridate::year(date),
+         Exposure = factor(x, levels = c(0, 1), 
+                    labels = c("Not exposed", "Exposed"))) %>% 
+  group_by(Year, Month) %>%
+  dplyr::mutate(saturday = lag(Weekday) == 7,
+                saturday = ifelse(is.na(saturday), 0, saturday),
+                Week = 1 + cumsum(saturday)) %>%
+  ungroup() %>%
+  ggplot(aes(x = Weekday, y = Week, fill = Exposure)) + 
+   geom_tile(colour = "white") + 
+   facet_grid(Year ~ Month, scales = "free") + 
+  scale_fill_manual(values = c("#414487FF", "#7AD151FF")) + 
+  scale_y_reverse() + theme_void()
+```
+
+The following figure shows the steps taken in simulating exposure ...
+
+```{r echo = FALSE, fig.width = 8, fig.height = 3}
+# binary_trend 
+# binary_continuous
+continuous_trend <- data_frame(t = calc_t(n = 1000, trend = "cos1")) %>%
+  mutate(x = 100 * t,
+         date = seq(from = as.Date("2000-01-01"),
+                    by = 1, length.out = 1000)) %>%
+  ggplot(aes(x = date, y = x)) + geom_point() + theme_minimal() + 
+  ylim(c(0, 200))
+continuous_simulated <- continuous_exposure(n = 1000, mu = 100,
+                                            sd = 10, trend = "cos1") %>%
+  ggplot(aes(x = date, y = x)) + geom_point() + theme_minimal() + 
+  ylim(c(0, 200))
+grid.arrange(continuous_trend, continuous_simulated, ncol = 2)
+```
+
+
+### Generating outcome data
+
+Next, the eesim package uses the exposure data to generate health outcome data with or without seasonal trends. eesim creates "baseline" values for outcome based on the user-specified trend and average outcome. Next it uses the following function to relate exposure and relative risk to outcomes:
+$$\lambda = e^{\log{(baseline)}+\log{(relative risk)}*exposure}$$
+The values of lambda are then used to randomize the outcome values around the baseline with a Poisson($\lambda\$) distribution.
+
+Here is an example of generating health outcome data with an upward linear trend using exposure data with a "cos1" trend:
+
+```{r fig.width = 5, fig.height = 3, fig.align = "center"}
+testexp2 <- sim_exposure(n=1000, central = 100, sd = 10, trend = "cos1", exposure_type = "continuous")
+testout <- sim_outcome(exposure = testexp2, average_outcome = 22, trend = "linear", rr = 1.01)
+qplot(testout$date, testout$outcome)+geom_point()+labs(title = "Health outcomes with a linear trend", x="Date", y="Outcome") + theme_bw()
+```
+
+```{r fig.align = "center", fig.width = 8, fig.height = 2.5}
+testout %>% 
+  mutate(Weekday = lubridate::wday(date), 
+         Month = lubridate::month(date, label = TRUE),
+         Year = lubridate::year(date),
+         Exposure = outcome) %>% 
+  group_by(Year, Month) %>%
+  dplyr::mutate(saturday = lag(Weekday) == 7,
+                saturday = ifelse(is.na(saturday), 0, saturday),
+                Week = 1 + cumsum(saturday)) %>%
+  ungroup() %>%
+  ggplot(aes(x = Weekday, y = Week, fill = Exposure)) + 
+   geom_tile(colour = "white") + 
+   facet_grid(Year ~ Month, scales = "free") + 
+  scale_fill_gradientn(colours = viridis(256)) + 
+  scale_y_reverse() + theme_void()
+```
+
+###Fitting models
+
+eesim next uses many generated data sets to fit statistical models to relate exposure to outcome and estimate relative risk.  The built-in model choices are a spline model and a case-crossover model. The fit_mods function outputs a data frame with estimates of the log relative risk, p-values, and upper and lower 95% confidence bounds for each simulated data set.
+
+Here is an example of fitting the spline model with 7 degrees of freedom:
+
+```{r}
+sims <- create_sims(n_reps=10, n=100, central = 100, sd = 10,
+             exposure_type="continuous", exposure_trend = "cos1",
+             exposure_amp = .6, average_outcome = 22,
+             outcome_trend = "no trend", outcome_amp = .6, rr = 1.01)
+fits <- fit_mods(outcome = sims, model = "spline", df_year = 7)
+fits
+```
+
+###Evaluating the models
+
+Lastly, eesim evaluates model performance with several different measures.  The check_sims function takes the true relative risk as input and returns mean beta and relative risk estimates across all simulated data sets, variance of the estimates of beta, the mean of the variances of each beta hat, the relative bias of the mean of the beta hats, the percent coverage of the true beta, and the power of the test at the 5% significance level. 
+
+Here is an example of the use of the check_sims function:
+
+```{r}
+check_sims(fits, true_rr = 1.01)
+```
+
+##Using custom functions
+
+An important feature of eesim is that the user may input custom functions for any part of the simulation process.  For example, the user may wish to generate exposure data with a custom trend, then automate the process of generating outcomes, fitting models, and evaluating performance using the built-in features of eesim. Functions the user has the option to customize within the eesim framework are exposure trend, outcome baseline, and outcome lambda. A custom model may also be used as long as returns the necessary output if the model assessmen tools in eesim are to be used.
+
+To use custom functions within eesim, the user must input the name of the custom function as well as a list of all arguments for the custom function and their values. Many inputs for the eesim functions may no longer be necessary when a custom function is used, in which case they can simply be left out.  
+
+###Custom exposure trend
+
+Here is an example of using a custom function to specify an exposure trend that is not built in to eesim:
+
+```{r, fig.width = 5, fig.height = 3, fig.align = "center"}
+sintrend <- function(n, mu, y){
+  day <- c(1:n)
+  base <- mu + y * sin(2 * pi * (day / 365))
+  rnorm(n, mean = base, sd = 1)
+}
+customexp <- sim_exposure(n=1000, exposure_type = "continuous", cust_exp_func = sintrend, cust_exp_args = list(n=1000, mu = 75, y=3))
+head(customexp)
+qplot(customexp$date, customexp$x)+geom_point()+labs(title = "Exposure values with a custom trend", x="Date", y="Exposure")+theme_bw()
+```
+
+```{r fig.align = "center", fig.width = 8, fig.height = 2.5}
+customexp %>% 
+  mutate(Weekday = lubridate::wday(date), 
+         Month = lubridate::month(date, label = TRUE),
+         Year = lubridate::year(date),
+         Exposure = x) %>% 
+  group_by(Year, Month) %>%
+  dplyr::mutate(saturday = lag(Weekday) == 7,
+                saturday = ifelse(is.na(saturday), 0, saturday),
+                Week = 1 + cumsum(saturday)) %>%
+  ungroup() %>%
+  ggplot(aes(x = Weekday, y = Week, fill = Exposure)) + 
+   geom_tile(colour = "white") + 
+   facet_grid(Year ~ Month, scales = "free") + 
+  scale_fill_gradientn(colours = viridis(256)) + 
+  scale_y_reverse() + theme_void()
+```
+
+This custom exposure function can be called with eesim:
+
+```{r, warning=F, error = TRUE}
+ex_sim2 <- eesim(n_reps = 3, n = 10, central = 100, sd = 10,
+                exposure_type = "continuous", exposure_trend = "custom", 
+                exposure_amp = .6, cust_exp_func = sintrend,
+                cust_exp_args = list(n=10, mu=75,y=3),
+                average_outcome = 22, rr = 1.01, 
+                model = "spline", df_year = 1)
+ex_sim2
+```
+
+
+###Custom outcomes
+
+There are two ways to customize the simulated outcome data: creating a custom baseline for outcome values or customizing the relationship between outcome and exposure.  
+
+The outcome baseline is comprised of the values the user expects the outcomes to take on without exposure factored in. The user may write a function to specify the trend of the baseline, then use it as an input in sim\_outcome or eesim. Here is an example of creating a custom baseline function and using it in the eesim function:
+
+```{r, warning = F}
+custombase <- function(n, slope, intercept){
+  day <- c(1:n)
+  baseline <- day*slope + intercept
+  return(baseline)
+}
+
+#Example:
+custombase(n=5, slope = .3, intercept = 55)
+
+ex_sim3 <- eesim(n_reps = 3, n = 10, central = 100, sd = 10,
+                exposure_type = "continuous", exposure_trend = "cos1",
+                exposure_amp = .6, average_outcome = 22, rr = 1.01, 
+                cust_base_func = custombase, cust_base_args = list(n=10, slope = .5,                        intercept = 12), model = "spline", df_year = 1)
+ex_sim3
+```
+
+Here is an example of creating a custom lambda, meaning a custom function relating relative risk and exposure to outcomes, and using it in eesim with the custom baseline function created above:
+
+```{r, warning = F}
+customlambda <- function(exposure, rr, constant, baseline){
+  log_lambda <- log(baseline) + log(rr) * exposure + constant
+  lambda <- exp(log_lambda)
+  return(lambda)
+}
+```
