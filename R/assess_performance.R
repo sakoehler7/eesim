@@ -10,8 +10,12 @@
 #'    relative risk
 #'
 #' @examples
-#' mod <- spline_mod(df = out)
-#' mean_beta(df=mod)
+#' sims <- create_sims(n_reps=10, n=50, central = 100, sd = 10,
+#'             exposure_type="continuous", exposure_trend = "cos1",
+#'             exposure_amp = .6, average_outcome = 22,
+#'             outcome_trend = "no trend", outcome_amp = .6, rr = 1.01)
+#' fits <- fit_mods(outcome = sims, model = "spline")
+#' mean_beta(df=fits)
 #'
 #' @export
 mean_beta <- function(df){
@@ -94,7 +98,15 @@ beta_bias <- function(df, true_rr){
 #'    over n simulations which include the true relative risk
 #'
 #' @examples
-#' coverage_beta(df, true_rr = 1.02)
+#' sims <- create_sims(n_reps = 10, n = 600, central = 100,
+#'                     sd = 10, exposure_type = "continuous",
+#'                     exposure_trend = "cos1",
+#'                     exposure_amp = 0.6,
+#'                     average_outcome = 20,
+#'                     outcome_trend = "no trend",
+#'                     rr = 1.01)
+#' fits <- fit_mods(outcome = sims, model = "spline", df_year = 1)
+#' coverage_beta(df=fits, true_rr = 1.02)
 #'
 #' @export
 coverage_beta <- function(df, true_rr){
@@ -140,12 +152,18 @@ power_beta <- function(df){
 #'    betas, mean variance of the estimates, percent bias, coverage, and power.
 #'
 #' @examples
-#' check_sims(df, true_rr = 1.02)
-#' \dontrun{
-#' check_sims(rep_df, true_rr = 1.02)
-#' }
+#' sims <- create_sims(n_reps = 10, n = 600, central = 100,
+#'                     sd = 10, exposure_type = "continuous",
+#'                     exposure_trend = "cos1",
+#'                     exposure_amp = 0.6,
+#'                     average_outcome = 20,
+#'                     outcome_trend = "no trend",
+#'                     rr = 1.01)
+#' fits <- fit_mods(outcome = sims, model = "spline", df_year = 1)
+#' check_sims(df = fits, true_rr = 1.02)
 #'
 #' @export
+#'
 check_sims <- function(df, true_rr){
   a <- mean_beta(df)
   b <- beta_var(df)
