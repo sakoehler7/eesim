@@ -42,7 +42,7 @@ user to input a custom function if desired to specify outcome trend.
 }
 \examples{
 create_baseline(n = 5, average_outcome = 22, trend = "linear")
-create_baseline(n = 5, average_outcome = NA, trend = NA,
+create_baseline(n = 5, average_outcome = NULL, trend = NULL,
                 custom_func = "custom_baseline", outcome_type = "death")
 
 }

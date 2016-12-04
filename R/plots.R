@@ -17,9 +17,9 @@
 #'
 #' @examples
 #' ex_sim <- eesim(n_reps = 100, n = 10, central = 100, sd = 10,
-#'           exposure_type = "continuous", average_outcome = 20, rr = 1.10,
+#'           exposure_type = "continuous", average_outcome = 20, rr = 1.05,
 #'           model = "spline", df_year = 1)
-#' coverage_plot(ex_sim[[1]], true_param = 1.10)
+#' coverage_plot(ex_sim[[1]], true_param = 1.05)
 #'
 #' @export
 #'
@@ -30,12 +30,12 @@ summarystats %>%
          rr = exp(Estimate),
          lower_rr = exp(lower_ci),
          upper_rr = exp(upper_ci),
-         includes_true = lower_rr < 1.10 & 1.10 < upper_rr) %>%
-  ggplot(aes(x = index, y = true_param, color = includes_true)) +
+         includes_true = lower_rr < true_param & true_param < upper_rr) %>%
+  ggplot(aes(x = index, y = rr, color = includes_true)) +
   coord_flip() +
   geom_point() +
   geom_errorbar(aes(ymin = lower_rr, ymax = upper_rr)) +
-  geom_hline(yintercept = 1.10, linetype = 2) +
+  geom_hline(yintercept = true_param, linetype = 2) +
   scale_color_manual(values = c("red", "darkgray")) +
   theme(legend.position="none",
         panel.background = element_rect(fill='white', colour='white')) +

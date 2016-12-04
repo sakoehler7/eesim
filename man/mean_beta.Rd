@@ -19,8 +19,12 @@ This function gives the mean value of the \eqn{\hat{\beta}}s and the mean
 estimated relative risk over the n simulations.
 }
 \examples{
-mod <- spline_mod(df = out)
-mean_beta(df=mod)
+sims <- create_sims(n_reps=10, n=50, central = 100, sd = 10,
+            exposure_type="continuous", exposure_trend = "cos1",
+            exposure_amp = .6, average_outcome = 22,
+            outcome_trend = "no trend", outcome_amp = .6, rr = 1.01)
+fits <- fit_mods(outcome = sims, model = "spline")
+mean_beta(df=fits)
 
 }
 

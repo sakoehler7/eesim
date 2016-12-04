@@ -20,10 +20,15 @@ Mean beta estimate, mean relative risk estimate, variance across
 This function gives several measures of model performance.
 }
 \examples{
-check_sims(df, true_rr = 1.02)
-\dontrun{
-check_sims(rep_df, true_rr = 1.02)
-}
+sims <- create_sims(n_reps = 10, n = 600, central = 100,
+                    sd = 10, exposure_type = "continuous",
+                    exposure_trend = "cos1",
+                    exposure_amp = 0.6,
+                    average_outcome = 20,
+                    outcome_trend = "no trend",
+                    rr = 1.01)
+fits <- fit_mods(outcome = sims, model = "spline", df_year = 1)
+check_sims(df = fits, true_rr = 1.02)
 
 }
 

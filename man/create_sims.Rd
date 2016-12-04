@@ -82,9 +82,6 @@ user-specified custom baseline function}
 
 \item{cust_lambda_args}{A list of arguments and their values used in the
 user-specified custom lambda function}
-
-\item{cust_lamba_args}{A list of arguments and their values used in the
-user-specified custom lambda function}
 }
 \value{
 A list resulting from repetitions of simulations with data frames
