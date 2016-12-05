@@ -217,7 +217,8 @@ create_baseline <- function(n, average_outcome, trend, amp,
 
 create_lambda <- function(baseline, exposure, rr, cust_lambda_func = NULL, ...){
   if(is.null(cust_lambda_func)){
-    log_lambda <- log(baseline$baseline) + log(rr) * exposure
+    if("data.frame" %in% class(baseline)){ baseline <- baseline$baseline }
+    log_lambda <- log(baseline) + log(rr) * exposure
     lambda <- exp(log_lambda)
   } else {
     arguments <- list(...)
@@ -268,15 +269,13 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
                             exposure = exposure$x,
                             rr = rr)
     outcome <- stats::rpois(n = nrow(exposure), lambda = lambda)
-  }
-  else if (is.null(cust_lambda_func) & !is.null(cust_base_func)){
+  } else if (is.null(cust_lambda_func) & !is.null(cust_base_func)){
     baseline <- do.call(cust_base_func, cust_base_args)
     lambda <- create_lambda(baseline = baseline,
                             exposure = exposure$x,
                             rr = rr)
     outcome <- stats::rpois(n = nrow(exposure), lambda = lambda)
-  }
-  else if (is.null(cust_base_func) & !is.null(cust_lambda_func)){
+  } else if (is.null(cust_base_func) & !is.null(cust_lambda_func)){
     baseline <- create_baseline(n = nrow(exposure),
                                 average_outcome = average_outcome,
                                 trend = trend,
@@ -284,8 +283,7 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
     cust_lambda_args$baseline <- baseline$baseline
     lambda <- do.call(cust_lambda_func, cust_lambda_args)
     outcome <- stats::rpois(n = nrow(exposure), lambda = lambda)
-  }
-  else {
+  } else {
     baseline <- do.call(cust_base_func, cust_base_args)
     cust_lambda_args$baseline <- baseline
     lambda <- do.call(cust_lambda_func, cust_lambda_args)
@@ -358,6 +356,7 @@ create_sims <- function(n_reps, n, central, sd, exposure_type, exposure_trend,
                         cust_exp_func = NULL, cust_exp_args = NULL,
                         cust_base_func = NULL, cust_lambda_func = NULL,
                         cust_base_args = NULL, cust_lambda_args = NULL){
+
   exposure <- lapply(rep(n, times = n_reps), sim_exposure, central = central,
                      sd = sd, exposure_type = exposure_type, amp = exposure_amp,
                      trend = exposure_trend, start.date = start.date,
@@ -426,7 +425,7 @@ fit_mods <- function(outcome, model, df_year = 7){
 #'       df_year = 5)
 #'
 #' @export
-eesim <- function(n_reps, n, central, sd, exposure_type, exposure_trend = NULL,
+eesim <- function(n_reps, n, central = NULL, sd = NULL, exposure_type, exposure_trend = NULL,
                   exposure_amp = NULL, average_outcome = NULL,
                   outcome_trend = "no trend",
                   outcome_amp = NULL, rr, start.date = "2000-01-01",
@@ -441,9 +440,9 @@ eesim <- function(n_reps, n, central, sd, exposure_type, exposure_trend = NULL,
                           average_outcome=average_outcome,
                           outcome_trend=outcome_trend, outcome_amp=outcome_amp,
                           rr=rr, start.date = "2000-01-01",
-                          cust_exp_func = NULL, cust_exp_args = NULL,
-                          cust_base_func = NULL, cust_lambda_func = NULL,
-                          cust_base_args = NULL, cust_lambda_args = NULL)
+                          cust_exp_func = cust_exp_func, cust_exp_args = cust_exp_args,
+                          cust_base_func = cust_base_func, cust_lambda_func = cust_lambda_func,
+                          cust_base_args = cust_base_args, cust_lambda_args = cust_lambda_args)
   mods <- fit_mods(datasims, model, df_year)
   check <- check_sims(df = mods, true_rr = rr)
   totalsims <- list(mods, check)
