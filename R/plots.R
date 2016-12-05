@@ -67,7 +67,7 @@ coverage_plot <- function(summarystats, true_param){
 #' @importFrom dplyr %>%
 #'
 #' @export
-calendar_plot <- function(df, type = "continuous", labels = NULL){
+calendar_plot <- function(df, type = "continuous", labels = NULL, legend_name = "Exposure"){
   names(df) <- c("date", "x")
 
   if(type == "continuous"){
@@ -92,10 +92,11 @@ calendar_plot <- function(df, type = "continuous", labels = NULL){
     ggplot2::geom_tile(colour = "white") +
     ggplot2::facet_grid(Year ~ Month, scales = "free")
   if(type=="continuous"){
-    newplot <- plot + viridis::scale_fill_viridis() +
+    newplot <- plot + viridis::scale_fill_viridis(name = legend_name) +
       ggplot2::scale_y_reverse() + ggplot2::theme_void()
   } else {
-    newplot <- plot + viridis::scale_fill_viridis(discrete = TRUE, begin = 0.2, end = 0.9) +
+    newplot <- plot +
+      viridis::scale_fill_viridis(name = legend_name, discrete = TRUE, begin = 0.2, end = 0.9) +
       ggplot2::scale_y_reverse() + ggplot2::theme_void()
   }
 
