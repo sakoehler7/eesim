@@ -27,9 +27,9 @@ the true relative risk appear in red.
 }
 \examples{
 ex_sim <- eesim(n_reps = 100, n = 10, central = 100, sd = 10,
-          exposure_type = "continuous", average_outcome = 20, rr = 1.10,
+          exposure_type = "continuous", average_outcome = 20, rr = 1.05,
           model = "spline", df_year = 1)
-coverage_plot(ex_sim[[1]], true_param = 1.10)
+coverage_plot(ex_sim[[1]], true_param = 1.05)
 
 }
 
