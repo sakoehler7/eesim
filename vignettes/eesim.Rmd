@@ -279,10 +279,11 @@ calendar_plot(customexp, type = "continuous")
 
 This custom exposure function can be called with eesim:
 
-```{r, warning=F, error = TRUE}
-ex_sim2 <- eesim(n_reps = 3, n = 10, central = 100, sd = 10,
-                exposure_type = "continuous", exposure_trend = "custom", 
-                exposure_amp = .6, cust_exp_func = sintrend,
+```{r, warning=F}
+ex_sim2 <- eesim(n_reps = 3, n = 10, 
+                exposure_type = "continuous", 
+                exposure_trend = "custom", 
+                cust_exp_func = sintrend,
                 cust_exp_args = list(n=10, mu=75,y=3),
                 average_outcome = 22, rr = 1.01, 
                 model = "spline", df_year = 1)
@@ -306,10 +307,12 @@ custombase <- function(n, slope, intercept){
 #Example:
 custombase(n=5, slope = .3, intercept = 55)
 
-ex_sim3 <- eesim(n_reps = 3, n = 10, central = 100, sd = 10,
+ex_sim3 <- eesim(n_reps = 3, n = 100, central = 100, sd = 10,
                 exposure_type = "continuous", exposure_trend = "cos1",
                 exposure_amp = .6, average_outcome = 22, rr = 1.01, 
-                cust_base_func = custombase, cust_base_args = list(n=10, slope = .5,                        intercept = 12), model = "spline", df_year = 1)
+                cust_base_func = custombase,
+                cust_base_args = list(n=10, slope = .5, intercept = 12),
+                model = "spline", df_year = 2)
 ex_sim3
 ```
 
