@@ -68,7 +68,7 @@ coverage_plot <- function(summarystats, true_param){
 calendar_plot <- function(df, type = "continuous", labels = NULL){
   names(df) <- c("date", "x")
   if(type=="continuous"){
-    Exposure<- df$x
+    Exposure <- df$x
   }
   else if(type=="discrete"){
     Exposure <- factor(df$x, levels = levels(factor(df$x)), labels = labels)
@@ -91,7 +91,7 @@ calendar_plot <- function(df, type = "continuous", labels = NULL){
       scale_y_reverse() + theme_void()
   }
   else if(type=="discrete"){
-    newplot <- plot + viridis::scale_color_viridis(discrete=TRUE) +
+    newplot <- plot + viridis::scale_color_viridis(discrete = TRUE) +
       scale_y_reverse() + theme_void()
   }
   return(newplot)
