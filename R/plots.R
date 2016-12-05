@@ -71,28 +71,28 @@ calendar_plot <- function(df, type = "continuous", labels = NULL){
   names(df) <- c("date", "x")
 
   if(type == "continuous"){
-    Exposure <- df$x
+    exposure <- df$x
   } else if(type == "discrete"){
-    Exposure <- factor(df$x, levels = levels(factor(df$x)), labels = labels)
+    exposure <- factor(df$x, levels = levels(factor(df$x)), labels = labels)
   } else {
     stop('The parameter `type` must be "continuous" or "discrete".')
   }
 
   plot <- df %>%
-    dplyr::mutate(Weekday = lubridate::wday(date),
-                  Month = lubridate::month(date, label = TRUE),
-                  Year = lubridate::year(date),
-                  Exposure) %>%
-    dplyr::group_by(Year, Month) %>%
-    dplyr::mutate(saturday = dplyr::lag(Weekday) == 7,
-                  saturday = ifelse(is.na(saturday), 0, saturday),
-                  Week = 1 + cumsum(saturday)) %>%
+    dplyr::mutate_(Weekday = ~ lubridate::wday(date),
+                  Month = ~ lubridate::month(date, label = TRUE),
+                  Year = ~ lubridate::year(date),
+                  Exposure = ~ exposure) %>%
+    dplyr::group_by_(.dots = list("Year", "Month")) %>%
+    dplyr::mutate_(saturday = ~ dplyr::lag(Weekday) == 7,
+                  saturday = ~ ifelse(is.na(saturday), 0, saturday),
+                  Week = ~ 1 + cumsum(saturday)) %>%
     dplyr::ungroup() %>%
-    ggplot2::ggplot(ggplot2::aes(x = Weekday, y = Week, fill = Exposure)) +
+    ggplot2::ggplot(ggplot2::aes_(x = ~ Weekday, y = ~ Week, fill = ~ Exposure)) +
     ggplot2::geom_tile(colour = "white") +
     ggplot2::facet_grid(Year ~ Month, scales = "free")
   if(type=="continuous"){
-    newplot <- plot + ggplot2::scale_fill_gradientn(colours = viridis(256)) +
+    newplot <- plot + ggplot2::scale_fill_gradientn(colours = viridis::viridis(256)) +
       ggplot2::scale_y_reverse() + ggplot2::theme_void()
   } else {
     newplot <- plot + viridis::scale_color_viridis(discrete = TRUE) +
