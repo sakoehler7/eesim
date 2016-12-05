@@ -64,6 +64,8 @@ coverage_plot <- function(summarystats, true_param){
 #' testdat$x[c(89,101,367,500,502,598,678,700,895)] <- 3
 #' calendar_plot(testdat, type = "discrete", labels = c("no", "yes", "maybe"))
 #'
+#' @importFrom dplyr %>%
+#'
 #' @export
 calendar_plot <- function(df, type = "continuous", labels = NULL){
   names(df) <- c("date", "x")
