@@ -56,7 +56,6 @@ The first element of the returned object can be used to explore the behavior of 
 coverage_plot(ex_sim[[1]], true_param = 1.10)
 ```
 
-
 The second element of the returned object gives the following overall summaries of model performance across all simulations: 
 
 ```{r echo = FALSE}
@@ -91,23 +90,12 @@ x_cont %>% slice(1:5)
 ggplot(x_cont, aes(x = date, y = x)) + geom_point(alpha = 0.2)
 ```
 
+You can plot a calendar plot of this simulated exposure time series using the `calendar_plot` function that comes with the package: 
+
 ```{r fig.align = "center", fig.width = 8, fig.height = 2.5}
-x_cont %>% 
-  mutate(Weekday = lubridate::wday(date), 
-         Month = lubridate::month(date, label = TRUE),
-         Year = lubridate::year(date),
-         Exposure = x) %>% 
-  group_by(Year, Month) %>%
-  dplyr::mutate(saturday = lag(Weekday) == 7,
-                saturday = ifelse(is.na(saturday), 0, saturday),
-                Week = 1 + cumsum(saturday)) %>%
-  ungroup() %>%
-  ggplot(aes(x = Weekday, y = Week, fill = Exposure)) + 
-   geom_tile(colour = "white") + 
-   facet_grid(Year ~ Month, scales = "free") + 
-  scale_fill_gradientn(colours = viridis(256)) + 
-  scale_y_reverse() + theme_void()
+calendar_plot(x_cont, type = "continuous")
 ```
+
 
 For binary exposure data, the `central` argument gives the probability of exposure on a study day:
 
