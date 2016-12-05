@@ -95,7 +95,7 @@ calendar_plot <- function(df, type = "continuous", labels = NULL){
     newplot <- plot + viridis::scale_fill_viridis() +
       ggplot2::scale_y_reverse() + ggplot2::theme_void()
   } else {
-    newplot <- plot + viridis::scale_color_viridis(discrete = TRUE) +
+    newplot <- plot + viridis::scale_fill_viridis(discrete = TRUE, begin = 0.2, end = 0.9) +
       ggplot2::scale_y_reverse() + ggplot2::theme_void()
   }
 
