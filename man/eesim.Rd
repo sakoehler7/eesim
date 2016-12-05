@@ -4,11 +4,12 @@
 \alias{eesim}
 \title{Simulate data, fit models, and assess models}
 \usage{
-eesim(n_reps, n, central, sd, exposure_type, exposure_trend = NULL,
-  exposure_amp = NULL, average_outcome = NULL, outcome_trend = "no trend",
-  outcome_amp = NULL, rr, start.date = "2000-01-01", cust_exp_func = NULL,
-  cust_exp_args = NULL, cust_base_func = NULL, cust_lambda_func = NULL,
-  cust_base_args = NULL, cust_lambda_args = NULL, model, df_year = NULL)
+eesim(n_reps, n, central = NULL, sd = NULL, exposure_type,
+  exposure_trend = NULL, exposure_amp = NULL, average_outcome = NULL,
+  outcome_trend = "no trend", outcome_amp = NULL, rr,
+  start.date = "2000-01-01", cust_exp_func = NULL, cust_exp_args = NULL,
+  cust_base_func = NULL, cust_lambda_func = NULL, cust_base_args = NULL,
+  cust_lambda_args = NULL, model, df_year = NULL)
 }
 \arguments{
 \item{n_reps}{A numeric value specifying the number of simulation repititions

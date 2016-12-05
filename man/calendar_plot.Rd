@@ -4,7 +4,8 @@
 \alias{calendar_plot}
 \title{Calendar Plot}
 \usage{
-calendar_plot(df, type = "continuous", labels = NULL)
+calendar_plot(df, type = "continuous", labels = NULL,
+  legend_name = "Exposure")
 }
 \arguments{
 \item{df}{Data frame with one column for date with entries in the format
