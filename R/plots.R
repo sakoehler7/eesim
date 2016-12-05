@@ -92,7 +92,7 @@ calendar_plot <- function(df, type = "continuous", labels = NULL){
     ggplot2::geom_tile(colour = "white") +
     ggplot2::facet_grid(Year ~ Month, scales = "free")
   if(type=="continuous"){
-    newplot <- plot + ggplot2::scale_fill_gradientn(colours = viridis::viridis(256)) +
+    newplot <- plot + viridis::scale_fill_viridis() +
       ggplot2::scale_y_reverse() + ggplot2::theme_void()
   } else {
     newplot <- plot + viridis::scale_color_viridis(discrete = TRUE) +
