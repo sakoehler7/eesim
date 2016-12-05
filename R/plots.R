@@ -79,24 +79,24 @@ calendar_plot <- function(df, type = "continuous", labels = NULL){
   }
 
   plot <- df %>%
-    mutate(Weekday = lubridate::wday(date),
-           Month = lubridate::month(date, label = TRUE),
-           Year = lubridate::year(date),
-           Exposure) %>%
-    group_by(Year, Month) %>%
-    dplyr::mutate(saturday = lag(Weekday) == 7,
+    dplyr::mutate(Weekday = lubridate::wday(date),
+                  Month = lubridate::month(date, label = TRUE),
+                  Year = lubridate::year(date),
+                  Exposure) %>%
+    dplyr::group_by(Year, Month) %>%
+    dplyr::mutate(saturday = dplyr::lag(Weekday) == 7,
                   saturday = ifelse(is.na(saturday), 0, saturday),
                   Week = 1 + cumsum(saturday)) %>%
-    ungroup() %>%
-    ggplot(aes(x = Weekday, y = Week, fill = Exposure)) +
-    geom_tile(colour = "white") +
-    facet_grid(Year ~ Month, scales = "free")
+    dplyr::ungroup() %>%
+    ggplot2::ggplot(ggplot2::aes(x = Weekday, y = Week, fill = Exposure)) +
+    ggplot2::geom_tile(colour = "white") +
+    ggplot2::facet_grid(Year ~ Month, scales = "free")
   if(type=="continuous"){
-    newplot <- plot + scale_fill_gradientn(colours = viridis(256)) +
-      scale_y_reverse() + theme_void()
+    newplot <- plot + ggplot2::scale_fill_gradientn(colours = viridis(256)) +
+      ggplot2::scale_y_reverse() + ggplot2::theme_void()
   } else {
     newplot <- plot + viridis::scale_color_viridis(discrete = TRUE) +
-      scale_y_reverse() + theme_void()
+      ggplot2::scale_y_reverse() + ggplot2::theme_void()
   }
 
   return(newplot)
