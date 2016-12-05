@@ -53,26 +53,10 @@ head(ex_sim[[1]])
 ex_sim[[2]]
 ```
 
-The first element of the returned object can be used to explore the behavior of individual simulations. For example, to look at the relative risk point estimate and 95% confidence interval from each of the 100 simulations, as well as which 95% confidence intervals include the true relative risk using the following call:
+The first element of the returned object can be used to explore the behavior of individual simulations. For example, to look at the relative risk point estimate and 95% confidence interval from each of the 100 simulations, as well as which 95% confidence intervals include the true relative risk using the `coverage_plot` function that comes with the package:
 
 ```{r fig.width = 4, fig.height = 5, fig.align = "center"}
-ex_sim[[1]] %>%
-  arrange(Estimate) %>%
-  mutate(index = 1:n(),
-         rr = exp(Estimate),
-         lower_rr = exp(lower_ci),
-         upper_rr = exp(upper_ci),
-         includes_true = lower_rr < 1.10 & 1.10 < upper_rr) %>%
-  ggplot(aes(x = index, y = rr, color = includes_true)) + 
-  coord_flip() + 
-  geom_point() + 
-  geom_errorbar(aes(ymin = lower_rr, ymax = upper_rr)) + 
-  geom_hline(yintercept = 1.10, linetype = 2) + 
-  scale_color_manual(values = c("red", "darkgray")) +
-  theme(legend.position="none",
-        panel.background = element_rect(fill='white', colour='white')) + 
-  ylab("Relative risk") +
-  scale_x_discrete(breaks = NULL) + xlab("") 
+coverage_plot(ex_sim[[1]], true_param = 1.10)
 ```
 
 The second element of the returned object gives the following overall summaries of model performance across all simulations: 
@@ -109,23 +93,12 @@ x_cont %>% slice(1:5)
 ggplot(x_cont, aes(x = date, y = x)) + geom_point(alpha = 0.2)
 ```
 
+You can plot a calendar plot of this simulated exposure time series using the `calendar_plot` function that comes with the package: 
+
 ```{r fig.align = "center", fig.width = 8, fig.height = 2.5}
-x_cont %>% 
-  mutate(Weekday = lubridate::wday(date), 
-         Month = lubridate::month(date, label = TRUE),
-         Year = lubridate::year(date),
-         Exposure = x) %>% 
-  group_by(Year, Month) %>%
-  dplyr::mutate(saturday = lag(Weekday) == 7,
-                saturday = ifelse(is.na(saturday), 0, saturday),
-                Week = 1 + cumsum(saturday)) %>%
-  ungroup() %>%
-  ggplot(aes(x = Weekday, y = Week, fill = Exposure)) + 
-   geom_tile(colour = "white") + 
-   facet_grid(Year ~ Month, scales = "free") + 
-  scale_fill_gradientn(colours = viridis(256)) + 
-  scale_y_reverse() + theme_void()
+calendar_plot(x_cont, type = "continuous")
 ```
+
 
 For binary exposure data, the `central` argument gives the probability of exposure on a study day:
 
@@ -134,24 +107,11 @@ x_bin <- sim_exposure(n = 1000, central = 0.1,
                       exposure_type = "binary")
 x_bin %>% slice(1:5)
 ```
+
 ```{r fig.align = "center", fig.width = 8, fig.height = 2.5}
-x_bin %>% 
-  mutate(Weekday = lubridate::wday(date), 
-         Month = lubridate::month(date, label = TRUE),
-         Year = lubridate::year(date),
-         Exposure = factor(x, levels = c(0, 1), 
-                    labels = c("Not exposed", "Exposed"))) %>% 
-  group_by(Year, Month) %>%
-  dplyr::mutate(saturday = lag(Weekday) == 7,
-                saturday = ifelse(is.na(saturday), 0, saturday),
-                Week = 1 + cumsum(saturday)) %>%
-  ungroup() %>%
-  ggplot(aes(x = Weekday, y = Week, fill = Exposure)) + 
-   geom_tile(colour = "white") + 
-   facet_grid(Year ~ Month, scales = "free") + 
-  scale_fill_manual(values = c("#414487FF", "#7AD151FF")) + 
-  scale_y_reverse() + theme_void()
+calendar_plot(x_bin, type = "discrete", labels = c("Not exposed", "Exposed"))
 ```
+
 
 For environmental epidemiology applications, exposure data often has a seasonal trend and / or long-term trend. The default for `sim_exposure` is to simulate the exposure data without a time trend (`trend = "no trend"`). However, we have also built in several time trends from which a user can to choose to simulate exposure data with a time trend, either seasonal or long-term or both. These trend patterns differ slightly depending on whether the user is simulating binary or continuous data. [add reference for Schwartz paper where we got some of the trend equations] Below are plots of the built-in trends for continuous exposure data from which the user may choose. 
 
@@ -187,26 +147,15 @@ trend:
 testexp <- sim_exposure(n=1000, central = 50, sd = 5, trend = "cos1linear",
                         amp = .6, exposure_type = "continuous")
 head(testexp)
-qplot(testexp$date, testexp$x)+geom_point()+coord_cartesian(ylim = c(0,110)) + labs(title = "Exposure with a cos1linear trend", x = "Date", y="Exposure")+theme_bw()
+qplot(testexp$date, testexp$x)+geom_point()+coord_cartesian(ylim = c(0,110)) + 
+  labs(title = "Exposure with a cos1linear trend", x = "Date", y="Exposure")+theme_bw()
 ```
 
+
 ```{r fig.align = "center", fig.width = 8, fig.height = 2.5}
-testexp %>% 
-  mutate(Weekday = lubridate::wday(date), 
-         Month = lubridate::month(date, label = TRUE),
-         Year = lubridate::year(date),
-         Exposure = x) %>% 
-  group_by(Year, Month) %>%
-  dplyr::mutate(saturday = lag(Weekday) == 7,
-                saturday = ifelse(is.na(saturday), 0, saturday),
-                Week = 1 + cumsum(saturday)) %>%
-  ungroup() %>%
-  ggplot(aes(x = Weekday, y = Week, fill = Exposure)) + 
-   geom_tile(colour = "white") + 
-   facet_grid(Year ~ Month, scales = "free") + 
-  scale_fill_gradientn(colours = viridis(256)) + 
-  scale_y_reverse() + theme_void()
+calendar_plot(testexp, type = "continuous")
 ```
+
 
 The default amplitude for the trend is .6, but we can adjust the "amp" parameter
 for a smaller or larger trend amplitude:
@@ -214,26 +163,16 @@ for a smaller or larger trend amplitude:
 ```{r, fig.width = 5, fig.height = 3, fig.align = "center"}
 smallamp <- sim_exposure(n=1000, central = 50, sd = 5, trend = "cos1linear",
                         amp = .2, exposure_type = "continuous")
-qplot(smallamp$date, smallamp$x)+geom_point()+coord_cartesian(ylim = c(0,110))+labs(title = "Cos1linear exposure with smaller amplitude", x="Date", y="Exposure") + theme_bw()
+qplot(smallamp$date, smallamp$x) +
+  geom_point() + coord_cartesian(ylim = c(0,110)) +
+  labs(title = "Cos1linear exposure with smaller amplitude", x="Date", y="Exposure") + theme_bw()
 ```
 
+
 ```{r fig.align = "center", fig.width = 8, fig.height = 2.5}
-smallamp %>% 
-  mutate(Weekday = lubridate::wday(date), 
-         Month = lubridate::month(date, label = TRUE),
-         Year = lubridate::year(date),
-         Exposure = x) %>% 
-  group_by(Year, Month) %>%
-  dplyr::mutate(saturday = lag(Weekday) == 7,
-                saturday = ifelse(is.na(saturday), 0, saturday),
-                Week = 1 + cumsum(saturday)) %>%
-  ungroup() %>%
-  ggplot(aes(x = Weekday, y = Week, fill = Exposure)) + 
-   geom_tile(colour = "white") + 
-   facet_grid(Year ~ Month, scales = "free") + 
-  scale_fill_gradientn(colours = viridis(256)) + 
-  scale_y_reverse() + theme_void()
+calendar_plot(smallamp, type = "continuous")
 ```
+
 
 Here is an example of generating binary exposure data with a "monthly" trend 
 starting from June 1, 2002.  The probabilities for the central parameter are for each month of the year, starting in January.
@@ -247,23 +186,9 @@ qplot(testbin$date, testbin$x)+geom_point()+labs(title = "Binary exposure data w
 ```
 
 ```{r fig.align = "center", fig.width = 8, fig.height = 2.5}
-testbin %>% 
-  mutate(Weekday = lubridate::wday(date), 
-         Month = lubridate::month(date, label = TRUE),
-         Year = lubridate::year(date),
-         Exposure = factor(x, levels = c(0, 1), 
-                    labels = c("Not exposed", "Exposed"))) %>% 
-  group_by(Year, Month) %>%
-  dplyr::mutate(saturday = lag(Weekday) == 7,
-                saturday = ifelse(is.na(saturday), 0, saturday),
-                Week = 1 + cumsum(saturday)) %>%
-  ungroup() %>%
-  ggplot(aes(x = Weekday, y = Week, fill = Exposure)) + 
-   geom_tile(colour = "white") + 
-   facet_grid(Year ~ Month, scales = "free") + 
-  scale_fill_manual(values = c("#414487FF", "#7AD151FF")) + 
-  scale_y_reverse() + theme_void()
+calendar_plot(testbin, type = "discrete", labels = c("Not exposed", "Exposed"))
 ```
+
 
 The following figure shows the steps taken in simulating exposure ...
 
@@ -295,26 +220,14 @@ Here is an example of generating health outcome data with an upward linear trend
 ```{r fig.width = 5, fig.height = 3, fig.align = "center"}
 testexp2 <- sim_exposure(n=1000, central = 100, sd = 10, trend = "cos1", exposure_type = "continuous")
 testout <- sim_outcome(exposure = testexp2, average_outcome = 22, trend = "linear", rr = 1.01)
-qplot(testout$date, testout$outcome)+geom_point()+labs(title = "Health outcomes with a linear trend", x="Date", y="Outcome") + theme_bw()
+qplot(testout$date, testout$outcome) + geom_point() +
+  labs(title = "Health outcomes with a linear trend", x="Date", y="Outcome") + theme_bw()
 ```
 
 ```{r fig.align = "center", fig.width = 8, fig.height = 2.5}
-testout %>% 
-  mutate(Weekday = lubridate::wday(date), 
-         Month = lubridate::month(date, label = TRUE),
-         Year = lubridate::year(date),
-         Exposure = outcome) %>% 
-  group_by(Year, Month) %>%
-  dplyr::mutate(saturday = lag(Weekday) == 7,
-                saturday = ifelse(is.na(saturday), 0, saturday),
-                Week = 1 + cumsum(saturday)) %>%
-  ungroup() %>%
-  ggplot(aes(x = Weekday, y = Week, fill = Exposure)) + 
-   geom_tile(colour = "white") + 
-   facet_grid(Year ~ Month, scales = "free") + 
-  scale_fill_gradientn(colours = viridis(256)) + 
-  scale_y_reverse() + theme_void()
+calendar_plot(testout %>% select(date, outcome), type = "continuous")
 ```
+
 
 ###Fitting models
 
@@ -323,7 +236,7 @@ eesim next uses many generated data sets to fit statistical models to relate exp
 Here is an example of fitting the spline model with 7 degrees of freedom:
 
 ```{r}
-sims <- create_sims(n_reps=10, n=100, central = 100, sd = 10,
+sims <- create_sims(n_reps = 10, n = 100, central = 100, sd = 10,
              exposure_type="continuous", exposure_trend = "cos1",
              exposure_amp = .6, average_outcome = 22,
              outcome_trend = "no trend", outcome_amp = .6, rr = 1.01)
@@ -363,22 +276,9 @@ qplot(customexp$date, customexp$x)+geom_point()+labs(title = "Exposure values wi
 ```
 
 ```{r fig.align = "center", fig.width = 8, fig.height = 2.5}
-customexp %>% 
-  mutate(Weekday = lubridate::wday(date), 
-         Month = lubridate::month(date, label = TRUE),
-         Year = lubridate::year(date),
-         Exposure = x) %>% 
-  group_by(Year, Month) %>%
-  dplyr::mutate(saturday = lag(Weekday) == 7,
-                saturday = ifelse(is.na(saturday), 0, saturday),
-                Week = 1 + cumsum(saturday)) %>%
-  ungroup() %>%
-  ggplot(aes(x = Weekday, y = Week, fill = Exposure)) + 
-   geom_tile(colour = "white") + 
-   facet_grid(Year ~ Month, scales = "free") + 
-  scale_fill_gradientn(colours = viridis(256)) + 
-  scale_y_reverse() + theme_void()
+calendar_plot(customexp, type = "continuous")
 ```
+
 
 This custom exposure function can be called with eesim:
 
