@@ -26,23 +26,23 @@
 #' @export
 #'
 coverage_plot <- function(summarystats, true_param){
-summarystats %>%
-  arrange(Estimate) %>%
-  mutate(index = 1:n(),
-         rr = exp(Estimate),
-         lower_rr = exp(lower_ci),
-         upper_rr = exp(upper_ci),
-         includes_true = lower_rr < true_param & true_param < upper_rr) %>%
-  ggplot(aes(x = index, y = rr, color = includes_true)) +
-  coord_flip() +
-  geom_point() +
-  geom_errorbar(aes(ymin = lower_rr, ymax = upper_rr)) +
-  geom_hline(yintercept = true_param, linetype = 2) +
-  scale_color_manual(values = c("red", "darkgray")) +
-  theme(legend.position="none",
-        panel.background = element_rect(fill='white', colour='white')) +
-  ylab("Relative risk") +
-  scale_x_discrete(breaks = NULL) + xlab("")
+  summarystats %>%
+    dplyr::arrange(Estimate) %>%
+    dplyr::mutate(index = 1:n(),
+                  rr = exp(Estimate),
+                  lower_rr = exp(lower_ci),
+                  upper_rr = exp(upper_ci),
+                  includes_true = lower_rr < true_param & true_param < upper_rr) %>%
+    ggplot2::ggplot(ggplot2::aes(x = index, y = rr, color = includes_true)) +
+    ggplot2::coord_flip() +
+    ggplot2::geom_point() +
+    ggplot2::geom_errorbar(ggplot2::aes(ymin = lower_rr, ymax = upper_rr)) +
+    ggplot2::geom_hline(yintercept = true_param, linetype = 2) +
+    ggplot2::scale_color_manual(values = c("red", "darkgray")) +
+    ggplot2::theme(legend.position="none",
+                   panel.background = ggplot2::element_rect(fill = 'white', colour = 'white')) +
+    ggplot2::ylab("Relative risk") +
+    ggplot2::scale_x_discrete(name = "", breaks = NULL)
 }
 #'
 #' Calendar Plot
