@@ -21,6 +21,8 @@
 #'           model = "spline", df_year = 1)
 #' coverage_plot(ex_sim[[1]], true_param = 1.05)
 #'
+#' @importFrom dplyr %>%
+#'
 #' @export
 #'
 coverage_plot <- function(summarystats, true_param){
