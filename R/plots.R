@@ -26,7 +26,7 @@
 #' @export
 #'
 coverage_plot <- function(summarystats, true_param){
-  summarystats %>%
+  out <- summarystats %>%
     dplyr::arrange(Estimate) %>%
     dplyr::mutate(index = 1:n(),
                   rr = exp(Estimate),
@@ -43,6 +43,7 @@ coverage_plot <- function(summarystats, true_param){
                    panel.background = ggplot2::element_rect(fill = 'white', colour = 'white')) +
     ggplot2::ylab("Relative risk") +
     ggplot2::scale_x_discrete(name = "", breaks = NULL)
+  return(out)
 }
 #'
 #' Calendar Plot
