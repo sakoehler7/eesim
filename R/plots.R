@@ -70,10 +70,12 @@ coverage_plot <- function(summarystats, true_param){
 calendar_plot <- function(df, type = "continuous", labels = NULL){
   names(df) <- c("date", "x")
 
-  if(type=="continuous"){
+  if(type == "continuous"){
     Exposure <- df$x
-  } else if(type=="discrete"){
+  } else if(type == "discrete"){
     Exposure <- factor(df$x, levels = levels(factor(df$x)), labels = labels)
+  } else {
+    stop('The parameter `type` must be "continuous" or "discrete".')
   }
 
   plot <- df %>%
@@ -92,12 +94,11 @@ calendar_plot <- function(df, type = "continuous", labels = NULL){
   if(type=="continuous"){
     newplot <- plot + scale_fill_gradientn(colours = viridis(256)) +
       scale_y_reverse() + theme_void()
-  } else if(type=="discrete"){
+  } else {
     newplot <- plot + viridis::scale_color_viridis(discrete = TRUE) +
       scale_y_reverse() + theme_void()
-  } else {
-    stop('The parameter `type` must be "continuous" or "discrete".')
   }
+
   return(newplot)
 }
 #'
