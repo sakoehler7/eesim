@@ -50,27 +50,12 @@ head(ex_sim[[1]])
 ex_sim[[2]]
 ```
 
-The first element of the returned object can be used to explore the behavior of individual simulations. For example, to look at the relative risk point estimate and 95% confidence interval from each of the 100 simulations, as well as which 95% confidence intervals include the true relative risk using the following call:
+The first element of the returned object can be used to explore the behavior of individual simulations. For example, to look at the relative risk point estimate and 95% confidence interval from each of the 100 simulations, as well as which 95% confidence intervals include the true relative risk using the `coverage_plot` function that comes with the package:
 
 ```{r fig.width = 4, fig.height = 5, fig.align = "center"}
-ex_sim[[1]] %>%
-  arrange(Estimate) %>%
-  mutate(index = 1:n(),
-         rr = exp(Estimate),
-         lower_rr = exp(lower_ci),
-         upper_rr = exp(upper_ci),
-         includes_true = lower_rr < 1.10 & 1.10 < upper_rr) %>%
-  ggplot(aes(x = index, y = rr, color = includes_true)) + 
-  coord_flip() + 
-  geom_point() + 
-  geom_errorbar(aes(ymin = lower_rr, ymax = upper_rr)) + 
-  geom_hline(yintercept = 1.10, linetype = 2) + 
-  scale_color_manual(values = c("red", "darkgray")) +
-  theme(legend.position="none",
-        panel.background = element_rect(fill='white', colour='white')) + 
-  ylab("Relative risk") +
-  scale_x_discrete(breaks = NULL) + xlab("") 
+coverage_plot(ex_sim[[1]], true_param = 1.10)
 ```
+
 
 The second element of the returned object gives the following overall summaries of model performance across all simulations: 
 
