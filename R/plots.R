@@ -57,6 +57,7 @@ coverage_plot <- function(summarystats, true_param){
 #' discrete
 #' @param labels Vector of character strings naming the levels of a discrete
 #' variable
+#' @param legend_name Character string specifying name of variable displayed
 #'
 #' @examples
 #' testdat <- sim_exposure(n = 1000, central = 0.1,
