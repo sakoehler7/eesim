@@ -152,13 +152,13 @@ power_beta <- function(df){
 #'    betas, mean variance of the estimates, percent bias, coverage, and power.
 #'
 #' @examples
-#' sims <- create_sims(n_reps = 10, n = 600, central = 100,
+#' sims <- create_sims(n_reps = 100, n = 1000, central = 100,
 #'                     sd = 10, exposure_type = "continuous",
 #'                     exposure_trend = "cos1",
 #'                     exposure_amp = 0.6,
 #'                     average_outcome = 20,
 #'                     outcome_trend = "no trend",
-#'                     rr = 1.01)
+#'                     rr = 1.02)
 #' fits <- fit_mods(outcome = sims, model = "spline", df_year = 1)
 #' check_sims(df = fits, true_rr = 1.02)
 #'
@@ -183,7 +183,6 @@ check_sims <- function(df, true_rr){
 #'    "n" or "rr"
 #' @param values A numeric vector of the chosen values of the varying parameters
 #' @param plot "TRUE" or "FALSE" for whether to produce a plot
-#' @inheritParams rep_sims
 #' @inheritParams power_beta
 #'
 #' @return Data frame with the value of the varying parameter and its
