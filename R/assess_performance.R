@@ -189,24 +189,29 @@ check_sims <- function(df, true_rr){
 #'    corresponding power
 #'
 #' @examples
-#' power_calc(varying = "n", values = c(50 * (1:5)), n_reps = 50,
-#'            model = "spline_mod", rr = 1.02)
-#' power_calc(varying = "rr", values = c(1.002, 1.005, 1.01, 1.02, 1.03, 1.05,
-#'            1.1), n_sims = 100, model = "spline_mod", n = 365, plot = TRUE)
+#' power_calc(varying = "n", values = c(50 * (1:5)), simargs = list(n_reps = 50,
+#'            rr = 1.02, central = 50, sd = 5, exposure_trend = "no trend",
+#'            exposure_amp = .6, exposure_type = "continuous",
+#'            outcome_trend = "cos1", outcome_amp = .6, average_outcome = 100),
+#'            fitargs = list(model = "spline"))
 #'
 #' @export
-power_calc <- function(varying, values, plot = FALSE, ...){
+power_calc <- function(varying, values, simargs = list(), fitargs = list(),
+                       plot = FALSE){
   out <- data.frame(x = values, power = NA)
+  simargs$n <- out$x[i]
   if(varying == "n"){
     for(i in 1:nrow(out)){
-      rep_df <- create_sims(n = out$x[i], ...)
-      fits <- fit_mods(outcome = rep_df, ...)
+      rep_df <- do.call(create_sims, simargs)
+      fitargs$outcome = rep_df
+      fits <- do.call(fit_mods, fitargs)
       out$power[i] <- power_beta(fits)[1,1]
     }
   } else if(varying == "rr"){
     for(i in 1:nrow(out)){
-      rep_df <- create_sims(rr = out$x[i], ...)
-      fits <- fit_mods(outcome = rep_df, ...)
+      rep_df <- do.call(create_sims, simargs)
+      fitargs$outcome <- rep_df
+      fits <- do.call(fit_mods, fitargs)
       out$power[i] <- power_beta(fits)[1,1]
     }
   }
