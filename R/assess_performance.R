@@ -182,6 +182,8 @@ check_sims <- function(df, true_rr){
 #' @param varying A character string of the parameter to be varied.  Choices are
 #'    "n" or "rr"
 #' @param values A numeric vector of the chosen values of the varying parameters
+#' @param simargs A list of arguments to be passed to the create_sims function
+#' @param fitargs A list of arguments to be passed to the fit_mods function
 #' @param plot "TRUE" or "FALSE" for whether to produce a plot
 #' @inheritParams power_beta
 #'
