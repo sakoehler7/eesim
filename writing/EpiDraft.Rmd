@@ -1,0 +1,22 @@
+---
+title: "Outstanding Title"
+author: "Sarah Koehler"
+date: "February 21, 2017"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+#Introduction
+
+Simulation studies are important in environmental epidemiology research on air pollution, temperature, and other exposures. For example, simulated data can be used to test new statistical models and perform power analyses. Developing the code to simulate environmental time series for these types of studies can be time consuming, and simulation methods have varied across previous simulation studies [cite studies], complicating the comparison of results across different studies. 
+
+Here, we present an R package that automates simulation of environmental time series for such simulations, offering both sensible defaults for each stage of the simulation process and also the option to customize any of the simulation steps while using defaults for any steps that do not require customization. This package can be used to aid simulation studies to explore environmental epidemiology models relating acute health outcomes and daily environmental exposures; it can also be used to estimate the power of studies when planning or proposing future research.
+
+#Previous Simulation Studies
+
+
+
+#Simulating Data and Testing Models
+
+#Power Analysis
