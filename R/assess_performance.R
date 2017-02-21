@@ -191,7 +191,7 @@ check_sims <- function(df, true_rr){
 #'    corresponding power
 #'
 #' @examples
-#' power_calc(varying = "n", values = c(50 * (1:5)), simargs = list(n_reps = 50,
+#' power_calc(varying = "n", values = c(5 * (1:5)), simargs = list(n_reps = 50,
 #'            rr = 1.02, central = 50, sd = 5, exposure_trend = "no trend",
 #'            exposure_amp = .6, exposure_type = "continuous",
 #'            outcome_trend = "cos1", outcome_amp = .6, average_outcome = 100),
@@ -201,7 +201,7 @@ check_sims <- function(df, true_rr){
 power_calc <- function(varying, values, simargs = list(), fitargs = list(),
                        plot = FALSE){
   out <- data.frame(x = values, power = NA)
-  simargs$n <- out$x[i]
+  simargs$n <- out$x
   if(varying == "n"){
     for(i in 1:nrow(out)){
       rep_df <- do.call(create_sims, simargs)
