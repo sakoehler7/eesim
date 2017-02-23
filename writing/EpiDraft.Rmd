@@ -46,4 +46,12 @@ eesim(n_reps = 3, n = 100, central = 50, sd = 5, exposure_type = "continuous",
 
 The above output gives the estimated effect sizes for each of the three repetitions along with their standard errors, test statistics, p-values, and confidence intervals. It also summarizes the outcomes of all three repetitions with a mean estimated beta (which equals the log of the estimated relative risk), estimated relative risk, the variance of the estimated betas, and the mean variance of the individual betas.  
 
+The `eesim` output also gives the relative parameter estimate bias, according to the following equation  from (citet{Beaujean2014}), given $\theta_{H}$ (true value of the parameter, as set when creating the simulated data) and $\hat{\theta}$ (value of the parameter estimated from applying a model to the simulated data): 
+
+\begin{equation}
+\theta_{bias} = \frac{\hat{\theta} - \theta_{H}}{\theta_{H}}
+\end{equation}
+
+Finally, the `eesim` output gives the coverage and power of the model.
+
 #Power Analysis
