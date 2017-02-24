@@ -38,8 +38,7 @@ For example, you can use the following call to (1) generate 3 repetitions of 100
 
 ```{r}
 library(eesim)
-eesim(n_reps = 3, n = 100, central = 50, sd = 5, exposure_type = "continuous", 
-      outcome_trend = "curvilinear", average_outcome = 20, rr = 1.10, model = "spline", df_year = 2)
+eesim(n_reps = 3, n = 100, central = 50, sd = 5, outcome_amp = .6, exposure_type = "continuous", outcome_trend = "cos1", average_outcome = 20, rr = 1.10, model = "spline", df_year = 2)
 ```
 
 The above output gives the estimated effect sizes for each of the three repetitions along with their standard errors, test statistics, p-values, and confidence intervals. It also summarizes the outcomes of all three repetitions with a mean estimated beta (which equals the log of the estimated relative risk), estimated relative risk, the variance of the estimated betas, and the mean variance of the individual betas.  
@@ -60,8 +59,8 @@ In `eesim`, the function `power_calc` can be used to investigate the effects of 
 Here is an example of using `power_calc` to test power for different sample sizes:
 
 ```{r}
-power_calc(varying = "n", values = c(5, 50, 500), simargs = list(n_reps = 10,
-           rr = 1.02, central = 50, sd = 5, exposure_trend = "no trend",
+power_calc(varying = "n", values = c(365*1:3), simargs = list(n_reps = 10,
+           rr = 1.5, central = 50, sd = 5, exposure_trend = "no trend",
            exposure_amp = .6, exposure_type = "continuous",
            outcome_trend = "cos1", outcome_amp = .6, average_outcome = 100),
            fitargs = list(model = "spline"))

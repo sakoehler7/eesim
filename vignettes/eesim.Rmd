@@ -42,10 +42,10 @@ For example, you can use the following call to (1) generate 10 observations of a
 [To do-- increase `n` and `n_reps`, but wait until we've edited the vignette, because that will increase time to render. We could change `df` then, too (and maybe change to case-crossover? That may be easier for a first example)]
 
 ```{r, warning = FALSE, message = FALSE}
-ex_sim <- eesim(n_reps = 100, n = 10, central = 100, sd = 10,
+ex_sim <- eesim(n_reps = 10, n = 100, central = 100, sd = 10,
                 exposure_type = "continuous", 
                 average_outcome = 20, rr = 1.10,
-                model = "spline", df_year = 1)
+                model = "casecrossover")
 head(ex_sim[[1]])
 ex_sim[[2]]
 ```
