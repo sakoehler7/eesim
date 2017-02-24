@@ -13,9 +13,9 @@ Simulation studies are important in environmental epidemiology research on air p
 
 Simulated data has been used in a number of environmental epidemiology studies on various kinds of exposures and outcomes. (citet{Armstrong2014}) used a simulation study to investigate short-term mortality displacement following heat waves. (citet{Bateson1999}), (citet{Bateson2001}), and (citet{Peng2006}) used simulated data with confounding seasonal trends to compare experimental designs and model choice. (citet{Strickland2015}), (citet{Gryparis2009}), and (citet{Butland2013}) investigated spatial misalignment and geographic heterogeneity of exposures using simulated data. (citet{Roberts2006}) used a simulation study to test the reliability of using AIC to determine the shape of the relationship between particulate matter and mortality. (citet{Bobb2015}) used simulation to assess the performance of a proposed method for estimating the health effects of multi-pollutant exposures called Bayesian kernel machine regression (BKMR). 
 
-Here, we present an R package that automates simulation of environmental time series for such simulations, offering both sensible defaults for each stage of the simulation process and also the option to customize any of the simulation steps while using defaults for any steps that do not require customization. There are a few important advantages to having an open-source software package that can simulate this type of environmental time series for simulation studies. First, current methods of simulating environmental time series to use to assess modeling choices vary across different studies. If results from a simulation study are not robust to different choices in how to simulate the data used in the study, results across studies using different methods of simulating data would not be comparable \citep{Alfons2010}. 
+Here, we present an R package that automates simulation of environmental time series for such studies, offering both sensible defaults for each stage of the simulation process and also the option to customize any of the simulation steps while using defaults for any steps that do not require customization. There are a few important advantages to having an open-source software package that can simulate this type of environmental time series for simulation studies. This package offers several methods of simulating time series so researchers can check if study results are robust to the data simulation method (citep{Alfons2010}). This software also allows for consistency and comparison of data simulation across studies and will save researchers time and effort in developing study-specific code. 
 
-This package offers several methods of simulating time series so researchers can check if study results are robust to data simulation method. This software also allows for consistency and comparison of data simulation across studies and will save researchers time and effort in developing study-specific code. This package can be used to aid simulation studies to explore environmental epidemiology models relating acute health outcomes and daily environmental exposures; it can also be used to estimate the power of studies when planning or proposing future research.
+This package can be used to aid simulation studies to explore environmental epidemiology models relating acute health outcomes and daily environmental exposures; it can also be used to estimate the power of studies when planning or proposing future research.
 
 #Simulating Data and Testing Models
 
@@ -54,4 +54,17 @@ Finally, the `eesim` output gives the coverage and power of the model.
 
 #Power Analysis
 
-Simulation studies can be used to determine effective sample size or power when planning or proposing future research studies. This method can be particularly useful in cases where modeling of the study data will be particularly complex and when the strong assumptions of classical, analytical power analysis are questionable (citep{Bellan2015, Johnson2015, Burton2009, Alfons2010, Beaujean2014}). Simulation studies can often be used to generate power analyses under a more realistic set of assumptions (citep{Burton2009, Beaujean2014}).
+Simulation studies can be used to determine effective sample size or power when planning or proposing future research studies. This method can be particularly useful in cases where modeling of the study data will be particularly complex and when the strong assumptions of classical, analytical power analysis are questionable (citep{Bellan2015, Johnson2015, Burton2009, Alfons2010, Beaujean2014, Schoemann2014}). Simulation studies can often be used to generate power analyses under a more realistic set of assumptions (citep{Burton2009, Beaujean2014}).
+
+In `eesim`, the function `power_calc` can be used to investigate the effects of various sample sizes or relative risks on power. This function requires arguments including the parameter to be varied (sample size or relative risk), the desired values of that parameter, and lists of the same arguments as used in the `eesim` function. The `power_calc` function outputs a table of the values of the varied parameter along with their corresponding power. 
+Here is an example of using `power_calc` to test power for different sample sizes:
+
+```{r}
+power_calc(varying = "n", values = c(5, 50, 500), simargs = list(n_reps = 10,
+           rr = 1.02, central = 50, sd = 5, exposure_trend = "no trend",
+           exposure_amp = .6, exposure_type = "continuous",
+           outcome_trend = "cos1", outcome_amp = .6, average_outcome = 100),
+           fitargs = list(model = "spline"))
+```
+
+The `power_calc` function will also return a plot if `plot=TRUE` is specified.  
