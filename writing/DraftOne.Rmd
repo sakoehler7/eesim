@@ -730,4 +730,45 @@ rep_sims <- function(n_sims, model, n = 5 * 365, rr = 1.01,
 
 ```
 
+##2nd attempt at power_calc
+
+```{r}
+power_calc <- function(varying, values, n_reps, n=NULL, central, sd, exposure_type,
+                       exposure_trend, exposure_amp, average_outcome, outcome_trend,
+                        outcome_amp, rr=NULL, start.date = "2000-01-01",
+                        cust_exp_func = NULL, cust_exp_args = NULL,
+                        cust_base_func = NULL, cust_lambda_func = NULL,
+                        cust_base_args = NULL, cust_lambda_args = NULL, 
+                       model, df_year=7){
+  if(varying == "n"){
+    rep_df <- n %>% map(create_sims, n_reps=n_reps, central=central, sd=sd, 
+                        exposure_type = exposure_type,
+                        exposure_trend=exposure_trend,exposure_amp=exposure_amp,
+                        average_outcome=average_outcome,outcome_trend=outcome_trend,
+                        outcome_amp = outcome_amp, rr=rr, start.date = start.date)
+      fits <- rep_df %>% map(fit_mods, model=model)
+      power <- fits %>% map(power_beta) #makes a list, want to extract the values of power and put in a data frame with values of n.
+    }
+  else if(varying == "rr"){
+    rep_df <- rr %>% map(create_sims, n=n, n_reps=n_reps, central=central, sd=sd, 
+                        exposure_type = exposure_type,
+                        exposure_trend=exposure_trend,exposure_amp=exposure_amp,
+                        average_outcome=average_outcome,outcome_trend=outcome_trend,
+                        outcome_amp = outcome_amp, start.date = start.date)
+      fits <- rep_df %>% map(fit_mods, model=model)
+      power <- fits %>% map(power_beta) #makes a list, want to extract the values of power and put in a data frame with values of rr.
+    }
+  if(plot == TRUE){
+    my_plot <- ggplot2::ggplot(out, ggplot2::aes_(x = ~ x, y = ~ power)) +
+      ggplot2::geom_line() + ggplot2::theme_minimal() +
+      ggplot2::xlab(varying)
+    print(my_plot)
+  }
+  return(power)
+}
+
+#Example that doesn't work: 
+power_calc(varying = "n", values = c(5, 10, 25), n_reps = 3, central = 100, sd=10, exposure_type = "continuous", exposure_trend = "cos1", exposure_amp = .6, average_outcome=22, outcome_trend = "no trend", outcome_amp = .6, rr=1.1, start.date = "2000-01-01")
+```
+
 ## References
