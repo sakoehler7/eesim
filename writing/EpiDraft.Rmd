@@ -2,6 +2,7 @@
 title: "Outstanding Title"
 author: "Sarah Koehler"
 date: "February 21, 2017"
+bibliography: mybibfile.bib
 output:
   pdf_document: default
   html_document: default

@@ -203,8 +203,8 @@ power_calc <- function(varying, values, simargs = list(), fitargs = list(),
   out <- data.frame(x = values, power = NA)
   simargs$n <- out$x
   if(varying == "n"){
-    simargs$n <- out$x
     for(i in 1:nrow(out)){
+      simargs$n <- out$x[i]
       rep_df[[i]] <- do.call(create_sims, simargs) #needs to output a list of data frames with date, x, outcome
       #How do I make it cycle through values of n and put each output from create_sims into a list?
       fitargs$outcome <- rep_df #this is not the right input for fit_mods
