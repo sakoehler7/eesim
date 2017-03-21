@@ -343,7 +343,7 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
 #'    for date, exposure, and outcomes, and estimates from fitting models
 #'
 #' @examples
-#' create_sims(n_reps=10, n=10, central = 100, sd = 10,
+#' create_sims(n_reps=3, n=100, central = 100, sd = 10,
 #'             exposure_type="continuous", exposure_trend = "cos1",
 #'             exposure_amp = .6, average_outcome = 22,
 #'             outcome_trend = "no trend", outcome_amp = .6, rr = 1.01)

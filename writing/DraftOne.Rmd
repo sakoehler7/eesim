@@ -730,7 +730,7 @@ rep_sims <- function(n_sims, model, n = 5 * 365, rr = 1.01,
 
 ```
 
-##2nd attempt at power_calc
+##2nd attempt at power_calc using purrr
 
 ```{r}
 power_calc <- function(varying, values, n_reps, n=NULL, central, sd, exposure_type,
@@ -768,7 +768,48 @@ power_calc <- function(varying, values, n_reps, n=NULL, central, sd, exposure_ty
 }
 
 #Example that doesn't work: 
-power_calc(varying = "n", values = c(5, 10, 25), n_reps = 3, central = 100, sd=10, exposure_type = "continuous", exposure_trend = "cos1", exposure_amp = .6, average_outcome=22, outcome_trend = "no trend", outcome_amp = .6, rr=1.1, start.date = "2000-01-01")
+power_calc(varying = "n", values = c(5, 10, 25), n_reps = 3, central = 100, sd=10, exposure_type = "continuous", exposure_trend = "cos1", exposure_amp = .6, average_outcome=22, outcome_trend = "no trend", outcome_amp = .6, rr=1.1, start.date = "2000-01-01", model = "spline", df_year = 1)
+```
+
+Not working, so step by step breakdown:
+
+```{r}
+#Establishing values for arguments
+varying = "n"
+values = c(5, 10, 25)
+n_reps = 3
+central = 100
+sd=10
+exposure_type = "continuous"
+exposure_trend = "cos1"
+exposure_amp = .6
+average_outcome=22
+outcome_trend = "no trend"
+outcome_amp = .6
+rr=1.1
+start.date = "2000-01-01"
+model = "spline"
+df_year = 1
+
+n<- c(5, 10, 20)
+
+#Getting list of data frames with date, x, outcome for each run
+rep_df <- n %>% map(create_sims, n_reps=n_reps, central=central, sd=sd, 
+                        exposure_type=exposure_type,
+                        exposure_trend=exposure_trend,exposure_amp=exposure_amp,
+                        average_outcome=average_outcome,outcome_trend=outcome_trend,
+                        outcome_amp = outcome_amp, rr=rr, start.date = start.date)
+rep_df
+
+#Try with actual values:
+
+rep_df <- n %>% map(create_sims, n_reps=3, central=100, sd=10, 
+                        exposure_type = "continuous",
+                        exposure_trend= "cos1",exposure_amp=.6,
+                        average_outcome=22,outcome_trend="no trend",
+                        outcome_amp = .6, rr=1.1, start.date = "2000-01-01")
+rep_df
+#This works, but why are the outcomes crazy? Oh noooooooo :( 
 ```
 
 ## References
