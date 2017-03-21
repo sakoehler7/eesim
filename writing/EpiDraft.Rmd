@@ -12,15 +12,15 @@ output:
 
 Simulation studies are important in environmental epidemiology research on air pollution, temperature, and other exposures. For example, simulated data can be used to test new statistical models and perform power analyses. Two current challenges of simulating time series data for epidemiology studies are (1) methods for simulating are inconsistent, making it difficult to compare results from different studies, and (2) developing the code to simulate environmental time series for these types of studies can be time consuming. We introduce `eesim`, an open-source software package in R that offers a solution to these challenges.
 
-Simulated data has been used in a number of environmental epidemiology studies on various kinds of exposures and outcomes. (citet{Armstrong2014}) used a simulation study to investigate short-term mortality displacement following heat waves. (citet{Bateson1999}), (citet{Bateson2001}), and (citet{Peng2006}) used simulated data with confounding seasonal trends to compare experimental designs and model choice. (citet{Strickland2015}), (citet{Gryparis2009}), and (citet{Butland2013}) investigated spatial misalignment and geographic heterogeneity of exposures using simulated data. (citet{Roberts2006}) used a simulation study to test the reliability of using AIC to determine the shape of the relationship between particulate matter and mortality. (citet{Bobb2015}) used simulation to assess the performance of a proposed method for estimating the health effects of multi-pollutant exposures called Bayesian kernel machine regression (BKMR). 
+Simulated data has been used in a number of environmental epidemiology studies on various kinds of exposures and outcomes. [@Armstrong2014] used a simulation study to investigate short-term mortality displacement following heat waves. [@Bateson1999], [@Bateson2001], and [@Peng2006] used simulated data with confounding seasonal trends to compare experimental designs and model choice. [@Strickland2015], [@Gryparis2009], and [@Butland2013] investigated spatial misalignment and geographic heterogeneity of exposures using simulated data. [@Roberts2006] used a simulation study to test the reliability of using AIC to determine the shape of the relationship between particulate matter and mortality. [@Bobb2015] used simulation to assess the performance of a proposed method for estimating the health effects of multi-pollutant exposures called Bayesian kernel machine regression (BKMR). 
 
-Here, we present an R package that automates simulation of environmental time series for such studies, offering both sensible defaults for each stage of the simulation process and also the option to customize any of the simulation steps while using defaults for any steps that do not require customization. There are a few important advantages to having an open-source software package that can simulate this type of environmental time series for simulation studies. This package offers several methods of simulating time series so researchers can check if study results are robust to the data simulation method (citep{Alfons2010}). This software also allows for consistency and comparison of data simulation across studies and will save researchers time and effort in developing study-specific code. 
+Here, we present an R package that automates simulation of environmental time series for such studies, offering both sensible defaults for each stage of the simulation process and also the option to customize any of the simulation steps while using defaults for any steps that do not require customization. There are a few important advantages to having an open-source software package that can simulate this type of environmental time series for simulation studies. This package offers several methods of simulating time series so researchers can check if study results are robust to the data simulation method [@Alfons2010]. This software also allows for consistency and comparison of data simulation across studies and will save researchers time and effort in developing study-specific code. 
 
 This package can be used to aid simulation studies to explore environmental epidemiology models relating acute health outcomes and daily environmental exposures; it can also be used to estimate the power of studies when planning or proposing future research.
 
 #Simulating Data and Testing Models
 
-Simulation studies can be used to assess different models and modeling choices. This way of assessing models can be particularly useful for complex statistical methods, for which assessing performance metrics can often prove difficult (citep{Alfons2010}). The `eesim` package allows you to simulate time series of environmental health data and perform simulation-based power analyses and other measures of model performance. The package includes four main parts: 
+Simulation studies can be used to assess different models and modeling choices. This way of assessing models can be particularly useful for complex statistical methods, for which assessing performance metrics can often prove difficult [@Alfons2010]. The `eesim` package allows you to simulate time series of environmental health data and perform simulation-based power analyses and other measures of model performance. The package includes four main parts: 
 
 1. Generation of exposure data; 
 2. Generation of outcome data;
@@ -44,7 +44,7 @@ eesim(n_reps = 3, n = 100, central = 50, sd = 5, outcome_amp = .6, exposure_type
 
 The above output gives the estimated effect sizes for each of the three repetitions along with their standard errors, test statistics, p-values, and confidence intervals. It also summarizes the outcomes of all three repetitions with a mean estimated beta (which equals the log of the estimated relative risk), estimated relative risk, the variance of the estimated betas, and the mean variance of the individual betas.  
 
-The `eesim` output also gives the relative parameter estimate bias, according to the following equation  from (citet{Beaujean2014}), given $\theta_{H}$ (true value of the parameter, as set when creating the simulated data) and $\hat{\theta}$ (value of the parameter estimated from applying a model to the simulated data): 
+The `eesim` output also gives the relative parameter estimate bias, according to the following equation  from [@Beaujean2014], given $\theta_{H}$ (true value of the parameter, as set when creating the simulated data) and $\hat{\theta}$ (value of the parameter estimated from applying a model to the simulated data): 
 
 \begin{equation}
 \theta_{bias} = \frac{\hat{\theta} - \theta_{H}}{\theta_{H}}
@@ -54,17 +54,13 @@ Finally, the `eesim` output gives the coverage and power of the model.
 
 #Power Analysis
 
-Simulation studies can be used to determine effective sample size or power when planning or proposing future research studies. This method can be particularly useful in cases where modeling of the study data will be particularly complex and when the strong assumptions of classical, analytical power analysis are questionable (citep{Bellan2015, Johnson2015, Burton2009, Alfons2010, Beaujean2014, Schoemann2014}). Simulation studies can often be used to generate power analyses under a more realistic set of assumptions (citep{Burton2009, Beaujean2014}).
+Simulation studies can be used to determine effective sample size or power when planning or proposing future research studies. This method can be particularly useful in cases where modeling of the study data will be particularly complex and when the strong assumptions of classical, analytical power analysis are questionable [@Bellan2015; @Johnson2015; @Burton2009; @Alfons2010; @Beaujean2014; @Schoemann2014]. Simulation studies can often be used to generate power analyses under a more realistic set of assumptions [@Burton2009; @Beaujean2014].
 
 In `eesim`, the function `power_calc` can be used to investigate the effects of various sample sizes or relative risks on power. This function requires arguments including the parameter to be varied (sample size or relative risk), the desired values of that parameter, and lists of the same arguments as used in the `eesim` function. The `power_calc` function outputs a table of the values of the varied parameter along with their corresponding power. 
 Here is an example of using `power_calc` to test power for different sample sizes:
 
 ```{r}
-power_calc(varying = "n", values = c(365*1:3), simargs = list(n_reps = 10,
-           rr = 1.5, central = 50, sd = 5, exposure_trend = "no trend",
-           exposure_amp = .6, exposure_type = "continuous",
-           outcome_trend = "cos1", outcome_amp = .6, average_outcome = 100),
-           fitargs = list(model = "spline"))
+#Power_calc momentarily out of commission :(
 ```
 
 The `power_calc` function will also return a plot if `plot=TRUE` is specified.  
