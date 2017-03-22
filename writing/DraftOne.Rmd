@@ -791,10 +791,10 @@ start.date = "2000-01-01"
 model = "spline"
 df_year = 1
 
-n<- c(5, 10, 20)
+n<- 100
 
 #Getting list of data frames with date, x, outcome for each run
-rep_df <- n %>% map(create_sims, n_reps=n_reps, central=central, sd=sd, 
+rep_df <- n %>% purrr::map(create_sims, n_reps=n_reps, central=central, sd=sd, 
                         exposure_type=exposure_type,
                         exposure_trend=exposure_trend,exposure_amp=exposure_amp,
                         average_outcome=average_outcome,outcome_trend=outcome_trend,
@@ -803,12 +803,13 @@ rep_df
 
 #Try with actual values:
 
-rep_df <- n %>% map(create_sims, n_reps=3, central=100, sd=10, 
+rep_df <- n %>% purrr::map(create_sims, n_reps=3, central=100, sd=10, 
                         exposure_type = "continuous",
                         exposure_trend= "cos1",exposure_amp=.6,
                         average_outcome=22,outcome_trend="no trend",
-                        outcome_amp = .6, rr=1.1, start.date = "2000-01-01")
+                        outcome_amp = .6, rr=1.01, start.date = "2000-01-01")
 rep_df
+
 #This works, but why are the outcomes crazy? Oh noooooooo :( 
 ```
 
