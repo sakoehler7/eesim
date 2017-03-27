@@ -175,15 +175,15 @@ custom_baseline <- function(n, df = dlnm::chicagoNMMAPS, outcome_type = "cvd",
 #'
 #' @export
 #'
-create_baseline <- function(n, average_outcome, trend, amp,
+create_baseline <- function(n, average_baseline, trend, amp,
                             cust_base_func = NULL, ...){
   if(is.null(cust_base_func)){
-    lambda <- average_outcome
+    lambda <- average_baseline
     baseline <- sim_baseline(n=n, lambda=lambda, trend=trend, amp=amp)
   } else {
     arguments <- list(...)
     arguments$n <- n
-    arguments$average_outcome <- average_outcome
+    arguments$average_outcome <- average_baseline
     arguments$trend <- trend
     baseline <- do.call(cust_base_func, arguments)
   }
@@ -256,13 +256,14 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
                         cust_base_args = list(), cust_lambda_args = list()){
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = nrow(exposure))
+  average_baseline <- average_outcome/exp(log(rr)*mean(exposure$x))
   if(is.null(cust_base_func) & is.null(cust_lambda_func)){
     if(is.null(average_outcome)){
       stop(paste0("If custom functions are not used to generate outcomes,
                   a value for average_outcome must be specified."))
     }
     baseline <- create_baseline(n = nrow(exposure),
-                                average_outcome = average_outcome,
+                                average_baseline = average_baseline,
                                 trend = trend,
                                 amp = amp)
     lambda <- create_lambda(baseline = baseline,
@@ -277,7 +278,7 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
     outcome <- stats::rpois(n = nrow(exposure), lambda = lambda)
   } else if (is.null(cust_base_func) & !is.null(cust_lambda_func)){
     baseline <- create_baseline(n = nrow(exposure),
-                                average_outcome = average_outcome,
+                                average_baseline = average_baseline,
                                 trend = trend,
                                 amp = amp)
     cust_lambda_args$baseline <- baseline$baseline
