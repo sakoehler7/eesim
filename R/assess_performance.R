@@ -195,7 +195,7 @@ check_sims <- function(df, true_rr){
 #'            central = 100, sd=10, rr = 1.01, exposure_type = "continuous",
 #'            exposure_trend = "cos1", exposure_amp = .6, average_outcome=22,
 #'            outcome_trend = "no trend", outcome_amp = .6,
-#'            start.date = "2000-01-01", model = "spline", df_year = 1, plot=TRUE)
+#'            start.date = "2000-01-01", model = "spline", df_year=5, plot=TRUE)
 #'
 #' @export
 power_calc <- function(varying, values, n_reps, n=NULL, central, sd, exposure_type,
@@ -211,7 +211,7 @@ power_calc <- function(varying, values, n_reps, n=NULL, central, sd, exposure_ty
                                     exposure_trend=exposure_trend,exposure_amp=exposure_amp,
                                     average_outcome=average_outcome,outcome_trend=outcome_trend,
                                     outcome_amp = outcome_amp, rr=rr, start.date = start.date)
-    fits <- rep_df %>% purrr::map(fit_mods, model=model)
+    fits <- rep_df %>% purrr::map(fit_mods, model=model, df_year=df_year)
     power <- fits %>% purrr::map(power_beta) #makes a list, want to extract the values of power and put in a data frame with values of n.
   }
   else if(varying == "rr"){
@@ -219,7 +219,7 @@ power_calc <- function(varying, values, n_reps, n=NULL, central, sd, exposure_ty
                                     exposure_trend=exposure_trend,exposure_amp=exposure_amp,
                                     average_outcome=average_outcome,outcome_trend=outcome_trend,
                                     outcome_amp = outcome_amp, start.date = start.date)
-    fits <- rep_df %>% purrr::map(fit_mods, model=model)
+    fits <- rep_df %>% purrr::map(fit_mods, model=model, df_year=df_year)
     power <- fits %>% purrr::map(power_beta) #makes a list, want to extract the values of power and put in a data frame with values of rr.
   }
   else if(varying=="average_outcome"){
@@ -228,7 +228,7 @@ power_calc <- function(varying, values, n_reps, n=NULL, central, sd, exposure_ty
                                     sd=sd, exposure_type = exposure_type, exposure_trend=exposure_trend,
                                     exposure_amp=exposure_amp, outcome_trend=outcome_trend,
                                     outcome_amp = outcome_amp, rr=rr, start.date = start.date)
-    fits <- rep_df %>% purrr::map(fit_mods, model=model)
+    fits <- rep_df %>% purrr::map(fit_mods, model=model, df_year=df_year)
     power <- fits %>% purrr::map(power_beta)
   }
   powervec <- rep(0, length(power))
