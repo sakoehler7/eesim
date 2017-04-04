@@ -191,11 +191,11 @@ check_sims <- function(df, true_rr){
 #'    corresponding power
 #'
 #' @examples
-#' pow <- power_calc(varying = "n", values = c(15, 50, 100), n_reps = 20,
+#' pow <- power_calc(varying = "n", values = c(15, 25, 50, 80, 95, 100), n_reps = 20,
 #'            central = 100, sd=10, rr = 1.01, exposure_type = "continuous",
 #'            exposure_trend = "cos1", exposure_amp = .6, average_outcome=22,
 #'            outcome_trend = "no trend", outcome_amp = .6,
-#'            start.date = "2000-01-01", model = "spline", df_year = 1)
+#'            start.date = "2000-01-01", model = "spline", df_year = 1, plot=TRUE)
 #'
 #' @export
 power_calc <- function(varying, values, n_reps, n=NULL, central, sd, exposure_type,
@@ -237,9 +237,9 @@ power_calc <- function(varying, values, n_reps, n=NULL, central, sd, exposure_ty
   }
   dat <- data.frame(values=values, power=powervec)
   if(plot == TRUE){
-    my_plot <- ggplot2::ggplot(out, ggplot2::aes_(x = ~ x, y = ~ power)) +
+    my_plot <- ggplot2::ggplot(dat, ggplot2::aes_(x = ~ dat$values, y = ~ dat$power)) +
       ggplot2::geom_line() + ggplot2::theme_minimal() +
-      ggplot2::xlab(varying)
+      ggplot2::xlab(varying) + ggplot2::ylab("power")
     print(my_plot)
   }
   return(dat)
