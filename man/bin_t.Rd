@@ -46,4 +46,3 @@ Creates a trend variable for binary exposure data which is centered at p.
 bin_t(n = 5, p = .3, trend = "cos1", amp = .3)
 
 }
-

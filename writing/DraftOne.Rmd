@@ -739,25 +739,33 @@ power_calc <- function(varying, values, n_reps, n=NULL, central, sd, exposure_ty
                         cust_exp_func = NULL, cust_exp_args = NULL,
                         cust_base_func = NULL, cust_lambda_func = NULL,
                         cust_base_args = NULL, cust_lambda_args = NULL, 
-                       model, df_year=7){
+                       model, df_year=7, plot=FALSE){
   if(varying == "n"){
-    rep_df <- n %>% map(create_sims, n_reps=n_reps, central=central, sd=sd, 
+    rep_df <- values %>% purrr::map(create_sims, n_reps=n_reps, central=central, sd=sd, 
                         exposure_type = exposure_type,
                         exposure_trend=exposure_trend,exposure_amp=exposure_amp,
                         average_outcome=average_outcome,outcome_trend=outcome_trend,
                         outcome_amp = outcome_amp, rr=rr, start.date = start.date)
-      fits <- rep_df %>% map(fit_mods, model=model)
-      power <- fits %>% map(power_beta) #makes a list, want to extract the values of power and put in a data frame with values of n.
+      fits <- rep_df %>% purrr::map(fit_mods, model=model)
+      power <- fits %>% purrr::map(power_beta) #makes a list, want to extract the values of power and put in a data frame with values of n.
     }
   else if(varying == "rr"){
-    rep_df <- rr %>% map(create_sims, n=n, n_reps=n_reps, central=central, sd=sd, 
-                        exposure_type = exposure_type,
+    rep_df <- values %>% purrr::map(create_sims, n=n, n_reps=n_reps, central=central, sd=sd,                         exposure_type = exposure_type,
                         exposure_trend=exposure_trend,exposure_amp=exposure_amp,
                         average_outcome=average_outcome,outcome_trend=outcome_trend,
                         outcome_amp = outcome_amp, start.date = start.date)
-      fits <- rep_df %>% map(fit_mods, model=model)
-      power <- fits %>% map(power_beta) #makes a list, want to extract the values of power and put in a data frame with values of rr.
-    }
+      fits <- rep_df %>% purrr::map(fit_mods, model=model)
+      power <- fits %>% purrr::map(power_beta) #makes a list, want to extract the values of power and put in a data frame with values of rr.
+  }
+  else if(varying=="average_outcome"){
+    rep_df <- values %>% purrr::map(create_sims, n=n, n_reps=n_reps,
+                        central=central,
+                        sd=sd, exposure_type = exposure_type, exposure_trend=exposure_trend,
+                        exposure_amp=exposure_amp, outcome_trend=outcome_trend,
+                        outcome_amp = outcome_amp, rr=rr, start.date = start.date)
+      fits <- rep_df %>% purrr::map(fit_mods, model=model)
+      power <- fits %>% purrr::map(power_beta)
+  }
   if(plot == TRUE){
     my_plot <- ggplot2::ggplot(out, ggplot2::aes_(x = ~ x, y = ~ power)) +
       ggplot2::geom_line() + ggplot2::theme_minimal() +
@@ -767,8 +775,8 @@ power_calc <- function(varying, values, n_reps, n=NULL, central, sd, exposure_ty
   return(power)
 }
 
-#Example that doesn't work: 
-power_calc(varying = "n", values = c(5, 10, 25), n_reps = 3, central = 100, sd=10, exposure_type = "continuous", exposure_trend = "cos1", exposure_amp = .6, average_outcome=22, outcome_trend = "no trend", outcome_amp = .6, rr=1.1, start.date = "2000-01-01", model = "spline", df_year = 1)
+#Example: 
+pow <- power_calc(varying = "rr", values = c(1.2,1.1,1.01), n=50, n_reps = 3, central = 100, sd=10, exposure_type = "continuous", exposure_trend = "cos1", exposure_amp = .6, average_outcome=22, outcome_trend = "no trend", outcome_amp = .6, start.date = "2000-01-01", model = "spline", df_year = 1)
 ```
 
 Not working, so step by step breakdown:
@@ -803,14 +811,15 @@ rep_df
 
 #Try with actual values:
 
-rep_df <- n %>% purrr::map(create_sims, n_reps=3, central=100, sd=10, 
+rep_df <- n %>% purrr::map(create_sims, n_reps=10, central=100, sd=10, 
                         exposure_type = "continuous",
                         exposure_trend= "cos1",exposure_amp=.6,
                         average_outcome=22,outcome_trend="no trend",
                         outcome_amp = .6, rr=1.01, start.date = "2000-01-01")
-rep_df
-
-#This works, but why are the outcomes crazy? Oh noooooooo :( 
+fits <- rep_df %>% map(fit_mods, model="spline")
+power <- fits %>% map(power_beta)
+power
+#This works!!!!!
 ```
 
 ## References

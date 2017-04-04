@@ -65,7 +65,7 @@ trend.  Must be between 0 and 1.}
 \item{rr}{A numeric value specifying the relative risk}
 
 \item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
-simulating values}
+simulating daily exposures}
 
 \item{cust_exp_func}{A character string specifying the name of a custom
 trend function to generate exposure data}
@@ -105,4 +105,3 @@ eesim(n_reps = 3, n = 50, central = 100, sd = 10,
       df_year = 5)
 
 }
-

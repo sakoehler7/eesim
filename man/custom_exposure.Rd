@@ -38,4 +38,3 @@ which to pull exposure values.
 custom_exposure(n = 5, metric = "temp", start.date = "2000-01-01")
 
 }
-

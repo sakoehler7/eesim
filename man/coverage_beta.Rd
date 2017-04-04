@@ -31,4 +31,3 @@ fits <- fit_mods(outcome = sims, model = "spline", df_year = 1)
 coverage_beta(df=fits, true_rr = 1.02)
 
 }
-

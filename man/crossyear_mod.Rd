@@ -20,4 +20,3 @@ This function fits a cross-year model to your data.
 crossyear_mod(df = out)
 
 }
-

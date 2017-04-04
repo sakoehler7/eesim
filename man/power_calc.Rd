@@ -4,13 +4,96 @@
 \alias{power_calc}
 \title{Power Calculations}
 \usage{
-power_calc(varying, values, plot = FALSE, ...)
+power_calc(varying, values, n_reps, n = NULL, central, sd, exposure_type,
+  exposure_trend, exposure_amp, average_outcome, outcome_trend, outcome_amp,
+  rr = NULL, start.date = "2000-01-01", cust_exp_func = NULL,
+  cust_exp_args = NULL, cust_base_func = NULL, cust_lambda_func = NULL,
+  cust_base_args = NULL, cust_lambda_args = NULL, model, df_year = 7,
+  plot = FALSE)
 }
 \arguments{
 \item{varying}{A character string of the parameter to be varied.  Choices are
 "n" or "rr"}
 
 \item{values}{A numeric vector of the chosen values of the varying parameters}
+
+\item{n_reps}{A numeric value specifying the number of simulation repititions
+to be performed}
+
+\item{n}{A numeric value specifying the number of days to simulate.}
+
+\item{central}{A numeric value specifying the mean probability of exposure
+(for binary data) or the mean exposure value (for continuous data).}
+
+\item{sd}{A numeric value giving the standard deviation of the exposure
+values around the trend line.}
+
+\item{exposure_type}{A character string specifying the type of exposure.
+Choices are "binary" or "continuous".}
+
+\item{exposure_trend}{A character string specifying the seasonal trend for
+    exposure. Options for continuous exposure are:
+    \itemize{
+  \item{"cos1"}
+  \item{"cos2"}
+  \item{"cos3"}
+  \item{"linear"}
+  \item{"curvilinear"}
+  \item{"cos1linear"}
+  \item{"no trend"}
+  \item{"custom"}
+  }
+   Options for binary exposure are:
+   \itemize{
+  \item{"cos1"}
+  \item{"cos2"}
+  \item{"cos3"}
+  \item{"linear"}
+  \item{"monthly"}
+  \item{"no trend"}
+  \item{"custom"}
+}}
+
+\item{exposure_amp}{A numeric value specifying the amplitude of the exposure
+trend. Must be between 0 and 1 for continuous exposure or between 0
+and .5 for binary exposure.}
+
+\item{average_outcome}{A numeric value specifying the average outcome value}
+
+\item{outcome_trend}{A character string specifying the seasonal trend in
+health outcomes.  Options are the same as for continuous exposure
+data.}
+
+\item{outcome_amp}{A numeric value specifying the amplitude of the outcome
+trend.  Must be between 0 and 1.}
+
+\item{rr}{A numeric value specifying the relative risk}
+
+\item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
+simulating daily exposures}
+
+\item{cust_exp_func}{A character string specifying the name of a custom
+trend function to generate exposure data}
+
+\item{cust_exp_args}{A list of arguments and their values for the
+user-specified custom exposure function.}
+
+\item{cust_base_func}{A character string specifying a user-made custom
+function for baseline trend}
+
+\item{cust_lambda_func}{A character string specifying a user-made custom
+function for relating baseline, relative risk, and exposure}
+
+\item{cust_base_args}{A list of arguments and their values used in the
+user-specified custom baseline function}
+
+\item{cust_lambda_args}{A list of arguments and their values used in the
+user-specified custom lambda function}
+
+\item{model}{A character string specifying model to be used. Choices are
+"spline" and "casecrossover"}
+
+\item{df_year}{A numeric value specifying the degrees of freedom per year}
 
 \item{plot}{"TRUE" or "FALSE" for whether to produce a plot}
 }
@@ -22,10 +105,10 @@ Data frame with the value of the varying parameter and its
 This function gives the power for a model with varying parameters.
 }
 \examples{
-power_calc(varying = "n", values = c(50 * (1:5)), n_reps = 50,
-           model = "spline_mod", rr = 1.02)
-power_calc(varying = "rr", values = c(1.002, 1.005, 1.01, 1.02, 1.03, 1.05,
-           1.1), n_sims = 100, model = "spline_mod", n = 365, plot = TRUE)
+power_calc(varying = "rr", values = c(1.2,1.1,1.01), n=50, n_reps = 3,
+           central = 100, sd=10, exposure_type = "continuous",
+           exposure_trend = "cos1", exposure_amp = .6, average_outcome=22,
+           outcome_trend = "no trend", outcome_amp = .6,
+           start.date = "2000-01-01", model = "spline", df_year = 1)
 
 }
-

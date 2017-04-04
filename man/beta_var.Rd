@@ -30,4 +30,3 @@ fits <- fit_mods(outcome = sims, model = "spline", df_year = 1)
 beta_var(fits)
 
 }
-

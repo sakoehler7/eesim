@@ -16,6 +16,8 @@ discrete}
 
 \item{labels}{Vector of character strings naming the levels of a discrete
 variable}
+
+\item{legend_name}{Character string specifying name of variable displayed}
 }
 \description{
 This plot displays daily values of a binary or continuous variable on a
@@ -28,4 +30,3 @@ testdat$x[c(89,101,367,500,502,598,678,700,895)] <- 3
 calendar_plot(testdat, type = "discrete", labels = c("no", "yes", "maybe"))
 
 }
-

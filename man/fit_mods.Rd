@@ -31,4 +31,3 @@ sims <- create_sims(n_reps=10, n=50, central = 100, sd = 10,
 fit_mods(outcome = sims, model = "spline")
 
 }
-

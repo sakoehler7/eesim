@@ -38,4 +38,3 @@ custom_baseline(n = 5)
 custom_baseline(n = 5, outcome_type = "death")
 
 }
-

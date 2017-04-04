@@ -23,7 +23,7 @@ Requires:
     dplyr (>= 0.5.0),
     lubridate (>= 1.5.6),
     splines
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
 Suggests: 
     dplyr,
     ggplot2 (>= 2.1.0),

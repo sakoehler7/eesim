@@ -42,4 +42,3 @@ Creates a trend variable for continuous exposures.
 calc_t(5, "cos3", amp = .5)
 
 }
-

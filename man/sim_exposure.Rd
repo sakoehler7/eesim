@@ -68,4 +68,3 @@ x_cust <- sim_exposure(n = 1000, cust_exp_func = "custom_exposure",
                        cust_exp_args = list(metric = "temp"))
 ggplot(x_cust, aes(x = date, y = x)) + geom_point()
 }
-

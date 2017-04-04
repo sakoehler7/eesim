@@ -60,4 +60,3 @@ exp <- sim_exposure(n = 5, central = 100, sd = 10, amp = .6,
 sim_outcome(exposure = exp, average_outcome = 22, trend = "linear")
 
 }
-

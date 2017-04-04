@@ -25,4 +25,3 @@ out <- sim_outcome(exposure = exp, average_outcome = 22, rr = 1.01)
 spline_mod(df = out)
 
 }
-

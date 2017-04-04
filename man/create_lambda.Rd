@@ -35,4 +35,3 @@ exp <- sim_exposure(n = 5, central = 100, sd = 10, amp = .6,
 create_lambda(baseline = base, exposure = exp, rr = 1.01)
 
 }
-

@@ -27,4 +27,3 @@ fits <- fit_mods(outcome = sims, model = "spline")
 mean_beta(df=fits)
 
 }
-

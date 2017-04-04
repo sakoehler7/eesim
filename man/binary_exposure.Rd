@@ -48,4 +48,3 @@ binary_exposure(n = 5, p = 0.1, trend = "cos1", amp = .02,
 
 
 }
-

@@ -56,4 +56,3 @@ std_exposure(n = 5, central = 50, sd = 5, trend = "cos3", amp = .6,
              exposure_type = "continuous", start.date = "2001-04-01")
 
 }
-

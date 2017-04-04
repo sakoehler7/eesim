@@ -20,4 +20,3 @@ This function fits a case-crossover model to your data.
 casecross_mod(df = out)
 
 }
-

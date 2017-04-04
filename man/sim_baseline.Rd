@@ -45,4 +45,3 @@ Generates expected baseline health outcomes.
 sim_baseline(n = 5, lambda = 100, trend = "cos1")
 
 }
-

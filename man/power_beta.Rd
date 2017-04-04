@@ -28,4 +28,3 @@ fits <- fit_mods(outcome = sims, model = "spline", df_year = 1)
 power_beta(fits)
 
 }
-

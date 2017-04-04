@@ -49,4 +49,3 @@ seasonal trend.
 continuous_exposure(n = 5, mu = 100, sd = 10, trend = "cos1")
 
 }
-

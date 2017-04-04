@@ -182,43 +182,54 @@ check_sims <- function(df, true_rr){
 #' @param varying A character string of the parameter to be varied.  Choices are
 #'    "n" or "rr"
 #' @param values A numeric vector of the chosen values of the varying parameters
-#' @param simargs A list of arguments to be passed to the create_sims function
-#' @param fitargs A list of arguments to be passed to the fit_mods function
 #' @param plot "TRUE" or "FALSE" for whether to produce a plot
 #' @inheritParams power_beta
+#' @inheritParams create_sims
+#' @inheritParams fit_mods
 #'
 #' @return Data frame with the value of the varying parameter and its
 #'    corresponding power
 #'
 #' @examples
-#' power_calc(varying = "n", values = c(5 * (1:5)), simargs = list(n_reps = 50,
-#'            rr = 1.02, central = 50, sd = 5, exposure_trend = "no trend",
-#'            exposure_amp = .6, exposure_type = "continuous",
-#'            outcome_trend = "cos1", outcome_amp = .6, average_outcome = 100),
-#'            fitargs = list(model = "spline"))
+#' power_calc(varying = "n", values = c(15, 50, 100), n_reps = 20,
+#'            central = 100, sd=10, rr = 1.01, exposure_type = "continuous",
+#'            exposure_trend = "cos1", exposure_amp = .6, average_outcome=22,
+#'            outcome_trend = "no trend", outcome_amp = .6,
+#'            start.date = "2000-01-01", model = "spline", df_year = 1, plot=TRUE)
 #'
 #' @export
-power_calc <- function(varying, values, simargs = list(), fitargs = list(),
-                       plot = FALSE){
-  out <- data.frame(x = values, power = NA)
-  simargs$n <- out$x
+power_calc <- function(varying, values, n_reps, n=NULL, central, sd, exposure_type,
+                       exposure_trend, exposure_amp, average_outcome, outcome_trend,
+                       outcome_amp, rr=NULL, start.date = "2000-01-01",
+                       cust_exp_func = NULL, cust_exp_args = NULL,
+                       cust_base_func = NULL, cust_lambda_func = NULL,
+                       cust_base_args = NULL, cust_lambda_args = NULL,
+                       model, df_year=7, plot=FALSE){
   if(varying == "n"){
-    for(i in 1:nrow(out)){
-      simargs$n <- out$x[i]
-      rep_df[[i]] <- do.call(create_sims, simargs) #needs to output a list of data frames with date, x, outcome
-      #How do I make it cycle through values of n and put each output from create_sims into a list?
-      fitargs$outcome <- rep_df #this is not the right input for fit_mods
-      fits <- do.call(fit_mods, fitargs)
-      out$power[i] <- power_beta(fits)[1,1]
-    }
+    rep_df <- values %>% purrr::map(create_sims, n_reps=n_reps, central=central, sd=sd,
+                                    exposure_type = exposure_type,
+                                    exposure_trend=exposure_trend,exposure_amp=exposure_amp,
+                                    average_outcome=average_outcome,outcome_trend=outcome_trend,
+                                    outcome_amp = outcome_amp, rr=rr, start.date = start.date)
+    fits <- rep_df %>% purrr::map(fit_mods, model=model)
+    power <- fits %>% purrr::map(power_beta) #makes a list, want to extract the values of power and put in a data frame with values of n.
   }
   else if(varying == "rr"){
-    for(i in 1:nrow(out)){
-      rep_df <- do.call(create_sims, simargs)
-      fitargs$outcome <- rep_df
-      fits <- do.call(fit_mods, fitargs)
-      out$power[i] <- power_beta(fits)[1,1]
-    }
+    rep_df <- values %>% purrr::map(create_sims, n=n, n_reps=n_reps, central=central, sd=sd,                         exposure_type = exposure_type,
+                                    exposure_trend=exposure_trend,exposure_amp=exposure_amp,
+                                    average_outcome=average_outcome,outcome_trend=outcome_trend,
+                                    outcome_amp = outcome_amp, start.date = start.date)
+    fits <- rep_df %>% purrr::map(fit_mods, model=model)
+    power <- fits %>% purrr::map(power_beta) #makes a list, want to extract the values of power and put in a data frame with values of rr.
+  }
+  else if(varying=="average_outcome"){
+    rep_df <- values %>% purrr::map(create_sims, n=n, n_reps=n_reps,
+                                    central=central,
+                                    sd=sd, exposure_type = exposure_type, exposure_trend=exposure_trend,
+                                    exposure_amp=exposure_amp, outcome_trend=outcome_trend,
+                                    outcome_amp = outcome_amp, rr=rr, start.date = start.date)
+    fits <- rep_df %>% purrr::map(fit_mods, model=model)
+    power <- fits %>% purrr::map(power_beta)
   }
   if(plot == TRUE){
     my_plot <- ggplot2::ggplot(out, ggplot2::aes_(x = ~ x, y = ~ power)) +
@@ -226,7 +237,5 @@ power_calc <- function(varying, values, simargs = list(), fitargs = list(),
       ggplot2::xlab(varying)
     print(my_plot)
   }
-
-  colnames(out)[1] <- varying
-  return(out)
+  return(power)
 }
