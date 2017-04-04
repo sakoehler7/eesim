@@ -187,15 +187,15 @@ check_sims <- function(df, true_rr){
 #' @inheritParams create_sims
 #' @inheritParams fit_mods
 #'
-#' @return Data frame with the value of the varying parameter and its
+#' @return Data frame with the values of the varying parameter and their
 #'    corresponding power
 #'
 #' @examples
-#' power_calc(varying = "n", values = c(15, 50, 100), n_reps = 20,
+#' pow <- power_calc(varying = "n", values = c(15, 50, 100), n_reps = 20,
 #'            central = 100, sd=10, rr = 1.01, exposure_type = "continuous",
 #'            exposure_trend = "cos1", exposure_amp = .6, average_outcome=22,
 #'            outcome_trend = "no trend", outcome_amp = .6,
-#'            start.date = "2000-01-01", model = "spline", df_year = 1, plot=TRUE)
+#'            start.date = "2000-01-01", model = "spline", df_year = 1)
 #'
 #' @export
 power_calc <- function(varying, values, n_reps, n=NULL, central, sd, exposure_type,
@@ -231,11 +231,16 @@ power_calc <- function(varying, values, n_reps, n=NULL, central, sd, exposure_ty
     fits <- rep_df %>% purrr::map(fit_mods, model=model)
     power <- fits %>% purrr::map(power_beta)
   }
+  powervec <- rep(0, length(power))
+  for (i in 1:length(power)){
+  powervec[i] <- power[[i]][,1]
+  }
+  dat <- data.frame(values=values, power=powervec)
   if(plot == TRUE){
     my_plot <- ggplot2::ggplot(out, ggplot2::aes_(x = ~ x, y = ~ power)) +
       ggplot2::geom_line() + ggplot2::theme_minimal() +
       ggplot2::xlab(varying)
     print(my_plot)
   }
-  return(power)
+  return(dat)
 }
