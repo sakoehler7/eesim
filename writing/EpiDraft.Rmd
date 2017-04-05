@@ -63,4 +63,23 @@ Here is an example of using `power_calc` to test power for different sample size
 #Power_calc momentarily out of commission :(
 ```
 
-The `power_calc` function will also return a plot if `plot=TRUE` is specified.  
+The `power_calc` function will also return a plot if `plot=TRUE` is specified. 
+
+##Legionnaire's Example
+
+Here is a plot of weekly counts of Legionnaire's disease in the United States from 2014 through 2016. This data was obtained from the CDC website.
+
+```{r, echo=FALSE}
+#I used the variable "Legionellosis, Current week" so hopefully that's right
+leg1 <- read.csv("~/eesim/Legionnaires data/2014Leg.csv")[,c(2,3,24)]
+leg2 <- read.csv("~/eesim/Legionnaires data/2015Leg.csv")[,c(2,3,24)]
+leg3 <- read.csv("~/eesim/Legionnaires data/2016Leg.csv")[,c(2,3,24)]
+leg <- data.frame(year = c(leg1$MMWR.Year, leg2$MMWR.Year, leg3$MMWR.Year), week = c(leg1$MMWR.Week, leg2$MMWR.Week, leg3$MMWR.Week), cases = c(leg1$Legionellosis..Current.week, leg2$Legionellosis..Current.week, leg3$Legionellosis..Current.week))
+plot(leg$cases, xlab = "Week", ylab = "Number of Cases", main = "Legionnaire's Disease 2014-2016")
+```
+
+We can pull the trend from this data:
+
+```{r}
+custom
+```
