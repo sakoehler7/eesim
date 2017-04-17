@@ -67,6 +67,8 @@ The `power_calc` function will also return a plot if `plot=TRUE` is specified.
 
 ##Legionnaire's Example
 
+###Actual Data from the CDC
+
 Here is a plot of weekly counts of Legionnaire's disease in the United States from 2014 through 2016. This data was obtained from the CDC website.
 
 ```{r, echo=FALSE}
@@ -101,4 +103,23 @@ We can pull the trend from this data:
 
 ```{r}
 custom
+```
+
+### Simulated Data with Similar Trend 
+
+Many epidemiologic data sets are of a sensitive nature and not publicly available.  We can use eesim to simulate data with a similar seasonal trend to fit and assess models.  
+
+```{r, echo=F}
+exposure <- continuous_exposure(n=1001, mu = 65, sd = 3, trend = "cos1", amp=.4)
+#Make this into weekly data instead of daily.
+exposuremat <- matrix(data=exposure$x, ncol = 7, nrow=143, byrow=T)
+exposurex <- apply(exposuremat, 1, mean)
+newdate <- seq.int(from=exposure$date[1], to=exposure$date[1001], by=7)
+weeklyexp <- data.frame(date=newdate, x=exposurex)
+plot(weeklyexp, main = "Plot of Exposure values")
+outcome <- sim_outcome(weeklyexp, average_outcome = 10, trend = "linear")
+plot(outcome$outcome)
+
+#Try with eesim function
+
 ```
