@@ -98,17 +98,17 @@ user-specified custom lambda function}
 \item{plot}{"TRUE" or "FALSE" for whether to produce a plot}
 }
 \value{
-Data frame with the value of the varying parameter and its
+Data frame with the values of the varying parameter and their
    corresponding power
 }
 \description{
 This function gives the power for a model with varying parameters.
 }
 \examples{
-power_calc(varying = "rr", values = c(1.2,1.1,1.01), n=50, n_reps = 3,
-           central = 100, sd=10, exposure_type = "continuous",
+pow <- power_calc(varying = "n", values = c(15, 25, 50, 80, 95, 100), n_reps = 20,
+           central = 100, sd=10, rr = 1.01, exposure_type = "continuous",
            exposure_trend = "cos1", exposure_amp = .6, average_outcome=22,
            outcome_trend = "no trend", outcome_amp = .6,
-           start.date = "2000-01-01", model = "spline", df_year = 1)
+           start.date = "2000-01-01", model = "spline", df_year=5, plot=TRUE)
 
 }

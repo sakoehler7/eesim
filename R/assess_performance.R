@@ -191,11 +191,11 @@ check_sims <- function(df, true_rr){
 #'    corresponding power
 #'
 #' @examples
-#' pow <- power_calc(varying = "n", values = c(15, 25, 50, 80, 95, 100), n_reps = 20,
-#'            central = 100, sd=10, rr = 1.01, exposure_type = "continuous",
+#' pow <- power_calc(varying = "n", values = c(50, 75, 100), n_reps = 20,
+#'            central = 100, sd=10, rr = 1.001, exposure_type = "continuous",
 #'            exposure_trend = "cos1", exposure_amp = .6, average_outcome=22,
 #'            outcome_trend = "no trend", outcome_amp = .6,
-#'            start.date = "2000-01-01", model = "spline", df_year=5, plot=TRUE)
+#'            start.date = "2000-01-01", model = "casecrossover", plot=TRUE)
 #'
 #' @export
 power_calc <- function(varying, values, n_reps, n=NULL, central, sd, exposure_type,
