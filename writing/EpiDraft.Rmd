@@ -78,6 +78,14 @@ leg <- data.frame(year = c(leg1$MMWR.Year, leg2$MMWR.Year, leg3$MMWR.Year), week
 plot(leg$cases, xlab = "Week", ylab = "Number of Cases", main = "Legionnaire's Disease 2014-2016")
 ```
 
+```{r}
+#scrape just the New York City value for week 14 of 2017 from cdc website:
+library(rvest)
+url <- read_html("https://wonder.cdc.gov/mmwr/mmwr_2017.asp?mmwr_year=2017&mmwr_week=14&mmwr_table=2J&request=Submit&mmwr_location=")
+nyc <- html_nodes(url, 'tr:nth-child(15) td:nth-child(2)')
+as.numeric(html_text(nyc))
+```
+
 We can pull the trend from this data:
 
 ```{r}
