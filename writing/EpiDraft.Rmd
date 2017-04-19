@@ -111,7 +111,7 @@ url1998 <- c(url1to9, url10to53)
 nyc1998 <- url1998 %>% map(~read_html(.x)) %>% map(~html_nodes(.x, 'tr:nth-child(13) td:nth-child(2)')) %>% map(~html_text(.x))
 as.numeric(nyc1998)
 
-#For the earlier years we only have cumulative data.  Could take differences via code? 2006 is the first year with variable for current week.
+#For the earlier years we only have cumulative data.  Could take differences via code? 2006 is the first year with variable for current week. NYC data not available many years, so I'll use Mid-Atlantic region.
 
 #MidAtlantic 2006:
 i <- 1:9
