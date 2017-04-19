@@ -113,6 +113,14 @@ as.numeric(nyc1998)
 
 #For the earlier years we only have cumulative data.  Could take differences via code? 2006 is the first year with variable for current week.
 
+#MidAtlantic 2006:
+i <- 1:9
+url1to9 <- i %>% map(~paste("https://wonder.cdc.gov/mmwr/mmwr_1995_2014.asp?mmwr_year=2006&mmwr_week=0", as.character(.x), "&mmwr_table=2C&request=Submit&mmwr_location=", sep=""))
+i <- 10:53
+url10to53 <- i %>% map(~paste("https://wonder.cdc.gov/mmwr/mmwr_1995_2014.asp?mmwr_year=2006&mmwr_week=", as.character(.x), "&mmwr_table=2C&request=Submit&mmwr_location=", sep=""))
+url2006 <- c(url1to9, url10to53)
+ma2006 <- url2006 %>% map(~read_html(.x)) %>% map(~html_nodes(.x, 'tr:nth-child(13) td:nth-child(12)')) %>% map(~html_text(.x))
+as.numeric(ma2006)
 
 ```
 
