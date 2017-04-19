@@ -80,7 +80,7 @@ leg <- data.frame(year = c(leg1$MMWR.Year, leg2$MMWR.Year, leg3$MMWR.Year), week
 plot(leg$cases, xlab = "Week", ylab = "Number of Cases", main = "Legionnaire's Disease 2014-2016")
 ```
 
-```{r}
+```{r, cache=T}
 #scrape just the New York City value for week 14 of 2017 from cdc website:
 library(rvest)
 url <- read_html("https://wonder.cdc.gov/mmwr/mmwr_2017.asp?mmwr_year=2017&mmwr_week=14&mmwr_table=2J&request=Submit&mmwr_location=")
@@ -94,9 +94,26 @@ url <- i %>% map(~paste("https://wonder.cdc.gov/mmwr/mmwr_2017.asp?mmwr_year=201
 html <- url %>% map(~read_html(.x))
 nodes <- html %>% map(~html_nodes(.x, 'tr:nth-child(15) td:nth-child(2)'))
 nycdat <- nodes %>% map(~html_text(.x))
-as.numeric(nycdat)
+as.numeric(nycdat) 
+
+#All in one?
+allinone <- i %>% map(~paste("https://wonder.cdc.gov/mmwr/mmwr_2017.asp?mmwr_year=2017&mmwr_week=0", as.character(.x), "&mmwr_table=2J&request=Submit&mmwr_location=", sep="")) %>% map(~read_html(.x)) %>% map(~html_nodes(.x, 'tr:nth-child(15) td:nth-child(2)')) %>% map(~html_text(.x))
 
 #There was no table for week 2 so we have an NA.
+
+#Get ALL THE DATA for NYC 1998-2017 (nothing for 1996 or 7)
+#1998:
+i <- 1:9
+url1to9 <- i %>% map(~paste("https://wonder.cdc.gov/mmwr/mmwr_1995_2014.asp?mmwr_year=1998&mmwr_week=0", as.character(.x), "&mmwr_table=2B&request=Submit&mmwr_location=", sep=""))
+i <- 10:53
+url10to53 <- i %>% map(~paste("https://wonder.cdc.gov/mmwr/mmwr_1995_2014.asp?mmwr_year=1998&mmwr_week=", as.character(.x), "&mmwr_table=2B&request=Submit&mmwr_location=", sep=""))
+url1998 <- c(url1to9, url10to53)
+nyc1998 <- url1998 %>% map(~read_html(.x)) %>% map(~html_nodes(.x, 'tr:nth-child(13) td:nth-child(2)')) %>% map(~html_text(.x))
+as.numeric(nyc1998)
+
+#For the earlier years we only have cumulative data.  Could take differences via code? 2006 is the first year with variable for current week.
+
+
 ```
 
 We can pull the trend from this data:
