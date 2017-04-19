@@ -447,6 +447,6 @@ eesim <- function(n_reps, n, central = NULL, sd = NULL, exposure_type, exposure_
   mods <- fit_mods(datasims, model, df_year)
   check <- check_sims(df = mods, true_rr = rr)
   totalsims <- list(mods, check)
-  return(totalsims)
+  return(c(totalsims, datasims))
 }
 

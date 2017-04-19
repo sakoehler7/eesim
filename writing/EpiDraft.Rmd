@@ -110,16 +110,18 @@ custom
 Many epidemiologic data sets are of a sensitive nature and not publicly available.  We can use eesim to simulate data with a similar seasonal trend to fit and assess models.  
 
 ```{r, echo=F}
-exposure <- continuous_exposure(n=1001, mu = 65, sd = 3, trend = "cos1", amp=.4)
+#Question: does exposure need to have trend or is it enough to just make outcome look like real data?
+exposure <- continuous_exposure(n=1001, mu = 65, sd = 3, trend = "no trend", amp=.4)
 #Make this into weekly data instead of daily.
 exposuremat <- matrix(data=exposure$x, ncol = 7, nrow=143, byrow=T)
 exposurex <- apply(exposuremat, 1, mean)
 newdate <- seq.int(from=exposure$date[1], to=exposure$date[1001], by=7)
 weeklyexp <- data.frame(date=newdate, x=exposurex)
 plot(weeklyexp, main = "Plot of Exposure values")
-outcome <- sim_outcome(weeklyexp, average_outcome = 10, trend = "linear")
+outcome <- sim_outcome(weeklyexp, average_outcome = 10, trend = "cos1linear")
 plot(outcome$outcome)
 
 #Try with eesim function
-
+leg <- eesim(n_reps=1, n=800, central = 65, sd = 3, exposure_type = "continuous", exposure_trend = "no trend", exposure_amp=.6,average_outcome = 10, outcome_trend = "cos1linear", outcome_amp = .6, rr= 1.02, model = "spline", df_year = 4)
+plot(leg[[3]]$outcome)
 ```
