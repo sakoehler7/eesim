@@ -80,7 +80,9 @@ leg <- data.frame(year = c(leg1$MMWR.Year, leg2$MMWR.Year, leg3$MMWR.Year), week
 plot(leg$cases, xlab = "Week", ylab = "Number of Cases", main = "Legionnaire's Disease 2014-2016")
 ```
 
-```{r}
+##Scraping the data
+
+```{r, cache=TRUE}
 library(rvest)
 library(purrr)
 library(dplyr)
@@ -106,19 +108,26 @@ week_end_date <- html_2017 %>%
 nodes_midatlantic <- html_2017 %>% map(~html_nodes(.x, 'tr:nth-child(12) td:nth-child(2)'))
 madat <- nodes_midatlantic %>% map(~html_text(.x))
 as.numeric(madat)
+checkma <- html_2017 %>% map(~html_nodes(.x, 'tr:nth-child(12) td:nth-child(1)')) %>% map(~html_text(.x)) %>% map(~str_trim(.x))
 
 nodes_nyc <- html_2017 %>% map(~html_nodes(.x, 'tr:nth-child(15) td:nth-child(2)'))
 nycdat <- nodes_nyc %>% map(~html_text(.x))
 as.numeric(nycdat)
+checknyc <- html_2017 %>% map(~html_nodes(.x, 'tr:nth-child(15) td:nth-child(1)')) %>% map(~html_text(.x)) %>% map(~str_trim(.x))
+
 
 nodes_pa <- html_2017 %>% map(~html_nodes(.x, 'tr:nth-child(16) td:nth-child(2)'))
 padat <- nodes_pa %>% map(~html_text(.x))
 as.numeric(padat)
+checkpa <- html_2017 %>% map(~html_nodes(.x, 'tr:nth-child(16) td:nth-child(1)')) %>% map(~html_text(.x)) %>% map(~str_trim(.x))
 
 leg_cases_2017 <- data_frame(week_end_date = as.character(week_end_date),
                         midatlantic = as.numeric(madat),
                         nyc = as.numeric(nycdat),
-                        penn = as.numeric(padat)) %>% 
+                        penn = as.numeric(padat), 
+                        checkma = as.character(checkma),
+                        checknyc=as.character(checknyc), 
+                        checkpa=as.character(checkpa)) %>% 
   mutate(week_end_date = mdy(week_end_date))
 
 ## For 2016
@@ -138,19 +147,25 @@ week_end_date <- html_2016 %>%
 nodes_midatlantic <- html_2016 %>% map(~html_nodes(.x, 'tr:nth-child(13) td:nth-child(12)'))
 madat <- nodes_midatlantic %>% map(~html_text(.x))
 as.numeric(madat)
+checkma <- html_2016 %>% map(~html_nodes(.x, 'tr:nth-child(13) td:nth-child(1)')) %>%  map(~html_text(.x)) %>% map(~str_trim(.x))
 
 nodes_nyc <- html_2016 %>% map(~html_nodes(.x, 'tr:nth-child(16) td:nth-child(12)'))
 nycdat <- nodes_nyc %>% map(~html_text(.x))
+checknyc <- html_2016 %>% map(~html_nodes(.x, 'tr:nth-child(16) td:nth-child(1)')) %>%  map(~html_text(.x)) %>% map(~str_trim(.x))
 as.numeric(nycdat)
 
 nodes_pa <- html_2016 %>% map(~html_nodes(.x, 'tr:nth-child(17) td:nth-child(12)'))
 padat <- nodes_pa %>% map(~html_text(.x))
+checkpa <- html_2016 %>% map(~html_nodes(.x, 'tr:nth-child(17) td:nth-child(1)')) %>%  map(~html_text(.x)) %>% map(~str_trim(.x))
 as.numeric(padat)
 
 leg_cases_2016 <- data_frame(week_end_date = as.character(week_end_date),
                         midatlantic = as.numeric(madat),
                         nyc = as.numeric(nycdat),
-                        penn = as.numeric(padat)) %>% 
+                        penn = as.numeric(padat),
+                        checkma = as.character(checkma),
+                        checknyc=as.character(checknyc), 
+                        checkpa=as.character(checkpa)) %>% 
   mutate(week_end_date = mdy(week_end_date))
 
 ## For 2015
@@ -167,79 +182,328 @@ week_end_date <- html_2015 %>%
   map(~ str_replace(.x[1], "\\(", "")) %>% 
   map(~ str_trim(.x[1]))
 
-nodes_midatlantic <- html_2015 %>% map(~html_nodes(.x, 'tr:nth-child(13) td:nth-child(12)'))
-madat <- nodes_midatlantic %>% map(~html_text(.x))
-as.numeric(madat)
+madat <- html_2015 %>% map(~html_nodes(.x, 'tr:nth-child(13) td:nth-child(12)')) %>% map(~html_text(.x)) %>% as.numeric()
+checkma <- html_2015 %>% map(~html_nodes(.x, 'tr:nth-child(13) td:nth-child(1)')) %>% map(~html_text(.x)) %>% map(~str_trim(.x)) %>% as.character()
 
-nodes_nyc <- html_2015 %>% map(~html_nodes(.x, 'tr:nth-child(16) td:nth-child(12)'))
-nycdat <- nodes_nyc %>% map(~html_text(.x))
-as.numeric(nycdat)
+nycdat <- html_2015 %>% map(~html_nodes(.x, 'tr:nth-child(16) td:nth-child(12)')) %>% map(~html_text(.x)) %>% as.numeric()
+checknyc <- html_2015 %>% map(~html_nodes(.x, 'tr:nth-child(16) td:nth-child(1)')) %>% map(~html_text(.x))%>% map(~str_trim(.x)) %>% as.character()
 
-nodes_pa <- html_2015 %>% map(~html_nodes(.x, 'tr:nth-child(17) td:nth-child(12)'))
-padat <- nodes_pa %>% map(~html_text(.x))
-as.numeric(padat)
+padat <- html_2015 %>% map(~html_nodes(.x, 'tr:nth-child(17) td:nth-child(12)')) %>% map(~html_text(.x)) %>% as.numeric()
+checkpa <- html_2015 %>% map(~html_nodes(.x, 'tr:nth-child(17) td:nth-child(1)')) %>% map(~html_text(.x))%>% map(~str_trim(.x)) %>% as.character()
+
+
 
 leg_cases_2015 <- data_frame(week_end_date = as.character(week_end_date),
-                             midatlantic = as.numeric(madat),
-                             nyc = as.numeric(nycdat),
-                             penn = as.numeric(padat)) %>% 
+                             midatlantic = madat,
+                             nyc = nycdat,
+                             penn = padat, 
+                             checkma = checkma,
+                             checknyc = checknyc,
+                             checkpa = checkpa) %>% 
   mutate(week_end_date = mdy(week_end_date))
 
-# Putting two years together
+##For 2014
 
-leg_cases <- bind_rows(leg_cases_2015, leg_cases_2016, leg_cases_2017)
+i <- str_pad(1:52, pad = "0", width = 2)
+url <- i %>% map(~paste("https://wonder.cdc.gov/mmwr/mmwr_1995_2014.asp?mmwr_year=2014&mmwr_week=", as.character(.x), "&mmwr_table=2F&request=Submit&mmwr_location=", sep=""))
+html_2014 <- url %>% map(~read_html(.x))
 
-leg_cases %>% 
+week_end_date <- html_2014 %>% 
+  map(~html_nodes(.x, 'tr:nth-child(1) td:nth-child(1)')) %>% 
+  map(~html_text(.x)) %>% 
+  map(~ str_extract(.x[1], "week ending .+ \\(")) %>% 
+  map(~ str_replace(.x[1], "week ending", "")) %>% 
+  map(~ str_replace(.x[1], "\\(", "")) %>% 
+  map(~ str_trim(.x[1]))
+
+madat <- html_2014 %>% map(~html_nodes(.x, 'tr:nth-child(13) td:nth-child(12)')) %>% map(~html_text(.x)) %>% as.numeric()
+checkma <- html_2014 %>% map(~html_nodes(.x, 'tr:nth-child(13) td:nth-child(1)')) %>% map(~html_text(.x)) %>% map(~str_trim(.x)) %>% as.character()
+
+nycdat <- html_2014 %>% map(~html_nodes(.x, 'tr:nth-child(16) td:nth-child(12)')) %>% map(~html_text(.x)) %>% as.numeric()
+checknyc <- html_2014 %>% map(~html_nodes(.x, 'tr:nth-child(16) td:nth-child(1)')) %>% map(~html_text(.x))%>% map(~str_trim(.x)) %>% as.character()
+
+padat <- html_2014 %>% map(~html_nodes(.x, 'tr:nth-child(17) td:nth-child(12)')) %>% map(~html_text(.x)) %>% as.numeric()
+checkpa <- html_2014 %>% map(~html_nodes(.x, 'tr:nth-child(17) td:nth-child(1)')) %>% map(~html_text(.x))%>% map(~str_trim(.x)) %>% as.character()
+
+
+
+leg_cases_2014 <- data_frame(week_end_date = as.character(week_end_date),
+                             midatlantic = madat,
+                             nyc = nycdat,
+                             penn = padat, 
+                             checkma = checkma,
+                             checknyc = checknyc,
+                             checkpa = checkpa) %>% 
+  mutate(week_end_date = mdy(week_end_date))
+
+##2013
+
+i <- str_pad(1:52, pad = "0", width = 2)
+url <- i %>% map(~paste("https://wonder.cdc.gov/mmwr/mmwr_1995_2014.asp?mmwr_year=2013&mmwr_week=", as.character(.x), "&mmwr_table=2F&request=Submit&mmwr_location=", sep=""))
+html_2013 <- url %>% map(~read_html(.x))
+
+week_end_date <- html_2013 %>% 
+  map(~html_nodes(.x, 'tr:nth-child(1) td:nth-child(1)')) %>% 
+  map(~html_text(.x)) %>% 
+  map(~ str_extract(.x[1], "week ending .+ \\(")) %>% 
+  map(~ str_replace(.x[1], "week ending", "")) %>% 
+  map(~ str_replace(.x[1], "\\(", "")) %>% 
+  map(~ str_trim(.x[1]))
+
+madat <- html_2013 %>% map(~html_nodes(.x, 'tr:nth-child(12) td:nth-child(2)')) %>% map(~html_text(.x)) %>% as.numeric()
+checkma <- html_2013 %>% map(~html_nodes(.x, 'tr:nth-child(12) td:nth-child(1)')) %>% map(~html_text(.x)) %>% map(~str_trim(.x)) %>% as.character()
+
+nycdat <- html_2013 %>% map(~html_nodes(.x, 'tr:nth-child(15) td:nth-child(2)')) %>% map(~html_text(.x)) %>% as.numeric()
+checknyc <- html_2013 %>% map(~html_nodes(.x, 'tr:nth-child(15) td:nth-child(1)')) %>% map(~html_text(.x))%>% map(~str_trim(.x)) %>% as.character()
+
+padat <- html_2013 %>% map(~html_nodes(.x, 'tr:nth-child(16) td:nth-child(2)')) %>% map(~html_text(.x)) %>% as.numeric()
+checkpa <- html_2013 %>% map(~html_nodes(.x, 'tr:nth-child(16) td:nth-child(1)')) %>% map(~html_text(.x))%>% map(~str_trim(.x)) %>% as.character()
+
+leg_cases_2013 <- data_frame(week_end_date = as.character(week_end_date),
+                             midatlantic = madat,
+                             nyc = nycdat,
+                             penn = padat, 
+                             checkma = checkma,
+                             checknyc = checknyc,
+                             checkpa = checkpa) %>% 
+  mutate(week_end_date = mdy(week_end_date))
+
+##For 2012
+
+i <- str_pad(1:52, pad = "0", width = 2)
+url <- i %>% map(~paste("https://wonder.cdc.gov/mmwr/mmwr_1995_2014.asp?mmwr_year=2012&mmwr_week=", as.character(.x), "&mmwr_table=2F&request=Submit&mmwr_location=", sep=""))
+html_2012 <- url %>% map(~read_html(.x))
+
+week_end_date <- html_2012 %>% 
+  map(~html_nodes(.x, 'tr:nth-child(1) td:nth-child(1)')) %>% 
+  map(~html_text(.x)) %>% 
+  map(~ str_extract(.x[1], "week ending .+ \\(")) %>% 
+  map(~ str_replace(.x[1], "week ending", "")) %>% 
+  map(~ str_replace(.x[1], "\\(", "")) %>% 
+  map(~ str_trim(.x[1]))
+
+madat <- html_2012 %>% map(~html_nodes(.x, 'tr:nth-child(12) td:nth-child(2)')) %>% map(~html_text(.x)) %>% as.numeric()
+checkma <- html_2012 %>% map(~html_nodes(.x, 'tr:nth-child(12) td:nth-child(1)')) %>% map(~html_text(.x)) %>% map(~str_trim(.x)) %>% as.character()
+
+nycdat <- html_2012 %>% map(~html_nodes(.x, 'tr:nth-child(15) td:nth-child(2)')) %>% map(~html_text(.x)) %>% as.numeric()
+checknyc <- html_2012 %>% map(~html_nodes(.x, 'tr:nth-child(15) td:nth-child(1)')) %>% map(~html_text(.x))%>% map(~str_trim(.x)) %>% as.character()
+
+padat <- html_2012 %>% map(~html_nodes(.x, 'tr:nth-child(16) td:nth-child(2)')) %>% map(~html_text(.x)) %>% as.numeric()
+checkpa <- html_2012 %>% map(~html_nodes(.x, 'tr:nth-child(16) td:nth-child(1)')) %>% map(~html_text(.x))%>% map(~str_trim(.x)) %>% as.character()
+
+leg_cases_2012 <- data_frame(week_end_date = as.character(week_end_date),
+                             midatlantic = madat,
+                             nyc = nycdat,
+                             penn = padat, 
+                             checkma = checkma,
+                             checknyc = checknyc,
+                             checkpa = checkpa) %>% 
+  mutate(week_end_date = mdy(week_end_date))
+
+##For 2011
+
+i <- str_pad(1:52, pad = "0", width = 2)
+url <- i %>% map(~paste("https://wonder.cdc.gov/mmwr/mmwr_1995_2014.asp?mmwr_year=2011&mmwr_week=", as.character(.x), "&mmwr_table=2F&request=Submit&mmwr_location=", sep=""))
+html_2011 <- url %>% map(~read_html(.x))
+
+week_end_date <- html_2011 %>% 
+  map(~html_nodes(.x, 'tr:nth-child(1) td:nth-child(1)')) %>% 
+  map(~html_text(.x)) %>% 
+  map(~ str_extract(.x[1], "week ending .+ \\(")) %>% 
+  map(~ str_replace(.x[1], "week ending", "")) %>% 
+  map(~ str_replace(.x[1], "\\(", "")) %>% 
+  map(~ str_trim(.x[1]))
+
+madat <- html_2011 %>% map(~html_nodes(.x, 'tr:nth-child(12) td:nth-child(2)')) %>% map(~html_text(.x)) %>% as.numeric()
+checkma <- html_2011 %>% map(~html_nodes(.x, 'tr:nth-child(12) td:nth-child(1)')) %>% map(~html_text(.x)) %>% map(~str_trim(.x)) %>% as.character()
+
+nycdat <- html_2011 %>% map(~html_nodes(.x, 'tr:nth-child(15) td:nth-child(2)')) %>% map(~html_text(.x)) %>% as.numeric()
+checknyc <- html_2011 %>% map(~html_nodes(.x, 'tr:nth-child(15) td:nth-child(1)')) %>% map(~html_text(.x))%>% map(~str_trim(.x)) %>% as.character()
+
+padat <- html_2011 %>% map(~html_nodes(.x, 'tr:nth-child(16) td:nth-child(2)')) %>% map(~html_text(.x)) %>% as.numeric()
+checkpa <- html_2011 %>% map(~html_nodes(.x, 'tr:nth-child(16) td:nth-child(1)')) %>% map(~html_text(.x))%>% map(~str_trim(.x)) %>% as.character()
+
+leg_cases_2011 <- data_frame(week_end_date = as.character(week_end_date),
+                             midatlantic = madat,
+                             nyc = nycdat,
+                             penn = padat, 
+                             checkma = checkma,
+                             checknyc = checknyc,
+                             checkpa = checkpa) %>% 
+  mutate(week_end_date = mdy(week_end_date))
+
+##For 2010
+
+i <- str_pad(1:52, pad = "0", width = 2)
+url <- i %>% map(~paste("https://wonder.cdc.gov/mmwr/mmwr_1995_2014.asp?mmwr_year=2010&mmwr_week=", as.character(.x), "&mmwr_table=2F&request=Submit&mmwr_location=", sep=""))
+html_2010 <- url %>% map(~read_html(.x))
+
+week_end_date <- html_2010 %>% 
+  map(~html_nodes(.x, 'tr:nth-child(1) td:nth-child(1)')) %>% 
+  map(~html_text(.x)) %>% 
+  map(~ str_extract(.x[1], "week ending .+ \\(")) %>% 
+  map(~ str_replace(.x[1], "week ending", "")) %>% 
+  map(~ str_replace(.x[1], "\\(", "")) %>% 
+  map(~ str_trim(.x[1]))
+
+madat <- html_2010 %>% map(~html_nodes(.x, 'tr:nth-child(12) td:nth-child(2)')) %>% map(~html_text(.x)) %>% as.numeric()
+checkma <- html_2010 %>% map(~html_nodes(.x, 'tr:nth-child(12) td:nth-child(1)')) %>% map(~html_text(.x)) %>% map(~str_trim(.x)) %>% as.character()
+
+nycdat <- html_2010 %>% map(~html_nodes(.x, 'tr:nth-child(15) td:nth-child(2)')) %>% map(~html_text(.x)) %>% as.numeric()
+checknyc <- html_2010 %>% map(~html_nodes(.x, 'tr:nth-child(15) td:nth-child(1)')) %>% map(~html_text(.x))%>% map(~str_trim(.x)) %>% as.character()
+
+padat <- html_2010 %>% map(~html_nodes(.x, 'tr:nth-child(16) td:nth-child(2)')) %>% map(~html_text(.x)) %>% as.numeric()
+checkpa <- html_2010 %>% map(~html_nodes(.x, 'tr:nth-child(16) td:nth-child(1)')) %>% map(~html_text(.x))%>% map(~str_trim(.x)) %>% as.character()
+
+leg_cases_2010 <- data_frame(week_end_date = as.character(week_end_date),
+                             midatlantic = madat,
+                             nyc = nycdat,
+                             penn = padat, 
+                             checkma = checkma,
+                             checknyc = checknyc,
+                             checkpa = checkpa) %>% 
+  mutate(week_end_date = mdy(week_end_date))
+
+##For 2009
+
+i <- str_pad(1:52, pad = "0", width = 2)
+url <- i %>% map(~paste("https://wonder.cdc.gov/mmwr/mmwr_1995_2014.asp?mmwr_year=2009&mmwr_week=", as.character(.x), "&mmwr_table=2F&request=Submit&mmwr_location=", sep=""))
+html_2009 <- url %>% map(~read_html(.x))
+
+week_end_date <- html_2009 %>% 
+  map(~html_nodes(.x, 'tr:nth-child(1) td:nth-child(1)')) %>% 
+  map(~html_text(.x)) %>% 
+  map(~ str_extract(.x[1], "week ending .+ \\(")) %>% 
+  map(~ str_replace(.x[1], "week ending", "")) %>% 
+  map(~ str_replace(.x[1], "\\(", "")) %>% 
+  map(~ str_trim(.x[1]))
+
+madat <- html_2009 %>% map(~html_nodes(.x, 'tr:nth-child(12) td:nth-child(2)')) %>% map(~html_text(.x)) %>% as.numeric()
+checkma <- html_2009 %>% map(~html_nodes(.x, 'tr:nth-child(12) td:nth-child(1)')) %>% map(~html_text(.x)) %>% map(~str_trim(.x)) %>% as.character()
+
+nycdat <- html_2009 %>% map(~html_nodes(.x, 'tr:nth-child(15) td:nth-child(2)')) %>% map(~html_text(.x)) %>% as.numeric()
+checknyc <- html_2009 %>% map(~html_nodes(.x, 'tr:nth-child(15) td:nth-child(1)')) %>% map(~html_text(.x))%>% map(~str_trim(.x)) %>% as.character()
+
+padat <- html_2009 %>% map(~html_nodes(.x, 'tr:nth-child(16) td:nth-child(2)')) %>% map(~html_text(.x)) %>% as.numeric()
+checkpa <- html_2009 %>% map(~html_nodes(.x, 'tr:nth-child(16) td:nth-child(1)')) %>% map(~html_text(.x))%>% map(~str_trim(.x)) %>% as.character()
+
+leg_cases_2009 <- data_frame(week_end_date = as.character(week_end_date),
+                             midatlantic = madat,
+                             nyc = nycdat,
+                             penn = padat, 
+                             checkma = checkma,
+                             checknyc = checknyc,
+                             checkpa = checkpa) %>% 
+  mutate(week_end_date = mdy(week_end_date))
+
+##For 2008
+
+i <- str_pad(1:52, pad = "0", width = 2)
+url <- i %>% map(~paste("https://wonder.cdc.gov/mmwr/mmwr_1995_2014.asp?mmwr_year=2008&mmwr_week=", as.character(.x), "&mmwr_table=2C&request=Submit&mmwr_location=", sep=""))
+html_2008 <- url %>% map(~read_html(.x))
+
+week_end_date <- html_2008 %>% 
+  map(~html_nodes(.x, 'tr:nth-child(1) td:nth-child(1)')) %>% 
+  map(~html_text(.x)) %>% 
+  map(~ str_extract(.x[1], "week ending .+ \\(")) %>% 
+  map(~ str_replace(.x[1], "week ending", "")) %>% 
+  map(~ str_replace(.x[1], "\\(", "")) %>% 
+  map(~ str_trim(.x[1]))
+
+madat <- html_2008 %>% map(~html_nodes(.x, 'tr:nth-child(13) td:nth-child(12)')) %>% map(~html_text(.x)) %>% as.numeric()
+checkma <- html_2008 %>% map(~html_nodes(.x, 'tr:nth-child(13) td:nth-child(1)')) %>% map(~html_text(.x)) %>% map(~str_trim(.x)) %>% as.character()
+
+nycdat <- html_2008 %>% map(~html_nodes(.x, 'tr:nth-child(16) td:nth-child(12)')) %>% map(~html_text(.x)) %>% as.numeric()
+checknyc <- html_2008 %>% map(~html_nodes(.x, 'tr:nth-child(16) td:nth-child(1)')) %>% map(~html_text(.x))%>% map(~str_trim(.x)) %>% as.character()
+
+padat <- html_2008 %>% map(~html_nodes(.x, 'tr:nth-child(17) td:nth-child(12)')) %>% map(~html_text(.x)) %>% as.numeric()
+checkpa <- html_2008 %>% map(~html_nodes(.x, 'tr:nth-child(17) td:nth-child(1)')) %>% map(~html_text(.x))%>% map(~str_trim(.x)) %>% as.character()
+
+leg_cases_2008 <- data_frame(week_end_date = as.character(week_end_date),
+                             midatlantic = madat,
+                             nyc = nycdat,
+                             penn = padat, 
+                             checkma = checkma,
+                             checknyc = checknyc,
+                             checkpa = checkpa) %>% 
+  mutate(week_end_date = mdy(week_end_date))
+
+##For 2007
+
+i <- str_pad(1:52, pad = "0", width = 2)
+url <- i %>% map(~paste("https://wonder.cdc.gov/mmwr/mmwr_1995_2014.asp?mmwr_year=2007&mmwr_week=", as.character(.x), "&mmwr_table=2C&request=Submit&mmwr_location=", sep=""))
+html_2007 <- url %>% map(~read_html(.x))
+
+week_end_date <- html_2007 %>% 
+  map(~html_nodes(.x, 'tr:nth-child(1) td:nth-child(1)')) %>% 
+  map(~html_text(.x)) %>% 
+  map(~ str_extract(.x[1], "week ending .+ \\(")) %>% 
+  map(~ str_replace(.x[1], "week ending", "")) %>% 
+  map(~ str_replace(.x[1], "\\(", "")) %>% 
+  map(~ str_trim(.x[1]))
+
+madat <- html_2007 %>% map(~html_nodes(.x, 'tr:nth-child(13) td:nth-child(12)')) %>% map(~html_text(.x)) %>% as.numeric()
+checkma <- html_2007 %>% map(~html_nodes(.x, 'tr:nth-child(13) td:nth-child(1)')) %>% map(~html_text(.x)) %>% map(~str_trim(.x)) %>% as.character()
+
+nycdat <- html_2007 %>% map(~html_nodes(.x, 'tr:nth-child(16) td:nth-child(12)')) %>% map(~html_text(.x)) %>% as.numeric()
+checknyc <- html_2007 %>% map(~html_nodes(.x, 'tr:nth-child(16) td:nth-child(1)')) %>% map(~html_text(.x))%>% map(~str_trim(.x)) %>% as.character()
+
+padat <- html_2007 %>% map(~html_nodes(.x, 'tr:nth-child(17) td:nth-child(12)')) %>% map(~html_text(.x)) %>% as.numeric()
+checkpa <- html_2007 %>% map(~html_nodes(.x, 'tr:nth-child(17) td:nth-child(1)')) %>% map(~html_text(.x))%>% map(~str_trim(.x)) %>% as.character()
+
+leg_cases_2007 <- data_frame(week_end_date = as.character(week_end_date),
+                             midatlantic = madat,
+                             nyc = nycdat,
+                             penn = padat, 
+                             checkma = checkma,
+                             checknyc = checknyc,
+                             checkpa = checkpa) %>% 
+  mutate(week_end_date = mdy(week_end_date))
+
+##For 2006
+
+i <- str_pad(1:52, pad = "0", width = 2)
+url <- i %>% map(~paste("https://wonder.cdc.gov/mmwr/mmwr_1995_2014.asp?mmwr_year=2006&mmwr_week=", as.character(.x), "&mmwr_table=2C&request=Submit&mmwr_location=", sep=""))
+html_2006 <- url %>% map(~read_html(.x))
+
+week_end_date <- html_2006 %>% 
+  map(~html_nodes(.x, 'tr:nth-child(1) td:nth-child(1)')) %>% 
+  map(~html_text(.x)) %>% 
+  map(~ str_extract(.x[1], "week ending .+ \\(")) %>% 
+  map(~ str_replace(.x[1], "week ending", "")) %>% 
+  map(~ str_replace(.x[1], "\\(", "")) %>% 
+  map(~ str_trim(.x[1]))
+
+madat <- html_2006 %>% map(~html_nodes(.x, 'tr:nth-child(13) td:nth-child(12)')) %>% map(~html_text(.x)) %>% as.numeric()
+checkma <- html_2006 %>% map(~html_nodes(.x, 'tr:nth-child(13) td:nth-child(1)')) %>% map(~html_text(.x)) %>% map(~str_trim(.x)) %>% as.character()
+
+nycdat <- html_2006 %>% map(~html_nodes(.x, 'tr:nth-child(16) td:nth-child(12)')) %>% map(~html_text(.x)) %>% as.numeric()
+checknyc <- html_2006 %>% map(~html_nodes(.x, 'tr:nth-child(16) td:nth-child(1)')) %>% map(~html_text(.x))%>% map(~str_trim(.x)) %>% as.character()
+
+padat <- html_2006 %>% map(~html_nodes(.x, 'tr:nth-child(17) td:nth-child(12)')) %>% map(~html_text(.x)) %>% as.numeric()
+checkpa <- html_2006 %>% map(~html_nodes(.x, 'tr:nth-child(17) td:nth-child(1)')) %>% map(~html_text(.x))%>% map(~str_trim(.x)) %>% as.character()
+
+leg_cases_2006 <- data_frame(week_end_date = as.character(week_end_date),
+                             midatlantic = madat,
+                             nyc = nycdat,
+                             penn = padat, 
+                             checkma = checkma,
+                             checknyc = checknyc,
+                             checkpa = checkpa) %>% 
+  mutate(week_end_date = mdy(week_end_date))
+
+
+# Putting three years together
+
+leg_cases <- bind_rows(leg_cases_2006, leg_cases_2007, leg_cases_2008, leg_cases_2009, leg_cases_2010, leg_cases_2011, leg_cases_2012, leg_cases_2013, leg_cases_2014, leg_cases_2015, leg_cases_2016, leg_cases_2017)
+
+leg_cases[,1:4] %>% 
   gather(key = location, value = cases, - week_end_date) %>% 
   ggplot(aes(x = week_end_date, y = cases, color = location)) + 
   #geom_point() + 
   geom_line() + 
   theme_classic() + 
   theme(legend.position = "top")
-```
-
-
-```{r, cache=T}
-#scrape just the New York City value for week 14 of 2017 from cdc website:
-library(rvest)
-url <- read_html("https://wonder.cdc.gov/mmwr/mmwr_2017.asp?mmwr_year=2017&mmwr_week=14&mmwr_table=2J&request=Submit&mmwr_location=")
-#Used Selector Gadget to get css selector
-nyc <- html_nodes(url, 'tr:nth-child(15) td:nth-child(2)')
-as.numeric(html_text(nyc))
-
-#Use purrr to get values for 2017 weeks 1-9
-i <- 1:9
-url <- i %>% map(~paste("https://wonder.cdc.gov/mmwr/mmwr_2017.asp?mmwr_year=2017&mmwr_week=0", as.character(.x), "&mmwr_table=2J&request=Submit&mmwr_location=", sep=""))
-html <- url %>% map(~read_html(.x))
-nodes <- html %>% map(~html_nodes(.x, 'tr:nth-child(15) td:nth-child(2)'))
-nycdat <- nodes %>% map(~html_text(.x))
-as.numeric(nycdat) 
-
-#All in one?
-allinone <- i %>% map(~paste("https://wonder.cdc.gov/mmwr/mmwr_2017.asp?mmwr_year=2017&mmwr_week=0", as.character(.x), "&mmwr_table=2J&request=Submit&mmwr_location=", sep="")) %>% map(~read_html(.x)) %>% map(~html_nodes(.x, 'tr:nth-child(15) td:nth-child(2)')) %>% map(~html_text(.x))
-
-#There was no table for week 2 so we have an NA.
-
-#Get ALL THE DATA for NYC 1998-2017 (nothing for 1996 or 7)
-#1998:
-i <- 1:9
-url1to9 <- i %>% map(~paste("https://wonder.cdc.gov/mmwr/mmwr_1995_2014.asp?mmwr_year=1998&mmwr_week=0", as.character(.x), "&mmwr_table=2B&request=Submit&mmwr_location=", sep=""))
-i <- 10:53
-url10to53 <- i %>% map(~paste("https://wonder.cdc.gov/mmwr/mmwr_1995_2014.asp?mmwr_year=1998&mmwr_week=", as.character(.x), "&mmwr_table=2B&request=Submit&mmwr_location=", sep=""))
-url1998 <- c(url1to9, url10to53)
-nyc1998 <- url1998 %>% map(~read_html(.x)) %>% map(~html_nodes(.x, 'tr:nth-child(13) td:nth-child(2)')) %>% map(~html_text(.x))
-as.numeric(nyc1998)
-
-#For the earlier years we only have cumulative data.  Could take differences via code? 2006 is the first year with variable for current week. NYC data not available many years, so I'll use Mid-Atlantic region.
-
-#MidAtlantic 2006:
-i <- 1:9
-url1to9 <- i %>% map(~paste("https://wonder.cdc.gov/mmwr/mmwr_1995_2014.asp?mmwr_year=2006&mmwr_week=0", as.character(.x), "&mmwr_table=2C&request=Submit&mmwr_location=", sep=""))
-i <- 10:53
-url10to53 <- i %>% map(~paste("https://wonder.cdc.gov/mmwr/mmwr_1995_2014.asp?mmwr_year=2006&mmwr_week=", as.character(.x), "&mmwr_table=2C&request=Submit&mmwr_location=", sep=""))
-url2006 <- c(url1to9, url10to53)
-ma2006 <- url2006 %>% map(~read_html(.x)) %>% map(~html_nodes(.x, 'tr:nth-child(13) td:nth-child(12)')) %>% map(~html_text(.x))
-as.numeric(ma2006)
 
 ```
 
