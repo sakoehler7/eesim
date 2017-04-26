@@ -22,48 +22,132 @@ library(gridExtra)
 
 This package allows you to simulate time series of environmental health data and perform simulation-based power analyses and other measures of model performance. The package includes four main parts: 
 
-1. Generation of exposure data; 
-2. Generation of outcome data;
-3. Fitting models to simulated data; and 
-4. Evaluating model performance on simulated data.
+1. Generation of exposure data (simulated or from real data); 
+2. Generation of simulated outcome data;
+3. Fitting models to generated data; and 
+4. Evaluating model performance on generated data.
 
 The user has the option to customize different aspects of the simulation at each of these steps.
 
-The package creates time series that are relevant for environmental epidemiology studies of ambient exposures (e.g., studies of acute mortality risks associated with daily air pollution concentration, daily temperature, or occurance of a community-wide extreme event like a heat wave).
+The package creates simulated time series data that are relevant for environmental epidemiology studies of ambient exposures (e.g., studies of acute mortality risks associated with daily air pollution concentration, daily temperature, or occurance of a community-wide extreme event like a heat wave). Such time series are often characterized by both seasonal and long-term trends in both the exposure of interest and the outcome. For example, the following plot shows time series of daily ozone concentration (in parts per billion [ppb]) and cardiovascular deaths in Chicago, IL (1996--2000), with smoothed lines overlaid on the raw data to show patterns over time. 
+
+```{r message = FALSE, echo = FALSE, fig.width = 5, fig.align = "center"}
+library(dlnm)
+data("chicagoNMMAPS")
+chicagoNMMAPS %>% 
+  tbl_df() %>% 
+  filter(year >= 1996) %>% 
+  select(date, cvd, o3) %>% 
+  rename(`Cardiovascular deaths` = cvd,
+         `Ozone concentration (ppb)` = o3) %>% 
+  gather(variable, value, -date) %>% 
+  ggplot(aes(x = date, y = value)) + 
+  geom_point(alpha = 0.5, size = 1) + 
+  geom_smooth(se = FALSE, span = 0.1, method = "loess", color = "red") +
+  facet_wrap(~ variable, ncol = 1, scales = "free_y") + 
+  theme_classic() + 
+  labs(x = "Date", y = "Variable value")
+```
+
+Simulated environmental datasets have been used in a number of studies to assess the performance of statistical models meant to estimate the association between exposure level and outcome risk, including: 
+
+- [Example study 1]
+- [Example study 2]
+- ...
 
 ## Basic example of using the package
 
-The main function of this package is the `eesim` function. You can use the `eesim` function to conduct all four steps of the simulation process at once (simulate exposure data, simulate outcome data, fit models to simulated data, and evaluate model performance). 
+The main function of this package is the `eesim` function. You can use the `eesim` function to conduct all four steps of the simulation process at once (generate exposure data, generate outcome data, fit models to simulated data, and evaluate model performance). 
 
-The `eesim` function requires [required inputs]. The function returns a list with two elements. The first element gives simulation-specific results: the estimated effect, standard error, t- and p-values, and upper and lower 95% confidence bounds when a model was applied to each set of simulated data. The second element gives some measures of model assessment, assessed over all simulations, including the mean beta and relative risk estimates across simulations.
+The `eesim` function requires inputs on: 
 
-For example, you can use the following call to (1) generate 10 observations of a continuous exposure with mean 100 and standard deviation 10, with a seasonal trend in expected value; (2) generate 10 associated outcome values, where the outcome has an average value of 20 and a relative risk of 1.10 per one-unit increase in the exposure; (3) fit a generalized linear model that controls for long-term and seasonal trends with a natural cubic spline with 1 degree of freedom per year; and (4) evaluate the performace of that model on the simulated data:
+- `n_reps`: The desired number of observations per simulated dataset (for a daily time series, this is the desired number of days in the simulated dataset)
+- `n`: The desired number of simulated datasets
+- `exposure_type`: Whether the exposure is binary (e.g., occurence of an extreme event like a heat wave or wildfire) or continuous (e.g., concentration of a pollutant)
+- `rr`: The relative rate of the outcome associated with the exposure. For a binary exposure, this is the relative rate associated with the exposure compared to a similar day without the exposure. For a continuous exposure, this is the relative rate associated with a one-unit increase in the exposure. 
+- `model`: The model to be used to estimate the association between exposure and outcome in the simulated datasets, either to estimate power of a planned analysis or to otherwise evaluate the performance (e.g., coverage, bias) of a model on the simulated datasets.
 
-[To do-- increase `n` and `n_reps`, but wait until we've edited the vignette, because that will increase time to render. We could change `df` then, too (and maybe change to case-crossover? That may be easier for a first example)]
+A number of optional inputs can also be specified, including arguments to adjust the shape of seasonal or long-term trends in the exposure or outcome data or custom arguments to use different steps of the data generation. 
+
+The function returns a list with two elements. The first element gives simulation-specific results for each simulated dataset: the estimated effect, standard error, t- and p-values, and upper and lower 95% confidence bounds when a model was applied to each of the simulated datasets. The second element gives some measures of model assessment, assessed over all simulations, including the mean beta and relative risk estimates across simulations.
+
+```{r message = FALSE, echo = FALSE}
+chicagoNMMAPS %>% 
+  tbl_df() %>% 
+  filter(year >= 1996) %>% 
+  select(date, cvd, o3) %>% 
+  gather(variable, value, -date) %>% 
+  group_by(variable) %>% 
+  summarize(mean = mean(value, na.rm = TRUE),
+            sd = sd(value, na.rm = TRUE))
+```
+
+For example, in the observed data from Chicago, IL, shown in the plots above, daily ozone concentrations have a mean of about 20 ppb and standard deviation of 10 ppb. The average number of cardiovascular deaths per day is around 50. Here is the code, and a plot of the resulting data, for generating a dataset with similar characteristics for use in a power analysis or to evaluate model performance (later in the vignette, we will show how to use customization to further improve the simulation of data for this example, including avoiding negative values of ozone concentration in simulated data):
 
 ```{r, warning = FALSE, message = FALSE}
-ex_sim <- eesim(n_reps = 10, n = 100, central = 100, sd = 10,
-                exposure_type = "continuous", 
-                average_outcome = 20, rr = 1.10,
-                model = "casecrossover")
-head(ex_sim[[1]])
-ex_sim[[2]]
+sim_chicago <- create_sims(n_reps = 1, n = 365 * 5, central = 20, sd = 9.8,
+                           exposure_type = "continuous", exposure_trend = "cos1",
+                           exposure_amp = -.6, average_outcome = 50,
+                           outcome_trend = "cos1", outcome_amp = 0.2, 
+                           rr = 1.0005, start.date = "1996-01-01")
+head(sim_chicago[[1]])
 ```
 
-The first element of the returned object can be used to explore the behavior of individual simulations. For example, to look at the relative risk point estimate and 95% confidence interval from each of the 100 simulations, as well as which 95% confidence intervals include the true relative risk using the `coverage_plot` function that comes with the package:
+```{r echo = FALSE, message = FALSE, echo = FALSE, fig.width = 5, fig.align = "center"}
+sim_chicago[[1]] %>% 
+  rename(Exposure = x,
+         Outcome = outcome) %>% 
+  gather(variable, value, -date) %>% 
+  mutate(variable = factor(variable, levels = c("Outcome", "Exposure"))) %>% 
+  ggplot(aes(x = date, y = value)) + 
+  geom_point(alpha = 0.5, size = 1) + 
+  facet_wrap(~ variable, ncol = 1, scales = "free_y") + 
+  theme_classic() + 
+  geom_smooth(se = FALSE, method = "loess", color = "red", span = 0.1)
+```
+
+This simulated data can also be visualized using the `calendar_plot` function that comes with the package: 
+
+```{r fig.align = "center", fig.width = 8, fig.height = 7.5}
+a <- calendar_plot(sim_chicago[[1]] %>% select(date, outcome), type = "continuous", 
+                   legend_name = "Outcome") + 
+  ggtitle("Outcome")
+b <- calendar_plot(sim_chicago[[1]] %>% select(date, x), type = "continuous") + 
+  ggtitle("Exposure")
+grid.arrange(a, b, ncol = 1)
+```
+
+You can use the `eesim` function to generate multiple similar simulated datasets and investigate how the performance of a case-crossover model in estimating the association between ozone concentration and the risk of cardiovascular death in 20 simulated datasets.
+
+```{r, warning = FALSE, message = FALSE}
+ex_sim <- eesim(n_reps = 100, n = 365 * 5, central = 20, sd = 9.8,
+                exposure_type = "continuous", exposure_trend = "cos1",
+                exposure_amp = -.6, average_outcome = 50,
+                outcome_trend = "cos1", outcome_amp = 0.2, 
+                rr = 1.0005, start.date = "1996-01-01",
+                model = "casecrossover")
+```
+
+The first element of the returned object can be used to explore the behavior of individual simulations. 
+
+```{r}
+head(ex_sim[[1]])
+```
+
+After running the simulation, you can look at the relative risk point estimate and 95% confidence interval from each of the 100 simulations, as well as which 95% confidence intervals include the true relative rate, using the `coverage_plot` function that comes with the package:
 
 ```{r fig.width = 4, fig.height = 5, fig.align = "center"}
-coverage_plot(ex_sim[[1]], true_param = 1.10)
+coverage_plot(ex_sim[[1]], true_param = 1.0005)
 ```
 
-The second element of the returned object gives the following overall summaries of model performance across all simulations: 
+The second element of the returned object gives the following overall summaries of model performance across all simulations:
 
 ```{r echo = FALSE}
 eesim_overall_output <- data_frame(element = paste0("`",
                                                     colnames(ex_sim[[2]]),
                                                     "`"),
-                                   desc = c("The mean estimated effect (log relative risk) over all simulations",
-                                            "The mean relative risk over all simulations",
+                                   desc = c("The mean estimated effect (log relative rate) over all simulations",
+                                            "The mean relative rate over all simulations",
                                             "Variance of the point estimates of the estimated effect over all simulations",
                                             "The mean across simulations of the variances of each estimated effect",
                                             "Relative bias of the mean of the estimated coefficients",
@@ -72,6 +156,106 @@ eesim_overall_output <- data_frame(element = paste0("`",
 knitr::kable(eesim_overall_output, col.names = c("Variable", "Description"))
 ```
 
+For example, here are the overall results for the simulation fit above:
+
+```{r}
+ex_sim[[2]]
+```
+
+In later sections of this vignette, we will show how to customize steps in the generation of the simulated data to further improve this example simulation.
+
+As another basic example, here is a plot of the dates of extreme heat days (defined as a day with temperature at or above the 98\textsuperscript{th} percentile temperature in Chicago between 1987 and 2000) in the observed Chicago dataset (points are jittered along the y-axis to limit overlapping):
+
+```{r echo = FALSE, message = FALSE, echo = FALSE, fig.width = 5, fig.align = "center", fig.height = 2}
+chicagoNMMAPS %>% 
+  mutate(temp = temp >= quantile(temp, probs = 0.98)) %>% 
+  tbl_df() %>% 
+  filter(year >= 1996) %>% 
+  select(date, temp) %>% 
+  rename(`Extreme heat day` = temp) %>% 
+  gather(variable, value, -date) %>% 
+  ggplot(aes(x = date, y = value)) + 
+  geom_jitter(alpha = 0.5, size = 0.7, fill = NA, width = 0, height = 0.1) + 
+  facet_wrap(~ variable, ncol = 1, scales = "free_y") + 
+  theme_classic() + 
+  labs(x = "Date", y = "Variable value")
+```
+
+
+```{r echo = FALSE}
+chicagoNMMAPS %>% 
+  mutate(temp = temp >= quantile(temp, probs = 0.98)) %>% 
+  tbl_df() %>% 
+  filter(year >= 1996) %>% 
+  group_by(month) %>% 
+  summarize(p_heat = mean(temp))
+```
+
+In this observed data, there is (unsurprisingly) a strong seasonal trend in this binary exposure of extreme heat days. The percent of days that are extreme heat days is 0% for all months expect June (about 5% of days in observed data were extreme heat days), July (about 12% of days), and August (about 2% of days).
+
+```{r}
+sim_chicago2 <- create_sims(n_reps = 1, n = 365 * 5, sd = 1,
+                            central = c(0, 0, 0, 0, 0, 0.05, 0.12, 0.02, 0, 0, 0, 0),
+                            exposure_type = "binary", exposure_trend = "monthly",
+                            exposure_amp = -.6, average_outcome = 50,
+                            outcome_trend = "cos1", outcome_amp = 0.2, 
+                            rr = 1.05, start.date = "1996-01-01")
+```
+
+Here is an example of the simulated exposure data:
+
+```{r echo = FALSE, message = FALSE, echo = FALSE, fig.width = 5, fig.align = "center", fig.height = 2}
+sim_chicago2[[1]] %>% 
+  select(date, x) %>% 
+  rename(`Extreme heat day` = x) %>% 
+  gather(variable, value, -date) %>% 
+  ggplot(aes(x = date, y = value)) + 
+  geom_jitter(alpha = 0.5, size = 0.7, fill = NA, width = 0, height = 0.1) + 
+  facet_wrap(~ variable, ncol = 1, scales = "free_y") + 
+  theme_classic() + 
+  labs(x = "Date", y = "Variable value")
+```
+
+Again, both the observed and simulated exposure data can also be plotted using the `calendar_plot` function: 
+
+```{r fig.align = "center", fig.width = 8, fig.height = 7.5}
+a <- chicagoNMMAPS %>% 
+  mutate(temp = temp >= quantile(temp, probs = 0.98)) %>% 
+  tbl_df() %>% 
+  filter(year >= 1996) %>% 
+  select(date, temp) %>% 
+  calendar_plot(type = "discrete", labels = c("Extreme heat day", "Other day")) + 
+  ggtitle("Observed exposure data")
+b <- sim_chicago2[[1]] %>% 
+  select(date, x) %>% 
+  calendar_plot(type = "discrete", labels = c("Extreme heat day", "Other day")) + 
+  ggtitle("Simulated exposure data")
+grid.arrange(a, b, ncol = 1)
+```
+
+The comparison of the observed and simulated data in this case suggests some clustering in the observed data that is not evident in the simulated data, suggesting that the probability of exposure may be higher on a day near other extreme heat days.
+
+The `eesim` function can be used to assess the performance of a case-crossover model in estimating relative risk of cardiovascular mortality for extreme heat days compared to other days using:
+
+```{r}
+ex_sim2 <- eesim(n_reps = 100, n = 365 * 5, sd = 1,
+                 central = c(0, 0, 0, 0, 0, 0.05, 0.12, 0.02, 0, 0, 0, 0),
+                 exposure_type = "binary", exposure_trend = "monthly",
+                 exposure_amp = -.6, average_outcome = 50,
+                 outcome_trend = "cos1", outcome_amp = 0.2, 
+                 rr = 1.05, start.date = "1996-01-01",
+                 model = "casecrossover")
+```
+
+```{r fig.width = 4, fig.height = 5, fig.align = "center"}
+coverage_plot(ex_sim2[[1]], true_param = 1.05)
+```
+
+Here are the overall estimates in this case for model performance:
+
+```{r}
+ex_sim2[[2]]
+```
 
 ##Piece-by-piece breakdown of package utility
 
