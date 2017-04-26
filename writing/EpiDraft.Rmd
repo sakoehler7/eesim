@@ -507,6 +507,13 @@ leg_cases[,1:4] %>%
 
 ```
 
+```{r}
+#Checking for anomalies:
+leg_cases[which(leg_cases$checkma != "MID. ATLANTIC"),]
+leg_cases[which(leg_cases$checknyc != "N.Y. City"),]
+leg_cases[which(leg_cases$checkpa != "Pa."),]
+
+#Row 48 is the only row with different states. 569 and 574 have NA in every column.
 ```
 
 We can pull the trend from this data:
