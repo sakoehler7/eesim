@@ -60,7 +60,7 @@ In `eesim`, the function `power_calc` can be used to investigate the effects of 
 Here is an example of using `power_calc` to test power for different sample sizes:
 
 ```{r}
-#Power_calc momentarily out of commission :(
+#Power_calc works except the casecrossover option
 ```
 
 The `power_calc` function will also return a plot if `plot=TRUE` is specified. 
@@ -69,7 +69,7 @@ The `power_calc` function will also return a plot if `plot=TRUE` is specified.
 
 ###Actual Data from the CDC
 
-Here is a plot of weekly counts of Legionnaire's disease in the United States from 2014 through 2016. This data was obtained from the CDC website.
+We can perform power analyses on real data to determine whether we have a large enough sample size, relative risk, or average outcome value to provide sufficient power for testing hypotheses.  Presented here is weekly data from the CDC on mortality related to Legionnaire's disease (citation?). We focus on data from New York City, Pennsylvania, and the Midatlantic region from 2006 through 2017.
 
 ```{r, echo=FALSE}
 #I used the variable "Legionellosis, Current week" so hopefully that's right
@@ -80,9 +80,9 @@ leg <- data.frame(year = c(leg1$MMWR.Year, leg2$MMWR.Year, leg3$MMWR.Year), week
 plot(leg$cases, xlab = "Week", ylab = "Number of Cases", main = "Legionnaire's Disease 2014-2016")
 ```
 
-##Scraping the data
+```{r, echo=F, warning=F, message=F}
+#Scraping the data from CDC
 
-```{r, cache=TRUE}
 library(rvest)
 library(purrr)
 library(dplyr)
@@ -493,7 +493,7 @@ leg_cases_2006 <- data_frame(week_end_date = as.character(week_end_date),
   mutate(week_end_date = mdy(week_end_date))
 
 
-# Putting three years together
+# Putting all years together
 
 leg_cases <- bind_rows(leg_cases_2006, leg_cases_2007, leg_cases_2008, leg_cases_2009, leg_cases_2010, leg_cases_2011, leg_cases_2012, leg_cases_2013, leg_cases_2014, leg_cases_2015, leg_cases_2016, leg_cases_2017)
 
@@ -504,6 +504,8 @@ leg_cases[,1:4] %>%
   geom_line() + 
   theme_classic() + 
   theme(legend.position = "top")
+
+```
 
 ```
 
