@@ -516,6 +516,11 @@ leg_cases[which(leg_cases$checkpa != "Pa."),]
 #Row 48 is the only row with different states. 569 and 574 have NA in every column.
 ```
 
+```{r}
+#Power analysis using eesim
+
+```
+
 We can pull the trend from this data:
 
 ```{r}
