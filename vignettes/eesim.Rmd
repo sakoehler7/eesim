@@ -71,7 +71,7 @@ A number of optional inputs can also be specified, including arguments to adjust
 
 The function returns a list with two elements. The first element gives simulation-specific results for each simulated dataset: the estimated effect, standard error, t- and p-values, and upper and lower 95% confidence bounds when a model was applied to each of the simulated datasets. The second element gives some measures of model assessment, assessed over all simulations, including the mean beta and relative risk estimates across simulations.
 
-```{r message = FALSE, echo = FALSE}
+```{r message = FALSE, echo = FALSE, results='hide'}
 chicagoNMMAPS %>% 
   tbl_df() %>% 
   filter(year >= 1996) %>% 
@@ -182,7 +182,7 @@ chicagoNMMAPS %>%
 ```
 
 
-```{r echo = FALSE}
+```{r echo = FALSE, results="hide"}
 chicagoNMMAPS %>% 
   mutate(temp = temp >= quantile(temp, probs = 0.98)) %>% 
   tbl_df() %>% 
@@ -218,7 +218,7 @@ sim_chicago2[[1]] %>%
 
 Again, both the observed and simulated exposure data can also be plotted using the `calendar_plot` function: 
 
-```{r fig.align = "center", fig.width = 8, fig.height = 7.5}
+```{r fig.align = "center", fig.width = 8, fig.height = 7}
 a <- chicagoNMMAPS %>% 
   mutate(temp = temp >= quantile(temp, probs = 0.98)) %>% 
   tbl_df() %>% 
@@ -257,44 +257,47 @@ Here are the overall estimates in this case for model performance:
 ex_sim2[[2]]
 ```
 
+[Add power calc example]
+
 ##Piece-by-piece breakdown of package utility
 
 To demonstrate how the `eesim` function works, here is a breakdown of each of the four main parts: generating exposure data, generating outcome data, fitting models, and evaluating models. The helper functions used for each step are described in detail in this section.
 
 ### Generating exposure data
 
-The first task of the package is generating exposure data. This can be dones with the `sim_exposure` function. In this function, the user can specify whether they would like the exposure data to be binary or continuous (`exposure_type`). For continuous exposure data, the user can specify the mean (`central`) and standard deviation (`sd`) of the exposure data: 
+The first task of the package is generating exposure data. This can be done with the `sim_exposure` function. In this function, the user can specify whether he or she would like to generate exposure data that is binary or continuous (`exposure_type`). For continuous exposure data, the user must specify the mean (`central`) and standard deviation (`sd`) of the exposure data. For example, the following call simulates a dataframe of exposure data for an exposure that is normally distributed, with a mean value of 50, a standard deviation of 5, and no long-term or seasonal trends:
 
 ```{r}
-x_cont <- sim_exposure(n = 1000, central = 50, sd = 5,
-                      exposure_type = "continuous") 
+x_cont <- sim_exposure(n = 1000, central = 50, sd = 5, exposure_type = "continuous") 
 x_cont %>% slice(1:5)
 ```
 ```{r fig.width = 4, fig.height = 2, fig.align = "center"}
-ggplot(x_cont, aes(x = date, y = x)) + geom_point(alpha = 0.2)
+ggplot(x_cont, aes(x = date, y = x)) + geom_point(alpha = 0.2) + 
+  theme_classic()
 ```
 
-You can plot a calendar plot of this simulated exposure time series using the `calendar_plot` function that comes with the package: 
+You can plot a calendar plot of this simulated exposure time series using the `calendar_plot` function that comes with the package. Within this function, the type of data ("continuous" or "discrete") must be specified: 
 
 ```{r fig.align = "center", fig.width = 8, fig.height = 2.5}
 calendar_plot(x_cont, type = "continuous")
 ```
 
-
-For binary exposure data, the `central` argument gives the probability of exposure on a study day:
+You can similarly use the `sim_exposure` function to simulate a binary exposure (e.g., occurence of an extreme event). For binary exposure data, the `central` argument of `sim_exposure` must also be expressed, but in this case it gives the probability of exposure on a study day:
 
 ```{r}
-x_bin <- sim_exposure(n = 1000, central = 0.1,
-                      exposure_type = "binary")
+x_bin <- sim_exposure(n = 1000, central = 0.05, exposure_type = "binary")
 x_bin %>% slice(1:5)
 ```
 
-```{r fig.align = "center", fig.width = 8, fig.height = 2.5}
+Again, the `calendar_plot` function can be used to visualize the generated time series. In the case of binary exposure data, the labels to be used in the legend for each outcome level must also be specified using the `labels` argument:
+
+```{r fig.align = "center", fig.width = 8, fig.height = 2.25}
 calendar_plot(x_bin, type = "discrete", labels = c("Not exposed", "Exposed"))
 ```
 
+So far, these `sim_exposure` calls have been used to simulate basic exposure data, without long-term or seasonal trends. However, for environmental epidemiology applications, exposure data often has a seasonal trend and / or long-term trend, and these temporal trends can serve as confounders in assessing the association between time-varying environmental exposures and health outcomes. The `sim_exposure` function therefore includes options to generate exposure data with long-term and seasonal trends relevant to environmental time series studies, through the `trend` argument.
 
-For environmental epidemiology applications, exposure data often has a seasonal trend and / or long-term trend. The default for `sim_exposure` is to simulate the exposure data without a time trend (`trend = "no trend"`). However, we have also built in several time trends from which a user can to choose to simulate exposure data with a time trend, either seasonal or long-term or both. These trend patterns differ slightly depending on whether the user is simulating binary or continuous data. [add reference for Schwartz paper where we got some of the trend equations] Below are plots of the built-in trends for continuous exposure data from which the user may choose. 
+The default for `sim_exposure` is to simulate the exposure data without a time trend (`trend = "no trend"`). However, we have also built in several time trends from which a user can to choose to simulate exposure data with a time trend, either seasonal or long-term or both, based on trend patterns used in a simulation study of ... [add reference for Schwartz paper where we got some of the trend equations]. These trend patterns differ slightly depending on whether the user is simulating binary or continuous data. Below are plots of the built-in trends for continuous exposure data from which the user may choose. 
 
 ```{r fig.width = 7, fig.height = 4, echo = FALSE, message = FALSE}
 data.frame(day = 1:1000) %>%
@@ -319,76 +322,89 @@ data.frame(day = 1:1000) %>%
   theme_bw()
 ```
 
-The trend options are similar for binary exposure, but exclude  "curvilinear" and "cos1linear" and include a "monthly" trend, for which the user enters a vector of 12 probabilities of exposure, one for each month.
+You can use the `amp` argument to adjust the seasonal trend in any of the patterns with a seasonal trend. For example, here are plots of trends using `tren = "cos1linear"` for different  values of `amp`:
 
-Here is an example of generating continuous exposure data with a "cos1linear"" 
-trend:
-
-```{r, fig.width = 5, fig.height = 3, fig.align = "center"}
-testexp <- sim_exposure(n=1000, central = 50, sd = 5, trend = "cos1linear",
-                        amp = .6, exposure_type = "continuous")
-head(testexp)
-qplot(testexp$date, testexp$x)+geom_point()+coord_cartesian(ylim = c(0,110)) + 
-  labs(title = "Exposure with a cos1linear trend", x = "Date", y="Exposure")+theme_bw()
+```{r fig.width = 7, fig.height = 2, echo = FALSE, message = FALSE}
+data.frame(day = 1:1000) %>%
+  mutate(`"amp = 0.5"` = calc_t(n = 1000, trend = "cos1linear", amp = 0.5),
+         `"amp = 0.1"` = calc_t(n = 1000, trend = "cos1linear", amp = 0.1),
+         `"amp = 0.9"` = calc_t(n = 1000, trend = "cos1linear", amp = 0.9),
+         `"amp = -0.5"` = calc_t(n = 1000, trend = "cos1linear", amp = -0.5)) %>%
+  gather(trend_method, trend_value, -day) %>%
+  ggplot(aes(x = day, y = trend_value)) + 
+  geom_line() + facet_wrap(~ trend_method, ncol = 4) + 
+  theme_bw()
 ```
 
+Here is an example of generating continuous exposure data with a "cos1linear" trend for an exposure with a mean value of 50 and a standard deviation of 10:
 
-```{r fig.align = "center", fig.width = 8, fig.height = 2.5}
-calendar_plot(testexp, type = "continuous")
+```{r, fig.width = 5.5, fig.height = 4, fig.align = "center"}
+testexp <- sim_exposure(n = 365 * 3, central = 50, sd = 10, trend = "cos1linear",
+                        exposure_type = "continuous")
+a <- ggplot(testexp, aes(x = date, y = x)) +  
+  geom_point(alpha = 0.5, size = 0.8) + 
+  coord_cartesian(ylim = c(0,110)) + 
+  labs(title = "Exposure with a 'cos1linear' trend", x = "Date", y="Exposure") + 
+  theme_classic()
+b <- calendar_plot(testexp, type = "continuous") + 
+  ggtitle("Calendar plot of simulated exposure data")
+grid.arrange(a, b, ncol = 1)
 ```
 
+Here is an example of changing the seasonal trend by changing the value for `amp` (the default value is 0.6) to simulate exposure data for an exposure with a smaller seasonal trend and with higher exposures typical in the summer than the winter:
 
-The default amplitude for the trend is .6, but we can adjust the "amp" parameter
-for a smaller or larger trend amplitude:
-
-```{r, fig.width = 5, fig.height = 3, fig.align = "center"}
-smallamp <- sim_exposure(n=1000, central = 50, sd = 5, trend = "cos1linear",
-                        amp = .2, exposure_type = "continuous")
-qplot(smallamp$date, smallamp$x) +
-  geom_point() + coord_cartesian(ylim = c(0,110)) +
-  labs(title = "Cos1linear exposure with smaller amplitude", x="Date", y="Exposure") + theme_bw()
+```{r, fig.width = 5.5, fig.height = 4, fig.align = "center"}
+small_amp <- sim_exposure(n = 365 * 3, central = 50, sd = 10, trend = "cos1linear",
+                        amp = -0.3, exposure_type = "continuous")
+a <- ggplot(small_amp, aes(x = date, y = x)) +  
+  geom_point(alpha = 0.5, size = 0.8) + 
+  coord_cartesian(ylim = c(0,110)) + 
+  labs(title = "Exposure with a 'cos1linear' trend", x = "Date", y="Exposure") + 
+  theme_classic()
+b <- calendar_plot(small_amp, type = "continuous") + 
+  ggtitle("Calendar plot of simulated exposure data")
+grid.arrange(a, b, ncol = 1)
 ```
 
+The trend options are similar for binary exposure, but exclude  "curvilinear" and "cos1linear". Further, binary exposures can also be simulated using a "monthly" trend (`trend = "monthly"`), in which the probability of exposure can vary by month. When using this "monthly" trend option, the `cental` argument to `sim_exposure` should include a vector with 12 separate probabilities (the first is for January, the second for February, etc.) rather than a single probability. Here is an example of generating binary exposure data with a monthly trend, starting from June 1, 2002, with higher probability of the exposure in summer months than in winter months:
 
-```{r fig.align = "center", fig.width = 8, fig.height = 2.5}
-calendar_plot(smallamp, type = "continuous")
-```
-
-
-Here is an example of generating binary exposure data with a "monthly" trend 
-starting from June 1, 2002.  The probabilities for the central parameter are for each month of the year, starting in January.
-
-```{r, message = FALSE, fig.width = 5, fig.height = 3, fig.align = "center"}
-testbin <- sim_exposure(n=1000, central = c(.1,.1,.2,.3,.4,.4,.5,.6,.5,.3,.2,.1),
+```{r, message = FALSE, fig.width = 5.5, fig.height = 4, fig.align = "center"}
+testbin <- sim_exposure(n=1000, central = c(.05, .05, .1, .2, .4, .4, .5, .7, .5, .2, .1, .05),
                         trend = "monthly", exposure_type = "binary", 
                         start.date = "2002-06-01")
-head(testbin)
-qplot(testbin$date, testbin$x)+geom_point()+labs(title = "Binary exposure data with monthly trend", x="Date", y="Exposure")+theme_bw()
+a <- testbin %>% 
+  mutate(x = factor(x, levels = c(0, 1), labels = c("Not exposed", "Exposed"))) %>% 
+  ggplot(aes(x = date, y = x)) + 
+  geom_jitter(alpha = 0.5, size = 0.7, fill = NA, width = 0, height = 0.1) + 
+  theme_classic() + 
+  labs(x = "Date", y = "Exposure")
+b <- calendar_plot(testbin, type = "discrete", labels = c("Not exposed", "Exposed")) + 
+  ggtitle("Calendar plot of simulated exposure data")
+grid.arrange(a, b, ncol = 1)
 ```
 
-```{r fig.align = "center", fig.width = 8, fig.height = 2.5}
-calendar_plot(testbin, type = "discrete", labels = c("Not exposed", "Exposed"))
-```
-
-
-The following figure shows the steps taken in simulating exposure ...
+The `sim_exposure` function works by first calculating the expected exposure on any date in the simulated time series (figure below, left). This expected value is a mean for a continuous exposure and a probability for a binary exposure. The `sim_exposure` function then draws random values from the appropriate distribution (normal distribution for a continuous exposure, binomial distribution for a binary exposure) based on this day-specific expected exposure value and, in the case of continuous exposure, the standard deviation of the exposure (figure below, right). For continuous exposure data, the standard deviation [double-check-- is this right?]
 
 ```{r echo = FALSE, fig.width = 8, fig.height = 3}
-# binary_trend 
-# binary_continuous
-continuous_trend <- data_frame(t = calc_t(n = 1000, trend = "cos1")) %>%
+continuous_trend <- data_frame(t = calc_t(n = 1000, trend = "cos1")) %>% 
   mutate(x = 100 * t,
          date = seq(from = as.Date("2000-01-01"),
-                    by = 1, length.out = 1000)) %>%
-  ggplot(aes(x = date, y = x)) + geom_point() + theme_minimal() + 
+                    by = 1, length.out = 1000)) 
+a <- continuous_trend %>%
+  ggplot(aes(x = date, y = x)) + geom_line(color = "red") + theme_classic() + 
   ylim(c(0, 200))
+
 continuous_simulated <- continuous_exposure(n = 1000, mu = 100,
-                                            sd = 10, trend = "cos1") %>%
-  ggplot(aes(x = date, y = x)) + geom_point() + theme_minimal() + 
+                                            sd = 10, trend = "cos1") 
+b <- continuous_simulated %>%
+  ggplot(aes(x = date, y = x)) + geom_point() + 
+  geom_line(data = continuous_trend, color = "red") + theme_classic() + 
   ylim(c(0, 200))
-grid.arrange(continuous_trend, continuous_simulated, ncol = 2)
+
+grid.arrange(a, b, ncol = 2)
 ```
 
+Later in this vignette, we show how you can further customize this step of generating exposure data through the use of a user-created function, allowing extensive further flexibility in simulating exposure data. 
 
 ### Generating outcome data
 
@@ -427,7 +443,7 @@ fits
 
 ###Evaluating the models
 
-Lastly, eesim evaluates model performance with several different measures.  The check_sims function takes the true relative risk as input and returns mean beta and relative risk estimates across all simulated data sets, variance of the estimates of beta, the mean of the variances of each beta hat, the relative bias of the mean of the beta hats, the percent coverage of the true beta, and the power of the test at the 5% significance level. 
+Lastly, `eesim` evaluates model performance with several different measures.  The check_sims function takes the true relative risk as input and returns mean beta and relative risk estimates across all simulated data sets, variance of the estimates of beta, the mean of the variances of each beta hat, the relative bias of the mean of the beta hats, the percent coverage of the true beta, and the power of the test at the 5% significance level. 
 
 Here is an example of the use of the check_sims function:
 
