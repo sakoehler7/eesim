@@ -8,6 +8,11 @@ output:
   html_document: default
 ---
 
+```{r echo = FALSE}
+knitr::opts_chunk$set(eval = FALSE)
+```
+
+
 #Introduction
 
 Simulation studies are important in environmental epidemiology research on air pollution, temperature, and other exposures. For example, simulated data can be used to test new statistical models and perform power analyses. Two current challenges of simulating time series data for epidemiology studies are (1) methods for simulating are inconsistent, making it difficult to compare results from different studies, and (2) developing the code to simulate environmental time series for these types of studies can be time consuming. We introduce `eesim`, an open-source software package in R that offers a solution to these challenges.
