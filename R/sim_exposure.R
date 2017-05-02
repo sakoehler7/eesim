@@ -17,6 +17,8 @@
 #'    }
 #'    See the package vignette for examples of the shapes of these trends.
 #'    Default is "no trend".
+#' @param slope A numeric value specifying the slope of the trend, to be used
+#'    with trend = "linear" or trend = "cos1linear".
 #' @param amp A numeric value specifying the amplitude of the seasonal trend.
 #'    Must be between 0 and 1.
 #' @param custom_func A character string specifying a customized function from
@@ -29,7 +31,7 @@
 #' calc_t(5, "cos3", amp = .5)
 #'
 #' @export
-calc_t <- function(n, trend = "no trend", amp = .6, custom_func = NULL, ...){
+calc_t <- function(n, trend = "no trend", slope=1, amp = .6, custom_func = NULL, ...){
   day <- c(1:n)
   if (trend == "cos1"){
     seasont <- 1 + amp * cos(2 * pi * (day / 365))
@@ -39,11 +41,11 @@ calc_t <- function(n, trend = "no trend", amp = .6, custom_func = NULL, ...){
     } else if (trend == "cos3"){
       seasont <- 1 + .75 ^ (day / 365) * amp * cos(2 * pi * (day / 365))
     } else if (trend == "linear"){
-      seasont <- 1 + (day / n)
+      seasont <- 1 + slope*(day / n)
     } else if (trend == "curvilinear"){
       seasont <- 1 + day * (2 / n) + day^2 * (-1 / n^2)
     } else if (trend == "cos1linear"){
-      seasont <- (1 + (day / n)) * (1 + amp * cos(2 * pi * (day / 365)))
+      seasont <- (1 + slope*(day / n)) * (1 + amp * cos(2 * pi * (day / 365)))
     } else if (trend == "no trend"){
       seasont <- rep(1, n)
     } else if (trend == "custom" & !is.null(custom_func)) {
@@ -75,6 +77,8 @@ calc_t <- function(n, trend = "no trend", amp = .6, custom_func = NULL, ...){
 #'    }
 #'
 #' @param p A numeric value giving the mean probability of exposure
+#' @param slope A numeric value specifying the slope of the trend, to be used
+#'    with trend = "linear" or trend = "cos1linear".
 #' @param amp A numeric value specifying the amplitude of the seasonal trend.
 #'    Must be between 0 and .5.
 #' @param start.date A date of the format "yyyy-mm-dd" from which to begin
@@ -88,7 +92,7 @@ calc_t <- function(n, trend = "no trend", amp = .6, custom_func = NULL, ...){
 #' bin_t(n = 5, p = .3, trend = "cos1", amp = .3)
 #'
 #' @export
-bin_t <- function(n, p, trend = "no trend", amp = .01,
+bin_t <- function(n, p, trend = "no trend", slope = 1, amp = .01,
                   start.date = "2000-01-01", custom_func = NULL,...){
   day <- c(1:n)
   start.date <- as.Date(start.date)
@@ -109,7 +113,7 @@ bin_t <- function(n, p, trend = "no trend", amp = .01,
   } else if (trend == "cos3"){
     seasont <- p + .75 ^ (day / 365) * amp * cos(2 * pi * (day / 365))
   } else if (trend == "linear"){
-    seasont <- ifelse(p*(1 + day/n) <1, p*(1+day/n), 1)
+    seasont <- ifelse(p*(1 + slope*day/n) <1, p*(1+slope*day/n), 1)
   } else if (trend == "monthly"){
     months <- lubridate::month(date)
     seasont <- p[months]
@@ -143,9 +147,9 @@ bin_t <- function(n, p, trend = "no trend", amp = .01,
 #'
 #'
 #' @export
-binary_exposure <- function(n, p, trend = "no trend", amp,
+binary_exposure <- function(n, p, trend = "no trend", slope, amp,
                             start.date = "2000-01-01", custom_func = NULL, ...){
-  t <- bin_t(n=n, p=p, trend = trend, amp = amp, start.date = start.date,
+  t <- bin_t(n=n, p=p, trend = trend, slope=slope, amp = amp, start.date = start.date,
              custom_func = custom_func)
   x <- stats::rbinom(length(t), size = 1, prob = t)
   start.date <- as.Date(start.date)
@@ -171,12 +175,12 @@ binary_exposure <- function(n, p, trend = "no trend", amp,
 #' continuous_exposure(n = 5, mu = 100, sd = 10, trend = "cos1")
 #'
 #' @export
-continuous_exposure <- function(n, mu, sd = 1, trend = "no trend", amp = .6,
+continuous_exposure <- function(n, mu, sd = 1, trend = "no trend", slope, amp = .6,
                                 start.date = "2000-01-01", ...){
   day <- c(1:n)
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
-  t <- calc_t(n, trend, amp, start.date, ...)
+  t <- calc_t(n, trend, slope, amp, start.date, ...)
   newmu <- mu * t
   x <- stats::rnorm(n, newmu, sd)
   df <- data.frame(date, x)
@@ -205,17 +209,17 @@ continuous_exposure <- function(n, mu, sd = 1, trend = "no trend", amp = .6,
 #'
 #' @export
 std_exposure <- function(n, central, sd = NULL, trend = "no trend",
-                         exposure_type = "binary", amp,
+                         exposure_type = "binary", slope, amp,
                          start.date = "2000-01-01", ...){
   if(exposure_type=="binary"){
     p <- central
-    df <- binary_exposure(n=n, p=p, trend=trend, amp=amp, start.date=start.date,
-                          ...)
+    df <- binary_exposure(n=n, p=p, trend=trend, slope=slope, amp=amp,
+                          start.date=start.date, ...)
   }
   else if(exposure_type == "continuous"){
     mu <- central
-    df <- continuous_exposure(n=n, mu=mu, sd =sd, trend=trend, amp=amp,
-                              start.date=start.date, ...)
+    df <- continuous_exposure(n=n, mu=mu, sd =sd, trend=trend, slope=slope,
+                              amp=amp, start.date=start.date, ...)
   }
   return(df)
 }
@@ -238,11 +242,11 @@ std_exposure <- function(n, central, sd = NULL, trend = "no trend",
 #' sim_baseline(n = 5, lambda = 100, trend = "cos1")
 #'
 #' @export
-sim_baseline <- function(n, lambda, trend = "no trend", amp = .6,
+sim_baseline <- function(n, lambda, trend = "no trend", slope=1,  amp = .6,
                          start.date = "2000-01-01"){
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
-  t <- calc_t(n = n, trend = trend, amp = amp)
+  t <- calc_t(n = n, trend = trend, slope=slope, amp = amp)
   baseline <- lambda * t
   df <- data.frame(date, baseline)
   return(df)

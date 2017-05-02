@@ -69,7 +69,7 @@ custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, metric = "temp",
 #' ggplot(x_cust, aes(x = date, y = x)) + geom_point()
 #' @export
 sim_exposure <- function(n, central = NULL, sd = NULL, trend = "no trend",
-                         amp = .6, exposure_type = NULL,
+                         slope = 1, amp = .6, exposure_type = NULL,
                          start.date = "2001-01-01", cust_exp_func = NULL,
                          cust_exp_args = NULL){
   start.date <- as.Date(start.date)
@@ -88,6 +88,7 @@ sim_exposure <- function(n, central = NULL, sd = NULL, trend = "no trend",
     }
     arguments$central <- central
     arguments$trend <- trend
+    arguments$slope <- slope
     arguments$amp <- amp
     arguments$exposure_type <- exposure_type
     arguments$sd <- sd
@@ -159,6 +160,8 @@ custom_baseline <- function(n, df = dlnm::chicagoNMMAPS, outcome_type = "cvd",
 #'      \item{"no trend"}
 #'      \item{"custom"}
 #'    }
+#' @param slope slope A numeric value specifying the slope of the trend, to be used
+#'    with trend = "linear" or trend = "cos1linear".
 #' @param amp A numeric value specifying the amplitude of the seasonal trend.
 #'    Must be between 0 and 1.
 #' @param ... optional arguments to a custom baseline function
@@ -175,11 +178,12 @@ custom_baseline <- function(n, df = dlnm::chicagoNMMAPS, outcome_type = "cvd",
 #'
 #' @export
 #'
-create_baseline <- function(n, average_baseline, trend, amp,
+create_baseline <- function(n, average_baseline, trend, slope, amp,
                             cust_base_func = NULL, ...){
   if(is.null(cust_base_func)){
     lambda <- average_baseline
-    baseline <- sim_baseline(n=n, lambda=lambda, trend=trend, amp=amp)
+    baseline <- sim_baseline(n=n, lambda=lambda, trend=trend, slope=slope,
+                             amp=amp)
   } else {
     arguments <- list(...)
     arguments$n <- n
@@ -208,7 +212,8 @@ create_baseline <- function(n, average_baseline, trend, amp,
 #' @return A numeric vector of mean outcome values
 #'
 #' @examples
-#' base <- create_baseline(n = 5, average_outcome = 22, trend = "linear")
+#' base <- create_baseline(n = 10, average_baseline = 22, trend = "linear",
+#'                         slope=.4)
 #' exp <- sim_exposure(n = 5, central = 100, sd = 10, amp = .6,
 #'                     exposure_type = "continuous")
 #' create_lambda(baseline = base, exposure = exp, rr = 1.01)
@@ -251,7 +256,7 @@ create_lambda <- function(baseline, exposure, rr, cust_lambda_func = NULL, ...){
 #'
 #' @export
 sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
-                        amp = .6, rr = 1.01, start.date="2000-01-01",
+                        slope = 1, amp = .6, rr = 1.01, start.date="2000-01-01",
                         cust_base_func = NULL, cust_lambda_func = NULL,
                         cust_base_args = list(), cust_lambda_args = list()){
   start.date <- as.Date(start.date)
@@ -264,7 +269,7 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
     }
     baseline <- create_baseline(n = nrow(exposure),
                                 average_baseline = average_baseline,
-                                trend = trend,
+                                trend = trend, slope=slope,
                                 amp = amp)
     lambda <- create_lambda(baseline = baseline,
                             exposure = exposure$x,
@@ -279,7 +284,7 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
   } else if (is.null(cust_base_func) & !is.null(cust_lambda_func)){
     baseline <- create_baseline(n = nrow(exposure),
                                 average_baseline = average_baseline,
-                                trend = trend,
+                                trend = trend, slope=slope,
                                 amp = amp)
     cust_lambda_args$baseline <- baseline$baseline
     lambda <- do.call(cust_lambda_func, cust_lambda_args)
@@ -323,12 +328,17 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
 #'      \item{"no trend"}
 #'      \item{"custom"}
 #'    }
+#' @param exposure_slope A numeric value specifying the linear slope of the
+#'        exposure, to be used with exposure_trend = "linear" or "cos1linear".
 #' @param exposure_amp A numeric value specifying the amplitude of the exposure
 #'        trend. Must be between 0 and 1 for continuous exposure or between 0
 #'        and .5 for binary exposure.
 #' @param outcome_trend A character string specifying the seasonal trend in
 #'        health outcomes.  Options are the same as for continuous exposure
 #'        data.
+#' @param outcome_slope A numeric value specifying the linear slope of the
+#'        outcome trend, to be used with outcome_trend = "linear" or
+#'        "cos1linear".
 #' @param outcome_amp A numeric value specifying the amplitude of the outcome
 #'        trend.  Must be between 0 and 1.
 #' @param cust_exp_func A character string specifying the name of a custom
@@ -352,19 +362,22 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
 #' @export
 #'
 create_sims <- function(n_reps, n, central, sd=1, exposure_type, exposure_trend,
-                        exposure_amp, average_outcome, outcome_trend,
+                        exposure_slope, exposure_amp, average_outcome,
+                        outcome_trend, outcome_slope,
                         outcome_amp, rr, start.date = "2000-01-01",
                         cust_exp_func = NULL, cust_exp_args = NULL,
                         cust_base_func = NULL, cust_lambda_func = NULL,
                         cust_base_args = NULL, cust_lambda_args = NULL){
 
   exposure <- lapply(rep(n, times = n_reps), sim_exposure, central = central,
-                     sd = sd, exposure_type = exposure_type, amp = exposure_amp,
+                     sd = sd, exposure_type = exposure_type,
+                     slope = exposure_slope, amp = exposure_amp,
                      trend = exposure_trend, start.date = start.date,
                      cust_exp_func = cust_exp_func,
                      cust_exp_args = cust_exp_args)
   outcome <- lapply(exposure, sim_outcome, average_outcome = average_outcome,
-                    trend = outcome_trend, amp = outcome_amp, rr = rr,
+                    trend = outcome_trend, slope = outcome_slope,
+                    amp = outcome_amp, rr = rr,
                     start.date = start.date, cust_base_func = cust_base_func,
                     cust_lambda_func = cust_lambda_func,
                     cust_base_args = cust_base_args,
@@ -426,9 +439,10 @@ fit_mods <- function(outcome, model, df_year = 7){
 #'       df_year = 5)
 #'
 #' @export
-eesim <- function(n_reps, n, central = NULL, sd = NULL, exposure_type, exposure_trend = NULL,
+eesim <- function(n_reps, n, central = NULL, sd = NULL, exposure_type,
+                  exposure_trend = NULL, exposure_slope = NULL,
                   exposure_amp = NULL, average_outcome = NULL,
-                  outcome_trend = "no trend",
+                  outcome_trend = "no trend", outcome_slope = NULL,
                   outcome_amp = NULL, rr, start.date = "2000-01-01",
                   cust_exp_func = NULL, cust_exp_args = NULL,
                   cust_base_func = NULL, cust_lambda_func = NULL,
@@ -437,9 +451,12 @@ eesim <- function(n_reps, n, central = NULL, sd = NULL, exposure_type, exposure_
   datasims <- create_sims(n_reps=n_reps, n=n, central=central, sd=sd,
                           exposure_type=exposure_type,
                           exposure_trend=exposure_trend,
+                          exposure_slope = exposure_slope,
                           exposure_amp=exposure_amp,
                           average_outcome=average_outcome,
-                          outcome_trend=outcome_trend, outcome_amp=outcome_amp,
+                          outcome_trend=outcome_trend,
+                          outcome_slope=outcome_slope,
+                          outcome_amp=outcome_amp,
                           rr=rr, start.date = "2000-01-01",
                           cust_exp_func = cust_exp_func, cust_exp_args = cust_exp_args,
                           cust_base_func = cust_base_func, cust_lambda_func = cust_lambda_func,
