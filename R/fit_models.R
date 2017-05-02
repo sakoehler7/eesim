@@ -2,7 +2,8 @@
 #'
 #' This function fits a GLM with splines to your data.
 #'
-#' @param df A data frame with exposure and outcome data
+#' @param df A data frame with exposure and outcome data called "x" and "outcome",
+#'    respectively
 #' @param df_year A numeric value specifying the degrees of freedom per year
 #'
 #' @return Summary of the estimated log relative risk for a 1-unit increase in

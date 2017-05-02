@@ -52,3 +52,16 @@ customlambda <- function(exposure, rr, constant, baseline){
 #Example:
 testlambda <- customlambda(testexp$x, testbase$baseline, rr=1.01, constant = 4)
 ```
+
+##Custom function for model
+
+```{r}
+trivial_mod <- function(df, constant){
+  newx <- constant*df$x
+  mod <- lm(outcome~newx, data=df)
+  out_1 <- summary(mod)$coef[2, ]
+  out_2 <- stats::confint.default(mod)[2, ]
+  out <- c(out_1, out_2)
+  return(out)
+}
+```

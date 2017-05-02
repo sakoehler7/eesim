@@ -76,7 +76,7 @@ beta_var <- function(df){
 #'                     average_outcome = 20,
 #'                     outcome_trend = "no trend",
 #'                     rr = 1.01)
-#' fits <- fit_mods(outcome = sims, model = "spline", df_year = 1)
+#' fits <- fit_mods(data = sims, model = "spline", df_year = 1)
 #' beta_bias(fits, true_rr = 1.02)
 #'
 #' @export
@@ -100,12 +100,12 @@ beta_bias <- function(df, true_rr){
 #' @examples
 #' sims <- create_sims(n_reps = 10, n = 600, central = 100,
 #'                     sd = 10, exposure_type = "continuous",
-#'                     exposure_trend = "cos1",
+#'                     exposure_trend = "cos1", exposure_slope=1,
 #'                     exposure_amp = 0.6,
 #'                     average_outcome = 20,
 #'                     outcome_trend = "no trend",
 #'                     rr = 1.01)
-#' fits <- fit_mods(outcome = sims, model = "spline", df_year = 1)
+#' fits <- fit_mods(data = sims, model = "spline", df_year = 1)
 #' coverage_beta(df=fits, true_rr = 1.02)
 #'
 #' @export
@@ -132,7 +132,7 @@ coverage_beta <- function(df, true_rr){
 #'                     average_outcome = 20,
 #'                     outcome_trend = "no trend",
 #'                     rr = 1.01)
-#' fits <- fit_mods(outcome = sims, model = "spline", df_year = 1)
+#' fits <- fit_mods(data = sims, model = "spline", df_year = 1)
 #' power_beta(fits)
 #'
 #' @export
@@ -159,7 +159,7 @@ power_beta <- function(df){
 #'                     average_outcome = 20,
 #'                     outcome_trend = "no trend",
 #'                     rr = 1.02)
-#' fits <- fit_mods(outcome = sims, model = "spline", df_year = 1)
+#' fits <- fit_mods(data = sims, model = "spline", df_year = 1)
 #' check_sims(df = fits, true_rr = 1.02)
 #'
 #' @export

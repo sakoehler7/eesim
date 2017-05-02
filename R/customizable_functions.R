@@ -363,8 +363,8 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
 #' @export
 #'
 create_sims <- function(n_reps, n, central, sd=1, exposure_type, exposure_trend,
-                        exposure_slope, exposure_amp, average_outcome,
-                        outcome_trend, outcome_slope,
+                        exposure_slope=1, exposure_amp, average_outcome,
+                        outcome_trend, outcome_slope=1,
                         outcome_amp, rr, start.date = "2000-01-01",
                         cust_exp_func = NULL, cust_exp_args = NULL,
                         cust_base_func = NULL, cust_lambda_func = NULL,
@@ -388,10 +388,17 @@ create_sims <- function(n_reps, n, central, sd=1, exposure_type, exposure_trend,
 
 #' Fit models
 #'
-#' @param outcome A list of simulated data sets which each include columns
-#'    called "x" and "outcome"
+#' @param data A list of simulated data sets which each include columns
+#'    called "x" for exposure values and "outcome" for outcome values
 #' @param model A character string specifying model to be used. Choices are
 #'    "spline" and "casecrossover"
+#' @param custom_model A character string for the name of the custom model. This
+#'    is a user-created function which takes a data frame with columns "x" for
+#'    exposure values and "outcome" for outcome values. It must output a data
+#'    frame with columns called "Estimate", "Std. Error", "t value", "Pr(>|t|)",
+#'    "2.5 %", and "97.5 %", the output from summary() and confint()
+#' @param custom_model_args A list of arguments and their values for a custom
+#'    model.
 #' @inheritParams spline_mod
 #'
 #' @return A data frame in which each row includes an estimate of beta hat,
@@ -403,15 +410,20 @@ create_sims <- function(n_reps, n, central, sd=1, exposure_type, exposure_trend,
 #'             exposure_type="continuous", exposure_trend = "cos1",
 #'             exposure_amp = .6, average_outcome = 22,
 #'             outcome_trend = "no trend", outcome_amp = .6, rr = 1.01)
-#' fit_mods(outcome = sims, model = "spline")
+#' fit_mods(data = sims, model = "spline")
 #'
 #' @export
-fit_mods <- function(outcome, model, df_year = 7){
+fit_mods <- function(data, model=NULL, df_year = 7, custom_model = NULL,
+                     custom_model_args = list()){
+  if(is.null(custom_model)){
   if(model == "spline"){
-    mods <- lapply(outcome, spline_mod, df_year = df_year)
+    mods <- lapply(data, spline_mod, df_year = df_year)
   }
   else if(model == "casecrossover"){
-    mods <- lapply(outcome, casecross_mod)
+    mods <- lapply(data, casecross_mod)
+  }}
+  else if(!is.null(custom_model)){
+    mods <- lapply(data, custom_model, custom_model_args)
   }
   datframe <- data.frame(do.call("rbind", mods))
   names(datframe) <- c("Estimate", "Std.Error", "t.value", "p.value",
@@ -447,8 +459,8 @@ eesim <- function(n_reps, n, central = NULL, sd = NULL, exposure_type,
                   outcome_amp = NULL, rr, start.date = "2000-01-01",
                   cust_exp_func = NULL, cust_exp_args = NULL,
                   cust_base_func = NULL, cust_lambda_func = NULL,
-                  cust_base_args = NULL, cust_lambda_args = NULL, model,
-                  df_year = NULL){
+                  cust_base_args = NULL, cust_lambda_args = NULL, model = NULL,
+                  df_year = NULL, custom_model = NULL, custom_model_args = NULL){
   datasims <- create_sims(n_reps=n_reps, n=n, central=central, sd=sd,
                           exposure_type=exposure_type,
                           exposure_trend=exposure_trend,
@@ -462,7 +474,8 @@ eesim <- function(n_reps, n, central = NULL, sd = NULL, exposure_type,
                           cust_exp_func = cust_exp_func, cust_exp_args = cust_exp_args,
                           cust_base_func = cust_base_func, cust_lambda_func = cust_lambda_func,
                           cust_base_args = cust_base_args, cust_lambda_args = cust_lambda_args)
-  mods <- fit_mods(datasims, model, df_year)
+  mods <- fit_mods(datasims, model=model, custom_model = custom_model,
+                   df_year=df_year, custom_model_args=custom_model_args)
   check <- check_sims(df = mods, true_rr = rr)
   totalsims <- list(mods, check)
   return(c(totalsims, datasims))
