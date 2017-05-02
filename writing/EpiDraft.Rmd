@@ -549,6 +549,12 @@ leg_cases[which(leg_cases$checkpa != "Pa."),]
 ```
 
 ```{r}
+#Precipitation data for New York City and Philadelphia:
+setwd("~/eesim/Legionnaires data")
+#parain <- readRDS("pa.rds") Why does this work in the console and not here?
+```
+
+```{r}
 #Power analysis using eesim
 
 ```
