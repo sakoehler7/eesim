@@ -305,7 +305,8 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
 #'        to be performed
 #' @param n A numeric value specifying the number of days to simulate.
 #' @param sd A numeric value giving the standard deviation of the exposure
-#'    values around the trend line.
+#'    values from the exposure trend line (not the total standard deviation of
+#'    the exposure values).
 #' @param exposure_trend A character string specifying the seasonal trend for
 #'        exposure. Options for continuous exposure are:
 #'        \itemize{

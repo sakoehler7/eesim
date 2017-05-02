@@ -165,7 +165,8 @@ binary_exposure <- function(n, p, trend = "no trend", slope, amp,
 #'
 #' @param mu A numeric value giving the mean exposure.
 #' @param sd A numeric value giving the standard deviation of the exposure
-#'    values around the trend line.
+#'    values from the exposure trend line (not the total standard deviation of
+#'    the exposure values).
 #' @inheritParams calc_t
 #' @inheritParams binary_exposure
 #'
