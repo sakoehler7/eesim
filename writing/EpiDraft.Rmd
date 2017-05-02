@@ -505,6 +505,8 @@ leg_cases[,1:4] %>%
   theme_classic() + 
   theme(legend.position = "top")
 
+save(leg_cases, file="data/leg_cases.rda")
+
 ```
 
 ```{r}
