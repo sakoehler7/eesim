@@ -8,7 +8,12 @@ output:
   html_document: default
 ---
 
-#Introduction
+```{r echo = FALSE}
+# knitr::opts_chunk$set(eval = FALSE)
+```
+
+
+# Introduction
 
 Simulation studies are important in environmental epidemiology research on air pollution, temperature, and other exposures. For example, simulated data can be used to test new statistical models and perform power analyses. Two current challenges of simulating time series data for epidemiology studies are (1) methods for simulating are inconsistent, making it difficult to compare results from different studies, and (2) developing the code to simulate environmental time series for these types of studies can be time consuming. We introduce `eesim`, an open-source software package in R that offers a solution to these challenges.
 
@@ -18,7 +23,7 @@ Here, we present an R package that automates simulation of environmental time se
 
 This package can be used to aid simulation studies to explore environmental epidemiology models relating acute health outcomes and daily environmental exposures; it can also be used to estimate the power of studies when planning or proposing future research.
 
-#Simulating Data and Testing Models
+# Simulating Data and Testing Models
 
 Simulation studies can be used to assess different models and modeling choices. This way of assessing models can be particularly useful for complex statistical methods, for which assessing performance metrics can often prove difficult [@Alfons2010]. The `eesim` package allows you to simulate time series of environmental health data and perform simulation-based power analyses and other measures of model performance. The package includes four main parts: 
 
@@ -52,7 +57,7 @@ The `eesim` output also gives the relative parameter estimate bias, according to
 
 Finally, the `eesim` output gives the coverage and power of the model.
 
-#Power Analysis
+# Power Analysis
 
 Simulation studies can be used to determine effective sample size or power when planning or proposing future research studies. This method can be particularly useful in cases where modeling of the study data will be particularly complex and when the strong assumptions of classical, analytical power analysis are questionable [@Bellan2015; @Johnson2015; @Burton2009; @Alfons2010; @Beaujean2014; @Schoemann2014]. Simulation studies can often be used to generate power analyses under a more realistic set of assumptions [@Burton2009; @Beaujean2014].
 
@@ -65,9 +70,34 @@ Here is an example of using `power_calc` to test power for different sample size
 
 The `power_calc` function will also return a plot if `plot=TRUE` is specified. 
 
-##Legionnaire's Example
+## Legionnaire's Example
 
-###Actual Data from the CDC
+As a case study, we give an example of conducting a power analysis for a planned study of the relationship between Legionnaires' disease (LD) and extreme precipitation in a community. 
+
+[Description of LD]
+The bacteria that causes LD, *Legionella*, is often present in ... . 
+[Where Lp live-- water systems, systems for A/C, ...]
+[What Lp need to grow-- protozoa (must grow inside them?), temperature conditions, water, water temperature?]
+[What Lp need to spread-- survival on aerosols, lower UV, enough wind to spread aerosols but not to break up aerosols, high relative humidity]
+The incubation period for LD is 2--10 days (this is relevant for the time between dispersal of Lp on aerosols and case onset) [@Halsby2014] [also could reference Campese et al. 2011, Farnham et al. 2014, Graham et al. 2011, Whiley et al. 2014, Phin et al. 2014, Brandsema et al. 2014, Dunn et al. 2012, Fisman et al. 2005, Halsby et al. 2013].
+[Destinction between community-acquired LD and other LD cases; sporadic vs. epidemic]
+Based on previous studies, approximately 2--6% of LD cases are outbreak-associated, rather than sporadic [Campese et al. 2011, Graham et al. 2011, Fisman et al. 2005, Halsby et al. 2013, Phin et al. 2014].
+Community counts of sporadic, community-acquired LD cases have been found to display a strong seasonal pattern, with most cases in summer to early fall [@Halsby2014; Campese et al. 2011; Falkinham et al. 2015; Farnham et al. 2014; Phin et al. 2014; Brandsema et al. 2014]. This seasonal trend may stem in part from seasonal variaition in weather factors, but may also be related to other seasonally-varying factors. Counts of LD cases have also shown a strong long-term trend in many locations, including in England and Wales between 1993 and 2008 [@Halsby2014], in France between 1998 and 2008 [Campese et al. 2011], and in the United States between 2000 and 2011 [Falkinham et al. 2015], ... . This long-term trend may in part reflect a growing improvement in reporting and testing [?] of potential cases [ref]; in fact, one study in Australia notes that the total incidence of LD cases might be a factor of 20 higher than the number of reported cases because of severe underreporting [Whiley et al. 2014]. 
+
+[Why we think LD might be linked with weather] 
+[Theoretical reasons]
+Weather could affect risk of LD by affecting either the growth or the spread, via aerosol dispersion [?], of the *Legionella* bacteria that causes the disease. [Why weather factor might affect growth of Lp] [Temperature could affect growth of Lp, including through a chain that increases growth of what protozoa eat, since Lp need to grow in protozoa?] A number of weather-related factors, including higher relative humidity and lower exposure to sunlight [?], might aid in survival of *Legionella* on aerosols [check Berendt 1980, Survival of Legionella pneumophila in aerosols...; Hambleton et al. 1983, Susceptibility of Lp to ultraviolet radiation; check for anything more current about survival of Lp on aerosols]
+[Evidenced on sporadic cases from epi studies]
+Several studies have investigated the association between weather conditions and daily counts of community-acquired LD cases using time series models. Many of these have found an increased risk of community-acquired LD following certain weather conditions; weather variables implicated include rainfall, wind speed, sunlight, relative humidity. For example, a study of community-acquired LD and weather in England and Wales found increased risk of LD associated with higher temperatures (at lags of 1--9 weeks; estimated odds ratio for 95th percentile versus 75th percentile temperature of 3.91), higher relative humidity (at lags of 2--10 days; estimated odds ratio for 75th versus 50th percentile relative humidity of 1.52), and higher rainfall (at lags of 2--10 days; estimated odds ratio for 75th versus 50th percentile rainfall of 1.78) [@Halsby2014]. A study of sporadic LD cases in the Netherlands between 2003 and 2011 found increased risk associated with warm temperature (4-week mean) and increased rainfall (2-week duration and intensity) [Brandsema et al. 2014]. A study in Taiwan between 1995 and 2011 found an increase in LD cases associated with increased temperature (lag day 10-11) and increased precipitation (lag day 11), with an increased risk of LD cases of 2.6 associated with heavy versus no rainfall eleven days prior [Nai-Tzu et al. 2014]. A study of LD cases in the greater Philadelphia metropolitan area between 1995 and 2003 found increased risk of LD following about eight days following precipitation (compared to no precipitation) as well as increased risk associated with higher relative humidity and higher temperature and decreased risk associated with a higher wind speed (at a similar lag?) [double-check. Fisman et al. 2005].
+[Evidence on outbreak cases from epi studies]
+The risk of outbreaks of LD might also be related to weather conditions, including extreme precipitation (e.g., [check Hoyle et al. 1985 Legionnaires' disease: seeking a wider source; Thacker et al. 1978, An outbreak in 1965 of severe respiratory illness caused by ...]).
+
+[Why power might be an issue in a study of LD and weather] 
+While the epidemiological estimates of the association between LD and weather variables could help in designing strategies to prevent cases of the disease or identify periods of heightened risk, the power to do such an analysis may be low in many communities because LD is typically a fairly rare disease. For example, a study of all sporadic community-acquired LD cases throughout England and Wales between 1993 and 2008 included only 1,676 cases after excluding cases that were possible travel-acquired and other data quality-related exclusions [@Halsby2014]. Several studies have used time series [Dunn et al. 2012] or case-crossover [@Halsby2014, Nai-Tzu et al. 2014, Fisman et al. 2005] designs to investigate the association between weather variables and community-wide risk of LD. These, however, have mostly been conducted on very large study populations (e.g., England and Wales[@Halsby2014]; Netherlands [Brandsema et al. 2014]; Taiwan [Nai-Tzu et al. 2014]). Even in these large populations, associations with some weather variables were suggestive but not statistically significant (e.g., for windspeed and UV in England and Wales; @Halsby2014). One study was conducting in a smaller population (the greater Philadelphia metropolitan area; Fisman et al. 2005). Some of these studies have controlled for season [@Halsby2014; Brandsema et al. 2014, Nai-Tzu et al. 2014, Fisman et al. 2005] while some have not [?].  
+
+Since it is unclear if the relationship between LD risk and weather variables is linear, many of these studies have investigated either categorical versions of the weather variables [e.g., Brandsema et al. 2014, Nai-Tzu et al. 2014] or estimated risks at two percentiles along the weather variable's full distribution (e.g., @Halsby2014).
+
+### Actual Data from the CDC
 
 We can perform power analyses on real data to determine whether we have a large enough sample size, relative risk, or average outcome value to provide sufficient power for testing hypotheses.  Presented here is weekly data from the CDC on mortality related to Legionnaire's disease (citation?). We focus on data from New York City, Pennsylvania, and the Midatlantic region from 2006 through 2017.
 

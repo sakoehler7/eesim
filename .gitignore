@@ -11,3 +11,5 @@ DraftOne_cache/
 DraftOne_cache/docx/
 DraftOne_files/figure-docx
 DraftOne_files/
+.DS_Store
+writing/.DS_Store
