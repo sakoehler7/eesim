@@ -297,8 +297,7 @@ calendar_plot(x_bin, type = "discrete", labels = c("Not exposed", "Exposed"))
 
 So far, these `sim_exposure` calls have been used to simulate basic exposure data, without long-term or seasonal trends. However, for environmental epidemiology applications, exposure data often has a seasonal trend and / or long-term trend, and these temporal trends can serve as confounders in assessing the association between time-varying environmental exposures and health outcomes. The `sim_exposure` function therefore includes options to generate exposure data with long-term and seasonal trends relevant to environmental time series studies, through the `trend` argument.
 
-The default for `sim_exposure` is to simulate the exposure data without a time trend (`trend = "no trend"`). However, we have also built in several time trends from which a user can to choose to simulate exposure data with a time trend, either seasonal or long-term or both, based on trend patterns used in a simulation study of ... [add reference for Schwartz paper where we got some of the trend equations]. These trend patterns differ slightly depending on whether the user is simulating binary or continuous data. Below are plots of the built-in trends for continuous exposure data from which the user may choose. 
-
+The default for `sim_exposure` is to simulate the exposure data without a time trend (`trend = "no trend"`). However, we have also built in several time trends from which a user can to choose to simulate exposure data with a time trend, either seasonal or long-term or both, based on trend patterns used in a simulation study of case-crossover studies as a method of controlling for seasonal and long-term trends in environmental epidemiology studies [@Bateson1999]. These trend patterns differ slightly depending on whether the user is simulating binary or continuous data. Below are plots of the built-in trends for continuous exposure data from which the user may choose. 
 ```{r fig.width = 7, fig.height = 4, echo = FALSE, message = FALSE}
 data.frame(day = 1:1000) %>%
   mutate(`"no trend"` = calc_t(n = 1000, trend = "no trend"),
@@ -448,9 +447,9 @@ As with the exposure simulation step, this step can also be extensively customiz
 
 Next, the `eesim` package allows you to generate many simulated data sets and then to fit statistical models to these generated datasets. This step allows tests of model performance.  The built-in model choices are a spline model and a case-crossover model. The fit_mods function outputs a data frame with estimates of the log relative risk, p-values, and upper and lower 95% confidence bounds for each simulated data set.
 
-Here is an example of fitting the spline model with 7 degrees of freedom:
+Here is an example of fitting the spline model with 7 degrees of freedom: [need to fix for updated `fit_mods` code]
 
-```{r}
+```{r eval = FALSE}
 sims <- create_sims(n_reps = 10, n = 100, central = 100, sd = 10,
              exposure_type="continuous", exposure_trend = "cos1",
              exposure_amp = .6, average_outcome = 22,
@@ -465,7 +464,7 @@ Next, `eesim` evaluates model performance with several different measures.  The 
 
 Here is an example of the use of the check_sims function:
 
-```{r}
+```{r eval = FALSE}
 check_sims(fits, true_rr = 1.01)
 ```
 
@@ -551,3 +550,20 @@ customlambda <- function(exposure, rr, constant, baseline){
 ```
 
 [For this example, it would be interesting to instead show a `customlambda` that calculates lambda based on a model with separate relative rates for lag 0 and lag 1 of the exposure. Alternatively, it would be interesting to show how to simulate exposure if is has a risk both from the exposure we care about (e.g., PM2.5 concentration) and an exposure that might be a confounder (e.g., temperature). I wonder if we could write this function in a way that a second simulated exposure also contributes to lambda? I'm thinking we could actually call `sim_exposure` from within this custom function to simulate the second exposure (temperature), and then have an equation for log_lambda that includes terms for both exposures.]
+
+
+# Case study
+
+[Using this package to re-do the analysis in Bateson and Schwartz, 1999]
+
+```{r}
+case_study_1 <- eesim(n_reps = 1000, n = 1096, 
+           central = 0.25,
+           exposure_type = "binary", exposure_trend = "cos1",
+           exposure_amp = -0.2, average_outcome = 22,
+           outcome_trend = "cos2", outcome_amp = 0.2, 
+           rr = 1.10, model = "casecrossover")
+case_study_1[[2]]
+coverage_plot(sample_n(case_study_1[[1]], 100), true_param = 1.10)
+```
+
