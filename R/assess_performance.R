@@ -197,7 +197,8 @@ check_sims <- function(df, true_rr){
 #' @inheritParams fit_mods
 #'
 #' @return Data frame with the values of the varying parameter and their
-#'    corresponding power
+#'    corresponding power. If the \code{plot} argument is set to \code{TRUE},
+#'    it also returns a power curve plot as a side effect.
 #'
 #' @examples
 #'
@@ -218,7 +219,8 @@ check_sims <- function(df, true_rr){
 #' @export
 power_calc <- function(varying, values, n_reps, n = NULL, central, sd = NULL, exposure_type,
                        exposure_trend = "no trend", exposure_amp, average_outcome,
-                       outcome_trend = "no trend", outcome_amp, rr = NULL, start.date = "2000-01-01",
+                       outcome_trend = "no trend", outcome_amp, rr = NULL,
+                       start.date = "2000-01-01",
                        cust_exp_func = NULL, cust_exp_args = NULL,
                        cust_base_func = NULL, cust_lambda_func = NULL,
                        cust_base_args = NULL, cust_lambda_args = NULL,
