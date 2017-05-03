@@ -112,8 +112,15 @@ plot(leg$cases, xlab = "Week", ylab = "Number of Cases", main = "Legionnaire's D
 
 ```{r, echo=F, warning=F, message=F}
 #plot of CDC data
+library(rvest)
+library(purrr)
+library(dplyr)
+library(stringr)
+library(lubridate)
+library(tidyr)
 library(ggplot2)
 
+load("~/eesim/writing/data/leg_cases.rda")
 leg_cases[,1:4] %>% 
   gather(key = location, value = cases, - week_end_date) %>% 
   ggplot(aes(x = week_end_date, y = cases, color = location)) + 
@@ -124,7 +131,7 @@ leg_cases[,1:4] %>%
 
 ```
 
-```{r}
+```{r, echo=F, eval=F}
 #Checking for anomalies:
 leg_cases[which(leg_cases$checkma != "MID. ATLANTIC"),]
 leg_cases[which(leg_cases$checknyc != "N.Y. City"),]
@@ -154,7 +161,8 @@ nyrain$year <- year(nyrain$date)
 #Monthly rainfall above 75th, 95th, and 99th percentiles for Philly and NYC
 pamonthly <- group_by(parain, month, year) %>% summarise(quant75 =mean(quant75), quant95=mean(quant95), quant99=mean(quant99))
 nymonthly <- group_by(nyrain, month, year) %>% summarise(mean(quant75), mean(quant95), mean(quant99))
-ggplot(pamonthly, aes(x=1:136, y=quant95))+geom_line()
+#What pattern is this?
+ggplot(pamonthly, aes(x=1:136, y=quant95))+geom_line()+geom_vline(xintercept=seq(from=1, to=136, by=12), col="red") + ggtitle("Monthly rainfall for Philadelphia 2006-2017")+ ylab("Proportion of days over 95th percentile")
 ```
 
 ```{r}
@@ -165,7 +173,6 @@ ggplot(pamonthly, aes(x=1:136, y=quant95))+geom_line()
 We can pull the trend from this data:
 
 ```{r}
-custom
 ```
 
 ### Simulated Data with Similar Trend 
