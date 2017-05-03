@@ -216,13 +216,13 @@ check_sims <- function(df, true_rr){
 #'            model = "casecrossover", plot=TRUE)
 #'
 #' @export
-power_calc <- function(varying, values, n_reps, n=NULL, central, sd = NULL, exposure_type,
-                       exposure_trend, exposure_amp, average_outcome, outcome_trend,
-                       outcome_amp, rr=NULL, start.date = "2000-01-01",
+power_calc <- function(varying, values, n_reps, n = NULL, central, sd = NULL, exposure_type,
+                       exposure_trend = "no trend", exposure_amp, average_outcome,
+                       outcome_trend = "no trend", outcome_amp, rr = NULL, start.date = "2000-01-01",
                        cust_exp_func = NULL, cust_exp_args = NULL,
                        cust_base_func = NULL, cust_lambda_func = NULL,
                        cust_base_args = NULL, cust_lambda_args = NULL,
-                       model, df_year=7, plot=FALSE){
+                       model, df_year = 7, plot = FALSE){
   if(varying == "n"){
     rep_df <- values %>% purrr::map(create_sims, n_reps=n_reps, central=central, sd=sd,
                                     exposure_type = exposure_type,
