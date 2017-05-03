@@ -177,10 +177,19 @@ check_sims <- function(df, true_rr){
 
 #' Power Calculations
 #'
-#' This function gives the power for a model with varying parameters.
+#' Calculate the expected power of an enviromental epidemiology time series study based
+#' on simulated datasets. This function uses the simulation provided by \code{eesim} to
+#' simulate multiple environmental epidemiology datasets under different scenarios (e.g.,
+#' total days in study, size of association between exposure and outcome, or baseline
+#' average daily count of the outcome in the study) and estimates the power of a specified
+#' model to detect the hypothesized association.
 #'
 #' @param varying A character string of the parameter to be varied.  Choices are
-#'    "n" or "rr"
+#'    "n" (which varies the number of days in each dataset of simulated data) or
+#'    "rr" (which varies the relative rate per unit increase in exposure that is used
+#'    to simulate the data). For whichever of these two values is not set to vary in this
+#'    argument, the user must specify a constant value to this funciton through either the
+#'    \code{n} or the \code{rr} argument.
 #' @param values A numeric vector of the chosen values of the varying parameters
 #' @param plot "TRUE" or "FALSE" for whether to produce a plot
 #' @inheritParams power_beta
@@ -191,11 +200,20 @@ check_sims <- function(df, true_rr){
 #'    corresponding power
 #'
 #' @examples
-#' pow <- power_calc(varying = "n", values = c(50, 75, 100), n_reps = 20,
-#'            central = 100, sd=10, rr = 1.001, exposure_type = "continuous",
-#'            exposure_trend = "cos1", exposure_amp = .6, average_outcome=22,
+#'
+#' # Calculate power for studies that vary in the total length of the study period
+#' # (between one and twenty-one years of data) for the association between a continuous
+#' # exposure with a seasonal trend (mean = 100, sd from seasonal baseline = 10) and a count
+#' # outcome (e.g., daily number of deaths, mean daily value across the study period of 22).
+#' # The alternative hypothesis is that there is a relative rate of the outcome of 1.001 for
+#' # every one-unit increase in exposure. The null hypothesis is that there is no association
+#' # between the exposure and the outcome. The model used to test for an association is a
+#' # case-crossover model
+#' pow <- power_calc(varying = "n", values = floor(365.25 * seq(1, 21, by = 4)), n_reps = 20,
+#'            central = 100, sd = 10, rr = 1.001, exposure_type = "continuous",
+#'            exposure_trend = "cos1", exposure_amp = .6, average_outcome = 22,
 #'            outcome_trend = "no trend", outcome_amp = .6,
-#'            start.date = "2000-01-01", model = "casecrossover", plot=TRUE)
+#'            model = "casecrossover", plot=TRUE)
 #'
 #' @export
 power_calc <- function(varying, values, n_reps, n=NULL, central, sd = NULL, exposure_type,
