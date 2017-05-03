@@ -5,7 +5,7 @@
 \title{Simulate exposure data using default methods}
 \usage{
 std_exposure(n, central, sd = NULL, trend = "no trend",
-  exposure_type = "binary", amp, start.date = "2000-01-01", ...)
+  exposure_type = "binary", slope, amp, start.date = "2000-01-01", ...)
 }
 \arguments{
 \item{n}{A numeric value specifying the number of days to simulate.}
@@ -14,7 +14,8 @@ std_exposure(n, central, sd = NULL, trend = "no trend",
 (for binary data) or the mean exposure value (for continuous data).}
 
 \item{sd}{A numeric value giving the standard deviation of the exposure
-values around the trend line.}
+values from the exposure trend line (not the total standard deviation of
+the exposure values).}
 
 \item{trend}{A character string that specifies the desired trend function.
 Options are:
@@ -33,6 +34,9 @@ Default is "no trend".}
 
 \item{exposure_type}{A character string specifying the type of exposure.
 Choices are "binary" or "continuous".}
+
+\item{slope}{A numeric value specifying the slope of the trend, to be used
+with trend = "linear" or trend = "cos1linear".}
 
 \item{amp}{A numeric value specifying the amplitude of the seasonal trend.
 Must be between 0 and 1.}

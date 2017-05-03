@@ -5,7 +5,7 @@
 \title{Simulate outcome}
 \usage{
 sim_outcome(exposure, average_outcome = NULL, trend = "no trend",
-  amp = 0.6, rr = 1.01, start.date = "2000-01-01",
+  slope = 1, amp = 0.6, rr = 1.01, start.date = "2000-01-01",
   cust_base_func = NULL, cust_lambda_func = NULL, cust_base_args = list(),
   cust_lambda_args = list())
 }
@@ -26,6 +26,9 @@ sim_outcome(exposure, average_outcome = NULL, trend = "no trend",
   \item{"no trend"}
   \item{"custom"}
 }}
+
+\item{slope}{slope A numeric value specifying the slope of the trend, to be used
+with trend = "linear" or trend = "cos1linear".}
 
 \item{amp}{A numeric value specifying the amplitude of the seasonal trend.
 Must be between 0 and 1.}

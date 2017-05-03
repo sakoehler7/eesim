@@ -29,7 +29,8 @@ user may input a custom function to relate exposure, relative risk, and
 baseline.
 }
 \examples{
-base <- create_baseline(n = 5, average_outcome = 22, trend = "linear")
+base <- create_baseline(n = 10, average_baseline = 22, trend = "linear",
+                        slope=.4)
 exp <- sim_exposure(n = 5, central = 100, sd = 10, amp = .6,
                     exposure_type = "continuous")
 create_lambda(baseline = base, exposure = exp, rr = 1.01)

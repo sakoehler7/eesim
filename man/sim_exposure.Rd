@@ -5,7 +5,7 @@
 \title{Simulate time series of exposure values}
 \usage{
 sim_exposure(n, central = NULL, sd = NULL, trend = "no trend",
-  amp = 0.6, exposure_type = NULL, start.date = "2001-01-01",
+  slope = 1, amp = 0.6, exposure_type = NULL, start.date = "2001-01-01",
   cust_exp_func = NULL, cust_exp_args = NULL)
 }
 \arguments{
@@ -15,7 +15,8 @@ sim_exposure(n, central = NULL, sd = NULL, trend = "no trend",
 (for binary data) or the mean exposure value (for continuous data).}
 
 \item{sd}{A numeric value giving the standard deviation of the exposure
-values around the trend line.}
+values from the exposure trend line (not the total standard deviation of
+the exposure values).}
 
 \item{trend}{A character string that specifies the desired trend function.
 Options are:
@@ -31,6 +32,9 @@ Options are:
 }
 See the package vignette for examples of the shapes of these trends.
 Default is "no trend".}
+
+\item{slope}{A numeric value specifying the slope of the trend, to be used
+with trend = "linear" or trend = "cos1linear".}
 
 \item{amp}{A numeric value specifying the amplitude of the seasonal trend.
 Must be between 0 and 1.}

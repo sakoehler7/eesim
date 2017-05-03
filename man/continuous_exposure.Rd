@@ -4,7 +4,7 @@
 \alias{continuous_exposure}
 \title{Simulate continuous exposure data}
 \usage{
-continuous_exposure(n, mu, sd = 1, trend = "no trend", amp = 0.6,
+continuous_exposure(n, mu, sd = 1, trend = "no trend", slope, amp = 0.6,
   start.date = "2000-01-01", ...)
 }
 \arguments{
@@ -13,7 +13,8 @@ continuous_exposure(n, mu, sd = 1, trend = "no trend", amp = 0.6,
 \item{mu}{A numeric value giving the mean exposure.}
 
 \item{sd}{A numeric value giving the standard deviation of the exposure
-values around the trend line.}
+values from the exposure trend line (not the total standard deviation of
+the exposure values).}
 
 \item{trend}{A character string that specifies the desired trend function.
 Options are:
@@ -29,6 +30,9 @@ Options are:
 }
 See the package vignette for examples of the shapes of these trends.
 Default is "no trend".}
+
+\item{slope}{A numeric value specifying the slope of the trend, to be used
+with trend = "linear" or trend = "cos1linear".}
 
 \item{amp}{A numeric value specifying the amplitude of the seasonal trend.
 Must be between 0 and 1.}
