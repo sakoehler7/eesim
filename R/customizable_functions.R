@@ -487,7 +487,7 @@ fit_mods <- function(data, model=NULL, df_year = 7, custom_model = NULL,
 #'
 #' @export
 eesim <- function(n_reps, n, central = NULL, sd = NULL, exposure_type,
-                  exposure_trend = NULL, exposure_slope = NULL,
+                  exposure_trend = "no trend", exposure_slope = NULL,
                   exposure_amp = NULL, average_outcome = NULL,
                   outcome_trend = "no trend", outcome_slope = NULL,
                   outcome_amp = NULL, rr, start.date = "2000-01-01",
