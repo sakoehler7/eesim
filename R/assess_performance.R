@@ -198,7 +198,7 @@ check_sims <- function(df, true_rr){
 #'            start.date = "2000-01-01", model = "casecrossover", plot=TRUE)
 #'
 #' @export
-power_calc <- function(varying, values, n_reps, n=NULL, central, sd, exposure_type,
+power_calc <- function(varying, values, n_reps, n=NULL, central, sd = NULL, exposure_type,
                        exposure_trend, exposure_amp, average_outcome, outcome_trend,
                        outcome_amp, rr=NULL, start.date = "2000-01-01",
                        cust_exp_func = NULL, cust_exp_args = NULL,
