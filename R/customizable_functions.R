@@ -495,6 +495,12 @@ eesim <- function(n_reps, n, central = NULL, sd = NULL, exposure_type,
                   cust_base_func = NULL, cust_lambda_func = NULL,
                   cust_base_args = NULL, cust_lambda_args = NULL, model = NULL,
                   df_year = NULL, custom_model = NULL, custom_model_args = NULL){
+
+  msg <- paste("This function may take a minute or two to run, especially with lots of",
+               "replications (`n_reps`).")
+  msg <- paste(strwrap(msg), collapse="\n")
+  message(msg)
+
   datasims <- create_sims(n_reps=n_reps, n=n, central=central, sd=sd,
                           exposure_type=exposure_type,
                           exposure_trend=exposure_trend,
