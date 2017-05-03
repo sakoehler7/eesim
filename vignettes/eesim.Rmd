@@ -120,12 +120,12 @@ grid.arrange(a, b, ncol = 1)
 You can use the `eesim` function to generate multiple similar simulated datasets and investigate how the performance of a case-crossover model in estimating the association between ozone concentration and the risk of cardiovascular death in 20 simulated datasets.
 
 ```{r, warning = FALSE, message = FALSE}
-ex_sim <- eesim(n_reps = 100, n = 365 * 5, central = 20, sd = 9.8,
+ex_sim <- eesim(n_reps = 100, n = 365 * 5, central = 20, sd = 4,
                 exposure_type = "continuous", exposure_trend = "cos1",
                 exposure_amp = -.6, average_outcome = 50,
                 outcome_trend = "cos1", outcome_amp = 0.2, 
-                rr = 1.0005, start.date = "1996-01-01",
-                model = "casecrossover")
+                rr = 1.2, start.date = "1996-01-01",
+                model = "spline", df = 7)
 ```
 
 The first element of the returned object can be used to explore the behavior of individual simulations. 
@@ -137,7 +137,7 @@ head(ex_sim[[1]])
 After running the simulation, you can look at the relative risk point estimate and 95% confidence interval from each of the 100 simulations, as well as which 95% confidence intervals include the true relative rate, using the `coverage_plot` function that comes with the package:
 
 ```{r fig.width = 4, fig.height = 5, fig.align = "center"}
-coverage_plot(ex_sim[[1]], true_param = 1.0005)
+coverage_plot(ex_sim[[1]], true_param = 1.2)
 ```
 
 The second element of the returned object gives the following overall summaries of model performance across all simulations:
@@ -238,7 +238,7 @@ The comparison of the observed and simulated data in this case suggests some clu
 The `eesim` function can be used to assess the performance of a case-crossover model in estimating relative risk of cardiovascular mortality for extreme heat days compared to other days using:
 
 ```{r}
-ex_sim2 <- eesim(n_reps = 100, n = 365 * 5, sd = 1,
+ex_sim2 <- eesim(n_reps = 100, n = 365 * 5, 
                  central = c(0, 0, 0, 0, 0, 0.05, 0.12, 0.02, 0, 0, 0, 0),
                  exposure_type = "binary", exposure_trend = "monthly",
                  exposure_amp = -.6, average_outcome = 50,
@@ -258,6 +258,22 @@ ex_sim2[[2]]
 ```
 
 [Add power calc example]
+
+```{r fig.width = 5, fig.height = 3.5, fig.align = "center"}
+ex_power_calc <- power_calc(varying = "n", values = floor(365.25 * seq(1, 20, by = 2)),
+                            n_reps = 100, rr = 1.05,
+                            central = c(0, 0, 0, 0, 0, 0.05, 0.12, 0.02, 0, 0, 0, 0),
+                            exposure_type = "binary", exposure_trend = "monthly", 
+                            exposure_amp = -.6, average_outcome = 50,
+                            outcome_trend = "cos1", outcome_amp = 0.2, 
+                            model = "spline", df_year = 7, plot = FALSE)
+ex_power_calc %>% 
+  ggplot(aes(x = values, y = power)) + 
+  geom_line() + 
+  ylim(0, 1) + 
+  labs(x = "Number of days in the study", y = "Power") + 
+  theme_bw()
+```
 
 ##Piece-by-piece breakdown of package utility
 
@@ -556,12 +572,12 @@ customlambda <- function(exposure, rr, constant, baseline){
 
 [Using this package to re-do the analysis in Bateson and Schwartz, 1999]
 
-```{r}
-case_study_1 <- eesim(n_reps = 1000, n = 1096, 
+```{r eval = FALSE}
+case_study_1 <- eesim(n_reps = 10, n = 1096, 
            central = 0.25,
            exposure_type = "binary", exposure_trend = "cos1",
            exposure_amp = -0.2, average_outcome = 22,
-           outcome_trend = "cos2", outcome_amp = 0.2, 
+           outcome_trend = "cos1linear", outcome_amp = 0.2, 
            rr = 1.10, model = "casecrossover")
 case_study_1[[2]]
 coverage_plot(sample_n(case_study_1[[1]], 100), true_param = 1.10)
