@@ -180,7 +180,7 @@ check_sims <- function(df, true_rr){
 #' This function gives the power for a model with varying parameters.
 #'
 #' @param varying A character string of the parameter to be varied.  Choices are
-#'    "n" or "rr"
+#'    "n", "rr", or "average_outcome"
 #' @param values A numeric vector of the chosen values of the varying parameters
 #' @param plot "TRUE" or "FALSE" for whether to produce a plot
 #' @inheritParams power_beta
@@ -198,6 +198,7 @@ check_sims <- function(df, true_rr){
 #'            start.date = "2000-01-01", model = "casecrossover", plot=TRUE)
 #'
 #' @export
+#'
 power_calc <- function(varying, values, n_reps, n=NULL, central, sd, exposure_type,
                        exposure_trend, exposure_amp, average_outcome, outcome_trend,
                        outcome_amp, rr=NULL, start.date = "2000-01-01",
