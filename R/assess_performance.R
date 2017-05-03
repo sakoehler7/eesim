@@ -210,7 +210,7 @@ check_sims <- function(df, true_rr){
 #' # every one-unit increase in exposure. The null hypothesis is that there is no association
 #' # between the exposure and the outcome. The model used to test for an association is a
 #' # case-crossover model
-#' pow <- power_calc(varying = "n", values = floor(365.25 * seq(1, 21, by = 4)), n_reps = 20,
+#' pow <- power_calc(varying = "n", values = floor(365.25 * seq(1, 21, by = 5)), n_reps = 20,
 #'            central = 100, sd = 10, rr = 1.001, exposure_type = "continuous",
 #'            exposure_trend = "cos1", exposure_amp = .6, average_outcome = 22,
 #'            outcome_trend = "no trend", outcome_amp = .6,
@@ -225,6 +225,12 @@ power_calc <- function(varying, values, n_reps, n = NULL, central, sd = NULL, ex
                        cust_base_func = NULL, cust_lambda_func = NULL,
                        cust_base_args = NULL, cust_lambda_args = NULL,
                        model, df_year = 7, plot = FALSE){
+
+  msg <- paste("This function may take a minute or two to run, especially with lots of",
+               "replications (`n_reps`) or options for `values`.")
+  msg <- paste(strwrap(msg), collapse="\n")
+  message(msg)
+
   if(varying == "n"){
     rep_df <- values %>% purrr::map(create_sims, n_reps=n_reps, central=central, sd=sd,
                                     exposure_type = exposure_type,
@@ -259,7 +265,8 @@ power_calc <- function(varying, values, n_reps, n = NULL, central, sd = NULL, ex
   if(plot == TRUE){
     my_plot <- ggplot2::ggplot(dat, ggplot2::aes_(x = ~ dat$values, y = ~ dat$power)) +
       ggplot2::geom_line() + ggplot2::theme_minimal() +
-      ggplot2::xlab(varying) + ggplot2::ylab("power")
+      ggplot2::xlab(varying) + ggplot2::ylab("power") +
+      ggplot2::ylim(0, 1)
     print(my_plot)
   }
   return(dat)
