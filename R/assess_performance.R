@@ -190,7 +190,8 @@ check_sims <- function(df, true_rr){
 #'    to simulate the data). For whichever of these two values is not set to vary in this
 #'    argument, the user must specify a constant value to this funciton through either the
 #'    \code{n} or the \code{rr} argument.
-#' @param values A numeric vector of the chosen values of the varying parameters
+#' @param values A numeric vector with the values you would like to test for the varying
+#'    parameters. For example, \code{values = c(1.05, 1.10, 1.15)} would
 #' @param plot "TRUE" or "FALSE" for whether to produce a plot
 #' @inheritParams power_beta
 #' @inheritParams create_sims
