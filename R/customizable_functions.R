@@ -461,8 +461,12 @@ fit_mods <- function(data, model=NULL, df_year = 7, custom_model = NULL,
 
 #' Simulate data, fit models, and assess models
 #'
-#' This function generates exposures and outcomes, fits models, and evaluates
-#' them for many simulation repetitions
+#' Generates synthetic time series datasets relevant for environmental epidemiology
+#' studies. Datasets can be generated with seasonal and long-term trends in either
+#' exposure or outcome. Binary or continuous outcomes can be simulated or incorporated
+#' from observed datasets. The function includes extensive options for customizing each
+#' step of the simulation process; see the \code{eesim} vignette for more details and
+#' examples.
 #'
 #' @inheritParams create_sims
 #' @inheritParams sim_exposure
