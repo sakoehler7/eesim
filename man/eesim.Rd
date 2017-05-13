@@ -4,10 +4,10 @@
 \alias{eesim}
 \title{Simulate data, fit models, and assess models}
 \usage{
-eesim(n_reps, n, central = NULL, sd = NULL, exposure_type,
-  exposure_trend = NULL, exposure_slope = NULL, exposure_amp = NULL,
+eesim(n_reps, n, rr, exposure_type, central = NULL, sd = NULL,
+  exposure_trend = "no trend", exposure_slope = NULL, exposure_amp = NULL,
   average_outcome = NULL, outcome_trend = "no trend",
-  outcome_slope = NULL, outcome_amp = NULL, rr, start.date = "2000-01-01",
+  outcome_slope = NULL, outcome_amp = NULL, start.date = "2000-01-01",
   cust_exp_func = NULL, cust_exp_args = NULL, cust_base_func = NULL,
   cust_lambda_func = NULL, cust_base_args = NULL, cust_lambda_args = NULL,
   model = NULL, df_year = NULL, custom_model = NULL,
@@ -22,15 +22,17 @@ the performance of a proposed model).}
 \item{n}{A numeric value specifying the number of days to simulate (e.g., \code{n = 365}
 would simulate a dataset with a year's worth of data).}
 
+\item{rr}{A numeric value specifying the relative risk}
+
+\item{exposure_type}{A character string specifying the type of exposure.
+Choices are "binary" or "continuous".}
+
 \item{central}{A numeric value specifying the mean probability of exposure
 (for binary data) or the mean exposure value (for continuous data).}
 
 \item{sd}{A numeric value giving the standard deviation of the exposure
 values from the exposure trend line (not the total standard deviation of
 the exposure values).}
-
-\item{exposure_type}{A character string specifying the type of exposure.
-Choices are "binary" or "continuous".}
 
 \item{exposure_trend}{A character string specifying a seasonal and / or long-term trend for
     expected mean exposure. See the vignette for \code{eesim} for examples of each option.
@@ -94,8 +96,6 @@ generate data with decreasing expected value over the years.}
 \item{outcome_amp}{A numeric value specifying the amplitude of the outcome
 trend.  Must be between -1 and 1.}
 
-\item{rr}{A numeric value specifying the relative risk}
-
 \item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
 simulating daily exposures}
 
@@ -132,12 +132,36 @@ frame with columns called "Estimate", "Std. Error", "t value", "Pr(>|t|)",
 model.}
 }
 \value{
-A list object with summaries of each model fitted on the simulated
-   data sets and measures of model evaluation including coverage and power
+A list object with three elements:
+\itemize{
+  \item{\code{simulated_datasets}: }{A list in which each element is a data frame with
+    one of the simulated time series datasets, created according to the specifications
+    set by the user.}
+  \item{\code{indiv_performance}: }{A dataframe with one row per simulated dataset (i.e.,
+    total number of rows equal to \code{n_reps}). Each row gives the results of fitting the
+    specified model to one of the simulated datasets and includes, for the model fit to that
+    synthetic dataset, the estimated \eqn{\beta} (\code{Estimate}), estimated standard
+    error of \eqn{\beta} (\code{Std.Error}), test statistic and p-value for a hypothesis test with the null
+    hypothesis \eqn{\beta = 0} (\code{t.value} and \code{p.value}), and the upper and lower
+    confidence intervals for the estimated \eqn{\beta} (\code{lower_ci} and \code{upper_ci}).}
+  \item{\code{overall_performance}: }{A one-row dataframe with overall performance summaries
+    from fitting the specified model to the synthetic datasets. Values include the mean estimated
+    value of \eqn{beta} (\code{beta_hat}), a translation of this mean estimated \eqn{\beta} into
+    a relative risk (\eqn{rr_hat}), the variance across estimated \eqn{\beta}'s
+    (\code{var_across_betas}), ... (\code{mean_beta_var}),
+    ... (\code{percent_bias}), the proportion of 95\% confidence intervals that included the
+    true value of \eqn{\beta} (\code{coverage}),
+    and the proportion of model fits for which the null hypothesis was
+    rejected under a Type I error rate (\eqn{\alpha}) of 0.05 (\code{power}).}
+}
 }
 \description{
-This function generates exposures and outcomes, fits models, and evaluates
-them for many simulation repetitions
+Generates synthetic time series datasets relevant for environmental epidemiology
+studies. Datasets can be generated with seasonal and long-term trends in either
+exposure or outcome. Binary or continuous outcomes can be simulated or incorporated
+from observed datasets. The function includes extensive options for customizing each
+step of the simulation process; see the \code{eesim} vignette for more details and
+examples.
 }
 \examples{
 eesim(n_reps = 3, n = 50, central = 100, sd = 10,

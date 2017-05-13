@@ -4,18 +4,23 @@
 \alias{power_calc}
 \title{Power Calculations}
 \usage{
-power_calc(varying, values, n_reps, n = NULL, central, sd, exposure_type,
-  exposure_trend, exposure_amp, average_outcome, outcome_trend, outcome_amp,
-  rr = NULL, start.date = "2000-01-01", cust_exp_func = NULL,
-  cust_exp_args = NULL, cust_base_func = NULL, cust_lambda_func = NULL,
-  cust_base_args = NULL, cust_lambda_args = NULL, model, df_year = 7,
-  plot = FALSE)
+power_calc(varying, values, n_reps, n = NULL, central, sd = NULL,
+  exposure_type, exposure_trend = "no trend", exposure_amp, average_outcome,
+  outcome_trend = "no trend", outcome_amp, rr = NULL,
+  start.date = "2000-01-01", cust_exp_func = NULL, cust_exp_args = NULL,
+  cust_base_func = NULL, cust_lambda_func = NULL, cust_base_args = NULL,
+  cust_lambda_args = NULL, model, df_year = 7, plot = FALSE)
 }
 \arguments{
 \item{varying}{A character string of the parameter to be varied.  Choices are
-"n" or "rr"}
+"n" (which varies the number of days in each dataset of simulated data) or
+"rr" (which varies the relative rate per unit increase in exposure that is used
+to simulate the data). For whichever of these two values is not set to vary in this
+argument, the user must specify a constant value to this funciton through either the
+\code{n} or the \code{rr} argument.}
 
-\item{values}{A numeric vector of the chosen values of the varying parameters}
+\item{values}{A numeric vector with the values you would like to test for the varying
+parameters. For example, \code{values = c(1.05, 1.10, 1.15)} would}
 
 \item{n_reps}{A numeric value specifying the number of datasets to simulate (e.g.,
 \code{n_reps = 1000} would simulate one thousand time series datasets with the
@@ -117,16 +122,31 @@ user-specified custom lambda function}
 }
 \value{
 Data frame with the values of the varying parameter and their
-   corresponding power
+   corresponding power. If the \code{plot} argument is set to \code{TRUE},
+   it also returns a power curve plot as a side effect.
 }
 \description{
-This function gives the power for a model with varying parameters.
+Calculate the expected power of an enviromental epidemiology time series study based
+on simulated datasets. This function uses the simulation provided by \code{eesim} to
+simulate multiple environmental epidemiology datasets under different scenarios (e.g.,
+total days in study, size of association between exposure and outcome, or baseline
+average daily count of the outcome in the study) and estimates the power of a specified
+model to detect the hypothesized association.
 }
 \examples{
-pow <- power_calc(varying = "n", values = c(50, 75, 100), n_reps = 20,
-           central = 100, sd=10, rr = 1.001, exposure_type = "continuous",
-           exposure_trend = "cos1", exposure_amp = .6, average_outcome=22,
+
+# Calculate power for studies that vary in the total length of the study period
+# (between one and twenty-one years of data) for the association between a continuous
+# exposure with a seasonal trend (mean = 100, sd from seasonal baseline = 10) and a count
+# outcome (e.g., daily number of deaths, mean daily value across the study period of 22).
+# The alternative hypothesis is that there is a relative rate of the outcome of 1.001 for
+# every one-unit increase in exposure. The null hypothesis is that there is no association
+# between the exposure and the outcome. The model used to test for an association is a
+# case-crossover model
+pow <- power_calc(varying = "n", values = floor(365.25 * seq(1, 21, by = 5)), n_reps = 20,
+           central = 100, sd = 10, rr = 1.001, exposure_type = "continuous",
+           exposure_trend = "cos1", exposure_amp = .6, average_outcome = 22,
            outcome_trend = "no trend", outcome_amp = .6,
-           start.date = "2000-01-01", model = "casecrossover", plot=TRUE)
+           model = "casecrossover", plot=TRUE)
 
 }

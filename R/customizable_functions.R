@@ -301,6 +301,12 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
 
 #' Create simulated data for many repetitions
 #'
+#' Creates a collection of synthetic datasets that follow a set of user-specified
+#' conditions (e.g., exposure mean and variance, average daily outcome count,
+#' long-term and seasonal trends in exposure and outcome, association between exposure
+#' and outcome). These synthetic datasets can be used to investigate performance of a specific
+#' model or to estimate power or required sample size for a hypothetical study.
+#'
 #' @param n_reps A numeric value specifying the number of datasets to simulate (e.g.,
 #'        \code{n_reps = 1000} would simulate one thousand time series datasets with the
 #'        specified characteristics, which can be used for a power analysis or to investigate
@@ -373,8 +379,9 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
 #' @inheritParams std_exposure
 #' @inheritParams sim_outcome
 #'
-#' @return A list resulting from repetitions of simulations with data frames
-#'    for date, exposure, and outcomes, and estimates from fitting models
+#' @return A list object, in which each list element is one of the synthetic datasets
+#'    simulated under the input conditions. Each synthetic dataset includes columns for
+#'    for date, daily exposure (\code{x}), and daily outcome count.
 #'
 #' @references
 #'
@@ -474,8 +481,28 @@ fit_mods <- function(data, model=NULL, df_year = 7, custom_model = NULL,
 #' @inheritParams std_exposure
 #' @inheritParams fit_mods
 #'
-#' @return A list object with summaries of each model fitted on the simulated
-#'    data sets and measures of model evaluation including coverage and power
+#' @return A list object with three elements:
+#' \itemize{
+#'   \item{\code{simulated_datasets}: }{A list in which each element is a data frame with
+#'     one of the simulated time series datasets, created according to the specifications
+#'     set by the user.}
+#'   \item{\code{indiv_performance}: }{A dataframe with one row per simulated dataset (i.e.,
+#'     total number of rows equal to \code{n_reps}). Each row gives the results of fitting the
+#'     specified model to one of the simulated datasets and includes, for the model fit to that
+#'     synthetic dataset, the estimated \eqn{\beta} (\code{Estimate}), estimated standard
+#'     error of \eqn{\beta} (\code{Std.Error}), test statistic and p-value for a hypothesis test with the null
+#'     hypothesis \eqn{\beta = 0} (\code{t.value} and \code{p.value}), and the upper and lower
+#'     confidence intervals for the estimated \eqn{\beta} (\code{lower_ci} and \code{upper_ci}).}
+#'   \item{\code{overall_performance}: }{A one-row dataframe with overall performance summaries
+#'     from fitting the specified model to the synthetic datasets. Values include the mean estimated
+#'     value of \eqn{beta} (\code{beta_hat}), a translation of this mean estimated \eqn{\beta} into
+#'     a relative risk (\eqn{rr_hat}), the variance across estimated \eqn{\beta}'s
+#'     (\code{var_across_betas}), ... (\code{mean_beta_var}),
+#'     ... (\code{percent_bias}), the proportion of 95\% confidence intervals that included the
+#'     true value of \eqn{\beta} (\code{coverage}),
+#'     and the proportion of model fits for which the null hypothesis was
+#'     rejected under a Type I error rate (\eqn{\alpha}) of 0.05 (\code{power}).}
+#' }
 #'
 #' @references
 #'
@@ -500,12 +527,13 @@ eesim <- function(n_reps, n, rr, exposure_type, central = NULL, sd = NULL,
                   cust_base_args = NULL, cust_lambda_args = NULL, model = NULL,
                   df_year = NULL, custom_model = NULL, custom_model_args = NULL){
 
-  msg <- paste("This function may take a minute or two to run, especially with lots of",
+  msg <- paste("This function may take a minute or two to run, especially if you are creating lots of",
                "replications (`n_reps`).")
   msg <- paste(strwrap(msg), collapse="\n")
   message(msg)
 
-  datasims <- create_sims(n_reps=n_reps, n=n, central=central, sd=sd,
+  totalsims <- vector("list", 1)
+  totalsims[[1]] <- create_sims(n_reps=n_reps, n=n, central=central, sd=sd,
                           exposure_type=exposure_type,
                           exposure_trend=exposure_trend,
                           exposure_slope = exposure_slope,
@@ -518,10 +546,10 @@ eesim <- function(n_reps, n, rr, exposure_type, central = NULL, sd = NULL,
                           cust_exp_func = cust_exp_func, cust_exp_args = cust_exp_args,
                           cust_base_func = cust_base_func, cust_lambda_func = cust_lambda_func,
                           cust_base_args = cust_base_args, cust_lambda_args = cust_lambda_args)
-  mods <- fit_mods(datasims, model=model, custom_model = custom_model,
+  totalsims[[2]] <- fit_mods(datasims, model=model, custom_model = custom_model,
                    df_year=df_year, custom_model_args=custom_model_args)
-  check <- check_sims(df = mods, true_rr = rr)
-  totalsims <- list(mods, check)
-  return(c(totalsims, datasims))
+  totalsims[[3]] <- check_sims(df = mods, true_rr = rr)
+  names(totalsims) <- c("simulated_datasets", "indiv_performance", "overall_performance")
+  return(totalsims)
 }
 
