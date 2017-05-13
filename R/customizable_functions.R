@@ -448,7 +448,7 @@ create_sims <- function(n_reps, n, central, sd=1, exposure_type, exposure_trend,
 #' fit_mods(data = sims, model = "spline")
 #'
 #' @export
-fit_mods <- function(data, model=NULL, df_year = 7, custom_model = NULL,
+fit_mods <- function(data, model = NULL, df_year = 7, custom_model = NULL,
                      custom_model_args = list()){
   if(is.null(custom_model)){
   if(model == "spline"){
