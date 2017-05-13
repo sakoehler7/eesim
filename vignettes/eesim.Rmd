@@ -80,12 +80,19 @@ chicagoNMMAPS %>%
   group_by(variable) %>% 
   summarize(mean = mean(value, na.rm = TRUE),
             sd = sd(value, na.rm = TRUE))
+
+library(splines)
+a <- chicagoNMMAPS %>% 
+  tbl_df() %>% 
+  filter(year >= 1996) %>% select(date, o3)
+mod <- lm(o3 ~ ns(scale(time, scale = FALSE, center = TRUE), 7 * 14), data = chicagoNMMAPS)
+sd(residuals(mod))
 ```
 
-For example, in the observed data from Chicago, IL, shown in the plots above, daily ozone concentrations have a mean of about 20 ppb and standard deviation of 10 ppb. The average number of cardiovascular deaths per day is around 50. Here is the code, and a plot of the resulting data, for generating a dataset with similar characteristics for use in a power analysis or to evaluate model performance (later in the vignette, we will show how to use customization to further improve the simulation of data for this example, including avoiding negative values of ozone concentration in simulated data):
+For example, in the observed data from Chicago, IL, shown in the plots above, daily ozone concentrations have a mean of about 20 ppb and standard deviation of about 7 ppb after removing seasonal and long-term trends. The average number of cardiovascular deaths per day is around 50. Here is the code, and a plot of the resulting data, for generating a dataset with similar characteristics for use in a power analysis or to evaluate model performance (later in the vignette, we will show how to use customization to further improve the simulation of data for this example, including avoiding negative values of ozone concentration in simulated data):
 
 ```{r, warning = FALSE, message = FALSE}
-sim_chicago <- create_sims(n_reps = 1, n = 365 * 5, central = 20, sd = 9.8,
+sim_chicago <- create_sims(n_reps = 1, n = 365 * 5, central = 20, sd = 7,
                            exposure_type = "continuous", exposure_trend = "cos1",
                            exposure_amp = -.6, average_outcome = 50,
                            outcome_trend = "cos1", outcome_amp = 0.2, 
@@ -120,7 +127,7 @@ grid.arrange(a, b, ncol = 1)
 You can use the `eesim` function to generate multiple similar simulated datasets and investigate how the performance of a case-crossover model in estimating the association between ozone concentration and the risk of cardiovascular death in 20 simulated datasets.
 
 ```{r, warning = FALSE, message = FALSE}
-ex_sim <- eesim(n_reps = 100, n = 365 * 5, central = 20, sd = 4,
+ex_sim <- eesim(n_reps = 100, n = 365 * 5, central = 20, sd = 7,
                 exposure_type = "continuous", exposure_trend = "cos1",
                 exposure_amp = -.6, average_outcome = 50,
                 outcome_trend = "cos1", outcome_amp = 0.2, 
@@ -146,13 +153,13 @@ The second element of the returned object gives the following overall summaries 
 eesim_overall_output <- data_frame(element = paste0("`",
                                                     colnames(ex_sim[[2]]),
                                                     "`"),
-                                   desc = c("The mean estimated effect (log relative rate) over all simulations",
-                                            "The mean relative rate over all simulations",
+                                   desc = c("**Mean beta hat**: The mean of the estimated log relative rate over all simulations.",
+                                            "**Mean estimated relative rate**: The mean of the estimated relative rate over all simulations.",
                                             "Variance of the point estimates of the estimated effect over all simulations",
                                             "The mean across simulations of the variances of each estimated effect",
                                             "Relative bias of the mean of the estimated coefficients",
-                                            "Percent of simulations for which the 95% confidence interval estimate includes the true value",
-                                            NA))
+                                            "**95% confidence inverval coverage**: Percent of simulations for which the 95% confidence interval estimate includes the true value. [Johnson2015, Beaujean2014]",
+                                            "**Power**: Percent of simulations in which a true effect, with an effect size given by an alternative hypothesis, is identified with a p-value of 0.05 or lower; i.e., probability of rejecting the null hypothesis when the the specified alternative hypothesis is true. [Bellan2015, Johnson2015, Gaye2015, Green2016, Beaujean2014]"))
 knitr::kable(eesim_overall_output, col.names = c("Variable", "Description"))
 ```
 
