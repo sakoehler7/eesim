@@ -122,11 +122,8 @@ user-specified custom lambda function}
 
 \item{df_year}{A numeric value specifying the degrees of freedom per year}
 
-\item{custom_model}{A character string for the name of the custom model. This
-is a user-created function which takes a data frame with columns "x" for
-exposure values and "outcome" for outcome values. It must output a data
-frame with columns called "Estimate", "Std. Error", "t value", "Pr(>|t|)",
-"2.5\%", and "97.5\%", the output from \code{summary} and \code{confint}.}
+\item{custom_model}{A character string with the object name of an R function
+that defines the code that will be used to fit the model. See Details for more.}
 
 \item{custom_model_args}{A list of arguments and their values for a custom
 model.}

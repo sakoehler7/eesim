@@ -8,30 +8,55 @@ fit_mods(data, model = NULL, df_year = 7, custom_model = NULL,
   custom_model_args = list())
 }
 \arguments{
-\item{data}{A list of simulated data sets which each include columns
-called "x" for exposure values and "outcome" for outcome values}
+\item{data}{A list of simulated data sets. Each simulated dataset must include a
+columns called "x" with daily exposure values and a column called "outcome" with
+daily outcome values.}
 
 \item{model}{A character string specifying model to be used. Choices are
 "spline" and "casecrossover"}
 
 \item{df_year}{A numeric value specifying the degrees of freedom per year}
 
-\item{custom_model}{A character string for the name of the custom model. This
-is a user-created function which takes a data frame with columns "x" for
-exposure values and "outcome" for outcome values. It must output a data
-frame with columns called "Estimate", "Std. Error", "t value", "Pr(>|t|)",
-"2.5\%", and "97.5\%", the output from \code{summary} and \code{confint}.}
+\item{custom_model}{A character string with the object name of an R function
+that defines the code that will be used to fit the model. See Details for more.}
 
 \item{custom_model_args}{A list of arguments and their values for a custom
 model.}
 }
 \value{
-A data frame in which each row includes an estimate of beta hat,
+A data frame in which each row gives the results from the model-fitting function run
+  on one of the simulated datasets input to the function as the \code{data} object. The returned
+  data frame has one row per simulated dataset and the following columns:
+  \itemize{
+    \item{\code{Estimate}: The estimated \eqn{\beta} (log relative risk) as estimated by
+      the model specified with \code{custom_model}.}
+    \item{\code{Std.Error}: The standard error for the estimated \eqn{\beta}.}
+    \item{\code{t.value}: The test statistic for a test of the null hypothesis \eqn{\beta = 0}.}
+    \item{\code{p.value}: The p-value for a test of the null hypothesis \eqn{\beta = 0}.}
+    \item{\code{lower_ci}: The lower value in the 95\% confidence interval estimated for
+      \eqn{\beta}.}
+    \item{\code{upper_ci}: The upper value in the 95\% confidence interval estimated for
+      \eqn{\beta}.}
+  }
+
+
+in which each row includes an estimate of beta hat,
    standard error, t-value, p-value, and 2.5\% and 97.5\% confidence bounds
    for each repetition of the simulation
 }
 \description{
-Fit models
+Fits a specified model to each of the simulated datasets and returns a dataframe
+summarizing results from fitting the model to each dataset, including the estimated
+effect and the estimated standard error for that estimated effect.
+}
+\details{
+The function specified by the \code{custom_model} argument should be
+   a user-created function that inputs a data frame with columns named "x" for
+   exposure values and "outcome" for outcome values. The function must output a data
+   frame with columns called "Estimate", "Std. Error", "t value", "Pr(>|t|)",
+   "2.5\%", and "97.5\%", the output from \code{summary} and \code{confint} for
+   models fit using a standard \code{glm} call. For more details and examples, see
+   the vignette for \code{eesim}.
 }
 \examples{
 sims <- create_sims(n_reps=10, n=50, central = 100, sd = 10,
