@@ -529,26 +529,22 @@ eesim <- function(n_reps, n, rr, exposure_type, central = NULL, sd = NULL,
 
   msg <- paste("This function may take a minute or two to run, especially if you are creating lots of",
                "replications (`n_reps`).")
-  msg <- paste(strwrap(msg), collapse="\n")
+  msg <- paste(strwrap(msg), collapse = "\n")
   message(msg)
 
   totalsims <- vector("list", 1)
-  totalsims[[1]] <- create_sims(n_reps=n_reps, n=n, central=central, sd=sd,
-                          exposure_type=exposure_type,
-                          exposure_trend=exposure_trend,
-                          exposure_slope = exposure_slope,
-                          exposure_amp=exposure_amp,
-                          average_outcome=average_outcome,
-                          outcome_trend=outcome_trend,
-                          outcome_slope=outcome_slope,
-                          outcome_amp=outcome_amp,
-                          rr=rr, start.date = "2000-01-01",
-                          cust_exp_func = cust_exp_func, cust_exp_args = cust_exp_args,
-                          cust_base_func = cust_base_func, cust_lambda_func = cust_lambda_func,
-                          cust_base_args = cust_base_args, cust_lambda_args = cust_lambda_args)
-  totalsims[[2]] <- fit_mods(datasims, model=model, custom_model = custom_model,
-                   df_year=df_year, custom_model_args=custom_model_args)
-  totalsims[[3]] <- check_sims(df = mods, true_rr = rr)
+  totalsims[[1]] <- create_sims(n_reps = n_reps, n = n, central = central, sd = sd,
+                          exposure_type = exposure_type, exposure_trend = exposure_trend,
+                          exposure_slope = exposure_slope, exposure_amp = exposure_amp,
+                          average_outcome = average_outcome, outcome_trend = outcome_trend,
+                          outcome_slope = outcome_slope, outcome_amp = outcome_amp,
+                          rr = rr, start.date = "2000-01-01", cust_exp_func = cust_exp_func,
+                          cust_exp_args = cust_exp_args, cust_base_func = cust_base_func,
+                          cust_lambda_func = cust_lambda_func, cust_base_args = cust_base_args,
+                          cust_lambda_args = cust_lambda_args)
+  totalsims[[2]] <- fit_mods(totalsims[[1]], model = model, custom_model = custom_model,
+                   df_year = df_year, custom_model_args = custom_model_args)
+  totalsims[[3]] <- check_sims(df = totalsims[[2]], true_rr = rr)
   names(totalsims) <- c("simulated_datasets", "indiv_performance", "overall_performance")
   return(totalsims)
 }
