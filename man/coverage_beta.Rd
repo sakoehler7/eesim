@@ -22,12 +22,12 @@ This function gives the percent coverage of the true coefficient.
 \examples{
 sims <- create_sims(n_reps = 10, n = 600, central = 100,
                     sd = 10, exposure_type = "continuous",
-                    exposure_trend = "cos1",
+                    exposure_trend = "cos1", exposure_slope=1,
                     exposure_amp = 0.6,
                     average_outcome = 20,
                     outcome_trend = "no trend",
                     rr = 1.01)
-fits <- fit_mods(outcome = sims, model = "spline", df_year = 1)
+fits <- fit_mods(data = sims, model = "spline", df_year = 1)
 coverage_beta(df=fits, true_rr = 1.02)
 
 }

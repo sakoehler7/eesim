@@ -177,10 +177,20 @@ check_sims <- function(df, true_rr){
 
 #' Power Calculations
 #'
-#' This function gives the power for a model with varying parameters.
+#' Calculate the expected power of an enviromental epidemiology time series study based
+#' on simulated datasets. This function uses the simulation provided by \code{eesim} to
+#' simulate multiple environmental epidemiology datasets under different scenarios (e.g.,
+#' total days in study, size of association between exposure and outcome, or baseline
+#' average daily count of the outcome in the study) and estimates the power of a specified
+#' model to detect the hypothesized association.
 #'
 #' @param varying A character string of the parameter to be varied.  Choices are
-#'    "n", "rr", or "average_outcome"
+#'    "n" (which varies the number of days in each dataset of simulated data),
+#'    "rr" (which varies the relative rate per unit increase in exposure that is used
+#'    to simulate the data), or "average_outcome" (which varies the average value
+#'    of the outcomes in each dataset). For whichever of these three values is not set to vary in this
+#'    argument, the user must specify a constant value to this function through the
+#'    \code{n}, \code{rr}, or \code{average_outcome} arguments.
 #' @param values A numeric vector of the chosen values of the varying parameters
 #' @param plot "TRUE" or "FALSE" for whether to produce a plot
 #' @inheritParams power_beta
@@ -188,24 +198,40 @@ check_sims <- function(df, true_rr){
 #' @inheritParams fit_mods
 #'
 #' @return Data frame with the values of the varying parameter and their
-#'    corresponding power
+#'    corresponding power. If the \code{plot} argument is set to \code{TRUE},
+#'    it also returns a power curve plot as a side effect.
 #'
 #' @examples
-#' pow <- power_calc(varying = "n", values = c(50, 75, 100), n_reps = 20,
-#'            central = 100, sd=10, rr = 1.001, exposure_type = "continuous",
-#'            exposure_trend = "cos1", exposure_amp = .6, average_outcome=22,
+#'
+#' # Calculate power for studies that vary in the total length of the study period
+#' # (between one and twenty-one years of data) for the association between a continuous
+#' # exposure with a seasonal trend (mean = 100, sd from seasonal baseline = 10) and a count
+#' # outcome (e.g., daily number of deaths, mean daily value across the study period of 22).
+#' # The alternative hypothesis is that there is a relative rate of the outcome of 1.001 for
+#' # every one-unit increase in exposure. The null hypothesis is that there is no association
+#' # between the exposure and the outcome. The model used to test for an association is a
+#' # case-crossover model
+#' pow <- power_calc(varying = "n", values = floor(365.25 * seq(1, 21, by = 5)), n_reps = 20,
+#'            central = 100, sd = 10, rr = 1.001, exposure_type = "continuous",
+#'            exposure_trend = "cos1", exposure_amp = .6, average_outcome = 22,
 #'            outcome_trend = "no trend", outcome_amp = .6,
-#'            start.date = "2000-01-01", model = "casecrossover", plot=TRUE)
+#'            model = "casecrossover", plot=TRUE)
 #'
 #' @export
-#'
-power_calc <- function(varying, values, n_reps, n=NULL, central, sd, exposure_type,
-                       exposure_trend, exposure_amp, average_outcome, outcome_trend,
-                       outcome_amp, rr=NULL, start.date = "2000-01-01",
+power_calc <- function(varying, values, n_reps, n = NULL, central, sd = NULL, exposure_type,
+                       exposure_trend = "no trend", exposure_amp, average_outcome,
+                       outcome_trend = "no trend", outcome_amp, rr = NULL,
+                       start.date = "2000-01-01",
                        cust_exp_func = NULL, cust_exp_args = NULL,
                        cust_base_func = NULL, cust_lambda_func = NULL,
                        cust_base_args = NULL, cust_lambda_args = NULL,
-                       model, df_year=7, plot=FALSE){
+                       model, df_year = 7, plot = FALSE){
+
+  msg <- paste("This function may take a minute or two to run, especially with lots of",
+               "replications (`n_reps`) or options for `values`.")
+  msg <- paste(strwrap(msg), collapse="\n")
+  message(msg)
+
   if(varying == "n"){
     rep_df <- values %>% purrr::map(create_sims, n_reps=n_reps, central=central, sd=sd,
                                     exposure_type = exposure_type,
@@ -240,7 +266,8 @@ power_calc <- function(varying, values, n_reps, n=NULL, central, sd, exposure_ty
   if(plot == TRUE){
     my_plot <- ggplot2::ggplot(dat, ggplot2::aes_(x = ~ dat$values, y = ~ dat$power)) +
       ggplot2::geom_line() + ggplot2::theme_minimal() +
-      ggplot2::xlab(varying) + ggplot2::ylab("power")
+      ggplot2::xlab(varying) + ggplot2::ylab("power") +
+      ggplot2::ylim(0, 1)
     print(my_plot)
   }
   return(dat)

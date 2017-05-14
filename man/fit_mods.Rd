@@ -4,20 +4,30 @@
 \alias{fit_mods}
 \title{Fit models}
 \usage{
-fit_mods(outcome, model, df_year = 7)
+fit_mods(data, model = NULL, df_year = 7, custom_model = NULL,
+  custom_model_args = list())
 }
 \arguments{
-\item{outcome}{A list of simulated data sets which each include columns
-called "x" and "outcome"}
+\item{data}{A list of simulated data sets which each include columns
+called "x" for exposure values and "outcome" for outcome values}
 
 \item{model}{A character string specifying model to be used. Choices are
 "spline" and "casecrossover"}
 
 \item{df_year}{A numeric value specifying the degrees of freedom per year}
+
+\item{custom_model}{A character string for the name of the custom model. This
+is a user-created function which takes a data frame with columns "x" for
+exposure values and "outcome" for outcome values. It must output a data
+frame with columns called "Estimate", "Std. Error", "t value", "Pr(>|t|)",
+"2.5\%", and "97.5\%", the output from \code{summary} and \code{confint}.}
+
+\item{custom_model_args}{A list of arguments and their values for a custom
+model.}
 }
 \value{
 A data frame in which each row includes an estimate of beta hat,
-   standard error, t-value, p-value, and 2.5% and 97.5% confidence bounds
+   standard error, t-value, p-value, and 2.5\% and 97.5\% confidence bounds
    for each repetition of the simulation
 }
 \description{
@@ -28,6 +38,6 @@ sims <- create_sims(n_reps=10, n=50, central = 100, sd = 10,
             exposure_type="continuous", exposure_trend = "cos1",
             exposure_amp = .6, average_outcome = 22,
             outcome_trend = "no trend", outcome_amp = .6, rr = 1.01)
-fit_mods(outcome = sims, model = "spline")
+fit_mods(data = sims, model = "spline")
 
 }

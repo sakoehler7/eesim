@@ -7,7 +7,8 @@
 crossyear_mod(df)
 }
 \arguments{
-\item{df}{A data frame with exposure and outcome data}
+\item{df}{A data frame with exposure and outcome data called "x" and "outcome",
+respectively}
 }
 \value{
 Summary of the estimated log relative risk for a 1-unit increase in

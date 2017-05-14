@@ -7,7 +7,8 @@
 spline_mod(df, df_year = 7)
 }
 \arguments{
-\item{df}{A data frame with exposure and outcome data}
+\item{df}{A data frame with exposure and outcome data called "x" and "outcome",
+respectively}
 
 \item{df_year}{A numeric value specifying the degrees of freedom per year}
 }

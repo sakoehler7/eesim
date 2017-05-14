@@ -4,7 +4,8 @@
 \alias{create_baseline}
 \title{Create a series of baseline outcomes}
 \usage{
-create_baseline(n, average_baseline, trend, amp, cust_base_func = NULL, ...)
+create_baseline(n, average_baseline, trend, slope, amp, cust_base_func = NULL,
+  ...)
 }
 \arguments{
 \item{n}{A numeric value specifying the number of days for which to simulate
@@ -22,6 +23,9 @@ data}
   \item{"no trend"}
   \item{"custom"}
 }}
+
+\item{slope}{slope A numeric value specifying the slope of the trend, to be used
+with trend = "linear" or trend = "cos1linear".}
 
 \item{amp}{A numeric value specifying the amplitude of the seasonal trend.
 Must be between 0 and 1.}

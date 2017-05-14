@@ -4,8 +4,8 @@
 \alias{bin_t}
 \title{Create a trend variable}
 \usage{
-bin_t(n, p, trend = "no trend", amp = 0.01, start.date = "2000-01-01",
-  custom_func = NULL, ...)
+bin_t(n, p, trend = "no trend", slope = 1, amp = 0.01,
+  start.date = "2000-01-01", custom_func = NULL, ...)
 }
 \arguments{
 \item{n}{A numeric value specifying the number of days to simulate.}
@@ -23,6 +23,9 @@ are:
   \item{"no trend"}
   \item{"custom"}
 }}
+
+\item{slope}{A numeric value specifying the slope of the trend, to be used
+with trend = "linear" or trend = "cos1linear".}
 
 \item{amp}{A numeric value specifying the amplitude of the seasonal trend.
 Must be between 0 and .5.}

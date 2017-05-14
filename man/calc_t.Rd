@@ -4,7 +4,8 @@
 \alias{calc_t}
 \title{Create a trend variable}
 \usage{
-calc_t(n, trend = "no trend", amp = 0.6, custom_func = NULL, ...)
+calc_t(n, trend = "no trend", slope = 1, amp = 0.6, custom_func = NULL,
+  ...)
 }
 \arguments{
 \item{n}{A numeric value specifying the number of days to simulate.}
@@ -23,6 +24,9 @@ Options are:
 }
 See the package vignette for examples of the shapes of these trends.
 Default is "no trend".}
+
+\item{slope}{A numeric value specifying the slope of the trend, to be used
+with trend = "linear" or trend = "cos1linear".}
 
 \item{amp}{A numeric value specifying the amplitude of the seasonal trend.
 Must be between 0 and 1.}

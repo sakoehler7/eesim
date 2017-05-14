@@ -4,52 +4,77 @@
 \alias{create_sims}
 \title{Create simulated data for many repetitions}
 \usage{
-create_sims(n_reps, n, central, sd, exposure_type, exposure_trend, exposure_amp,
-  average_outcome, outcome_trend, outcome_amp, rr, start.date = "2000-01-01",
+create_sims(n_reps, n, central, sd = 1, exposure_type, exposure_trend,
+  exposure_slope = 1, exposure_amp, average_outcome, outcome_trend,
+  outcome_slope = 1, outcome_amp, rr, start.date = "2000-01-01",
   cust_exp_func = NULL, cust_exp_args = NULL, cust_base_func = NULL,
   cust_lambda_func = NULL, cust_base_args = NULL, cust_lambda_args = NULL)
 }
 \arguments{
-\item{n_reps}{A numeric value specifying the number of simulation repititions
-to be performed}
+\item{n_reps}{A numeric value specifying the number of datasets to simulate (e.g.,
+\code{n_reps = 1000} would simulate one thousand time series datasets with the
+specified characteristics, which can be used for a power analysis or to investigate
+the performance of a proposed model).}
 
-\item{n}{A numeric value specifying the number of days to simulate.}
+\item{n}{A numeric value specifying the number of days to simulate (e.g., \code{n = 365}
+would simulate a dataset with a year's worth of data).}
 
 \item{central}{A numeric value specifying the mean probability of exposure
 (for binary data) or the mean exposure value (for continuous data).}
 
 \item{sd}{A numeric value giving the standard deviation of the exposure
-values around the trend line.}
+values from the exposure trend line (not the total standard deviation of
+the exposure values).}
 
 \item{exposure_type}{A character string specifying the type of exposure.
 Choices are "binary" or "continuous".}
 
-\item{exposure_trend}{A character string specifying the seasonal trend for
-    exposure. Options for continuous exposure are:
+\item{exposure_trend}{A character string specifying a seasonal and / or long-term trend for
+    expected mean exposure. See the vignette for \code{eesim} for examples of each option.
+    The shapes are based on those used in Bateson and Schwartz (1999).
+    For trends with a seasonal component, the amplitude of the seasonal trend can be
+    customized using the \code{exposure\_amp} argument. For trends with a long-term
+    pattern, the slope of the long-term trend can be set using the \code{exposure\_slope}
+    argument. If using the "custom" option, you must ... .
+    If using the "monthly" option for a binary exposure, you must input a numeric
+    vector of length 12 for the \code{central} argument that gives the probability of
+    exposure for each month, starting in January and ending in December.
+    Options for continuous exposure are:
     \itemize{
-  \item{"cos1"}
-  \item{"cos2"}
-  \item{"cos3"}
-  \item{"linear"}
-  \item{"curvilinear"}
-  \item{"cos1linear"}
-  \item{"no trend"}
-  \item{"custom"}
+  \item{"cos1": A seasonal trend only.}
+  \item{"cos2": A seasonal trend with variable amplitude across years.}
+  \item{"cos3": A seasonal trend with steadily decreasing amplitude over time.}
+  \item{"linear": A linear long-term trend with no seasonal trend.}
+  \item{"curvilinear": A curved long-term trend with no seasonal trend.}
+  \item{"cos1linear": A seasonal trend plus a linear long-term trend.}
+  \item{"no trend": No trend, either seasonal or long-term (default).}
+  \item{"custom": Uses a custom trend function input by the user.}
   }
    Options for binary exposure are:
    \itemize{
-  \item{"cos1"}
-  \item{"cos2"}
-  \item{"cos3"}
-  \item{"linear"}
-  \item{"monthly"}
-  \item{"no trend"}
-  \item{"custom"}
+  \item{"cos1": A seasonal trend only.}
+  \item{"cos2": A seasonal trend with variable amplitude across years.}
+  \item{"cos3": A seasonal trend with steadily decreasing amplitude over time.}
+  \item{"linear": A linear long-term trend with no seasonal trend.}
+  \item{"monthly": Uses a user-specified probability of exposure for each month.}
+  \item{"no trend": No trend, either seasonal or long-term (default).}
+  \item{"custom": Uses a custom trend function input by the user.}
 }}
 
+\item{exposure_slope}{A numeric value specifying the linear slope of the
+exposure, to be used with exposure_trend = "linear" or "cos1linear".
+The default value is 1. Positive values will generate data with an
+increasing expected value over the years while negative values will
+generate data with decreasing expected value over the years.}
+
 \item{exposure_amp}{A numeric value specifying the amplitude of the exposure
-trend. Must be between 0 and 1 for continuous exposure or between 0
-and .5 for binary exposure.}
+trend. Must be between -1 and 1 for continuous exposure or between -0.5
+and 0.5 for binary exposure. Positive values will simulate a pattern
+with higher values at the time of the year of the start of the dataset
+(typically January) and lowest values six months following that (typically
+July). Negative values can be used to simulate a trend with lower values
+at the time of year of the start of the dataset and higher values in the
+opposite season.}
 
 \item{average_outcome}{A numeric value specifying the average outcome value}
 
@@ -57,8 +82,14 @@ and .5 for binary exposure.}
 health outcomes.  Options are the same as for continuous exposure
 data.}
 
+\item{outcome_slope}{A numeric value specifying the linear slope of the
+outcome trend, to be used with outcome_trend = "linear" or
+"cos1linear". The default value is 1. Positive values will generate data with an
+increasing expected value over the years while negative values will
+generate data with decreasing expected value over the years.}
+
 \item{outcome_amp}{A numeric value specifying the amplitude of the outcome
-trend.  Must be between 0 and 1.}
+trend.  Must be between -1 and 1.}
 
 \item{rr}{A numeric value specifying the relative risk}
 
@@ -96,4 +127,9 @@ create_sims(n_reps=3, n=100, central = 100, sd = 10,
             exposure_amp = .6, average_outcome = 22,
             outcome_trend = "no trend", outcome_amp = .6, rr = 1.01)
 
+}
+\references{
+Bateson TF, Schwartz J. 1999. Control for seasonal variation and time trend in
+    case-crossover studies of acute effects of environmental exposures. Epidemiology
+    10(4):539-544.
 }
