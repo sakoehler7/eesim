@@ -38,11 +38,6 @@ A data frame in which each row gives the results from the model-fitting function
     \item{\code{upper_ci}: The upper value in the 95\% confidence interval estimated for
       \eqn{\beta}.}
   }
-
-
-in which each row includes an estimate of beta hat,
-   standard error, t-value, p-value, and 2.5\% and 97.5\% confidence bounds
-   for each repetition of the simulation
 }
 \description{
 Fits a specified model to each of the simulated datasets and returns a dataframe
@@ -53,14 +48,14 @@ effect and the estimated standard error for that estimated effect.
 The function specified by the \code{custom_model} argument should be
    a user-created function that inputs a data frame with columns named "x" for
    exposure values and "outcome" for outcome values. The function must output a data
-   frame with columns called "Estimate", "Std. Error", "t value", "Pr(>|t|)",
-   "2.5\%", and "97.5\%", the output from \code{summary} and \code{confint} for
-   models fit using a standard \code{glm} call. For more details and examples, see
-   the vignette for \code{eesim}.
+   frame with columns called \code{Estimate}, \code{Std. Error}, \code{t value},
+   \code{Pr(>|t|)}, \code{2.5\%}, and \code{97.5\%}. Note that these columns are the output
+   from \code{summary} and \code{confint} for models fit using a \code{glm} call. For
+   more details and examples, see the vignette for \code{eesim}.
 }
 \examples{
-sims <- create_sims(n_reps=10, n=50, central = 100, sd = 10,
-            exposure_type="continuous", exposure_trend = "cos1",
+sims <- create_sims(n_reps = 10, n = 50, central = 100, sd = 10,
+            exposure_type = "continuous", exposure_trend = "cos1",
             exposure_amp = .6, average_outcome = 22,
             outcome_trend = "no trend", outcome_amp = .6, rr = 1.01)
 fit_mods(data = sims, model = "spline")

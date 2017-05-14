@@ -80,7 +80,7 @@ calc_t <- function(n, trend = "no trend", slope=1, amp = .6, custom_func = NULL,
 #' @param slope A numeric value specifying the slope of the trend, to be used
 #'    with trend = "linear" or trend = "cos1linear".
 #' @param amp A numeric value specifying the amplitude of the seasonal trend.
-#'    Must be between 0 and .5.
+#'    Must be between -.5 and .5.
 #' @param start.date A date of the format "yyyy-mm-dd" from which to begin
 #'    simulating values
 #' @inheritParams calc_t
@@ -99,11 +99,11 @@ bin_t <- function(n, p, trend = "no trend", slope = 1, amp = .01,
   date <- seq(from = start.date, by = 1, length.out = n)
   if (trend == "monthly"){
   }
-  else if (p > .5 & amp >1-p & !(trend == "no trend")){
-    stop(paste0("For p>.5, amp must be between 0 and 1-p."))
+  else if (abs(p) > .5 & abs(amp) >1-p & !(trend == "no trend")){
+    stop(paste0("For abs(p)>.5, amp must be between -(1-p) and 1-p."))
   }
-  else if (p<.5 & amp >p & !(trend == "no trend")){
-    stop(paste0("For p<.5, amp must be between 0 and p."))
+  else if (abs(p)<.5 & abs(amp) >p & !(trend == "no trend")){
+    stop(paste0("For abs(p)<.5, amp must be between -p and p."))
   }
   if (trend == "cos1"){
     seasont <- p + amp * cos(2 * pi * (day / 365))

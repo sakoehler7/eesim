@@ -13,14 +13,16 @@ power_calc(varying, values, n_reps, n = NULL, central, sd = NULL,
 }
 \arguments{
 \item{varying}{A character string of the parameter to be varied.  Choices are
-"n" (which varies the number of days in each dataset of simulated data) or
+"n" (which varies the number of days in each dataset of simulated data),
 "rr" (which varies the relative rate per unit increase in exposure that is used
-to simulate the data). For whichever of these two values is not set to vary in this
-argument, the user must specify a constant value to this funciton through either the
-\code{n} or the \code{rr} argument.}
+to simulate the data), or "average_outcome" (which varies the average value
+of the outcomes in each dataset). For whichever of these three values is not set to vary in this
+argument, the user must specify a constant value to this function through the
+\code{n}, \code{rr}, or \code{average_outcome} arguments.}
 
 \item{values}{A numeric vector with the values you would like to test for the varying
-parameters. For example, \code{values = c(1.05, 1.10, 1.15)} would}
+parameters. For example, \code{values = c(1.05, 1.10, 1.15)} would produce power
+estimates for the four specified values of relative risk.}
 
 \item{n_reps}{A numeric value specifying the number of datasets to simulate (e.g.,
 \code{n_reps = 1000} would simulate one thousand time series datasets with the
