@@ -115,11 +115,16 @@ user-specified custom baseline function}
 user-specified custom lambda function}
 }
 \value{
-A list resulting from repetitions of simulations with data frames
-   for date, exposure, and outcomes, and estimates from fitting models
+A list object, in which each list element is one of the synthetic datasets
+   simulated under the input conditions. Each synthetic dataset includes columns for
+   for date, daily exposure (\code{x}), and daily outcome count.
 }
 \description{
-Create simulated data for many repetitions
+Creates a collection of synthetic datasets that follow a set of user-specified
+conditions (e.g., exposure mean and variance, average daily outcome count,
+long-term and seasonal trends in exposure and outcome, association between exposure
+and outcome). These synthetic datasets can be used to investigate performance of a specific
+model or to estimate power or required sample size for a hypothetical study.
 }
 \examples{
 create_sims(n_reps=3, n=100, central = 100, sd = 10,

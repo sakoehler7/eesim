@@ -191,7 +191,9 @@ check_sims <- function(df, true_rr){
 #'    of the outcomes in each dataset). For whichever of these three values is not set to vary in this
 #'    argument, the user must specify a constant value to this function through the
 #'    \code{n}, \code{rr}, or \code{average_outcome} arguments.
-#' @param values A numeric vector of the chosen values of the varying parameters
+#' @param values A numeric vector with the values you would like to test for the varying
+#'    parameters. For example, \code{values = c(1.05, 1.10, 1.15)} would produce power
+#'    estimates for the four specified values of relative risk.
 #' @param plot "TRUE" or "FALSE" for whether to produce a plot
 #' @inheritParams power_beta
 #' @inheritParams create_sims
