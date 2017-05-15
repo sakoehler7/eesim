@@ -14,12 +14,12 @@ sintrend <- function(n, y){
 }
 binsin <- function(n, y, p){
   day <- c(1:n)
-  seasont <- p + y * sin(2 * pi * (day / 365))
+  p + y * sin(2 * pi * (day / 365))
 }
 calc_t(n = 5, y = .3, custom_func = sintrend)
 plot(calc_t(1000, y = 2, custom_func = sintrend))
 plot(bin_t(1000, p=.3, trend="cos1"))
-plot(bin_t(1000, p=.3, custom_func=binsin, y=.1))
+plot(bin_t(n= 1000, p=.3, custom_func=binsin, y=.1))
 ```
 
 bin_t is similar.
@@ -56,17 +56,4 @@ customlambda <- function(exposure, rr, constant, baseline){
 
 #Example:
 testlambda <- customlambda(testexp$x, testbase$baseline, rr=1.01, constant = 4)
-```
-
-##Custom function for model
-
-```{r}
-trivial_mod <- function(df, constant){
-  newx <- constant*df$x
-  mod <- lm(outcome~newx, data=df)
-  out_1 <- summary(mod)$coef[2, ]
-  out_2 <- stats::confint.default(mod)[2, ]
-  out <- c(out_1, out_2)
-  return(out)
-}
 ```
