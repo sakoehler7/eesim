@@ -21,7 +21,6 @@ are:
   \item{"linear"}
   \item{"monthly"}
   \item{"no trend"}
-  \item{"custom"}
 }}
 
 \item{slope}{A numeric value specifying the slope of the trend, to be used

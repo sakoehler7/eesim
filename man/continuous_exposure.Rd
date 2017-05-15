@@ -26,7 +26,6 @@ Options are:
   \item{"curvilinear"}
   \item{"cos1linear"}
   \item{"no trend"}
-  \item{"custom"}
 }
 See the package vignette for examples of the shapes of these trends.
 Default is "no trend".}
