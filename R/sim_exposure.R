@@ -13,14 +13,13 @@
 #'      \item{"curvilinear"}
 #'      \item{"cos1linear"}
 #'      \item{"no trend"}
-#'      \item{"custom"}
 #'    }
 #'    See the package vignette for examples of the shapes of these trends.
 #'    Default is "no trend".
 #' @param slope A numeric value specifying the slope of the trend, to be used
 #'    with trend = "linear" or trend = "cos1linear".
 #' @param amp A numeric value specifying the amplitude of the seasonal trend.
-#'    Must be between 0 and 1.
+#'    Must be between -1 and 1.
 #' @param custom_func A character string specifying a customized function from
 #'    which to create a trend variable.
 #' @param ... optional arguments to a custom trend function
@@ -33,7 +32,12 @@
 #' @export
 calc_t <- function(n, trend = "no trend", slope=1, amp = .6, custom_func = NULL, ...){
   day <- c(1:n)
-  if (trend == "cos1"){
+  if (!is.null(custom_func)) {
+    arguments <- list(...)
+    arguments$n <- n
+    seasont <- do.call(custom_func, arguments)
+  }
+  else if (trend == "cos1"){
     seasont <- 1 + amp * cos(2 * pi * (day / 365))
     } else if (trend == "cos2"){
     seasont <- 1 + amp * cos(2 * pi * (day / 365)) +
@@ -48,10 +52,6 @@ calc_t <- function(n, trend = "no trend", slope=1, amp = .6, custom_func = NULL,
       seasont <- (1 + slope*(day / n)) * (1 + amp * cos(2 * pi * (day / 365)))
     } else if (trend == "no trend"){
       seasont <- rep(1, n)
-    } else if (trend == "custom" & !is.null(custom_func)) {
-      arguments <- list(...)
-      arguments$n <- n
-      seasont <- do.call(custom_func, arguments)
     } else {
       stop(paste0("`trend` value is not a valid choice. Please check the",
                   " function documentation to select a valid option."))
@@ -73,7 +73,6 @@ calc_t <- function(n, trend = "no trend", slope=1, amp = .6, custom_func = NULL,
 #'      \item{"linear"}
 #'      \item{"monthly"}
 #'      \item{"no trend"}
-#'      \item{"custom"}
 #'    }
 #'
 #' @param p A numeric value giving the mean probability of exposure
@@ -95,9 +94,13 @@ calc_t <- function(n, trend = "no trend", slope=1, amp = .6, custom_func = NULL,
 bin_t <- function(n, p, trend = "no trend", slope = 1, amp = .01,
                   start.date = "2000-01-01", custom_func = NULL,...){
   day <- c(1:n)
-  start.date <- as.Date(start.date)
-  date <- seq(from = start.date, by = 1, length.out = n)
-  if (trend == "monthly"){
+  if (!is.null(custom_func)) {
+    arguments <- list(...)
+    arguments$n <- n
+    arguments$p <- p
+    seasont <- do.call(custom_func, arguments)
+  }
+  else if (trend == "monthly"){
   }
   else if (abs(p) > .5 & abs(amp) >1-p & !(trend == "no trend")){
     stop(paste0("For abs(p)>.5, amp must be between -(1-p) and 1-p."))
@@ -119,10 +122,6 @@ bin_t <- function(n, p, trend = "no trend", slope = 1, amp = .01,
     seasont <- p[months]
   } else if (trend == "no trend"){
     seasont <- rep(p, n)
-  } else if (trend == "custom" & !is.null(custom_func)) {
-    arguments <- list(...)
-    arguments$n <- n
-    seasont <- do.call(custom_func, arguments)
   } else {
     stop(paste0("`trend` value is not a valid choice. Please check the",
                 " function documentation to select a valid option."))
@@ -181,7 +180,7 @@ continuous_exposure <- function(n, mu, sd = 1, trend = "no trend", slope, amp = 
   day <- c(1:n)
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
-  t <- calc_t(n, trend, slope, amp, start.date, ...)
+  t <- calc_t(n=n, trend=trend, slope=slope, amp=amp, ...)
   newmu <- mu * t
   x <- stats::rnorm(n, newmu, sd)
   df <- data.frame(date, x)
