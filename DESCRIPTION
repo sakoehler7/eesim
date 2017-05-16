@@ -2,7 +2,7 @@ Package: eesim
 Type: Package
 Title: Simulate and Evaluate Time Series for Environmental Epidemiology
 Version: 0.1.0.9000
-Date: 2016-05-31
+Date: 2017-05-16
 Authors@R: c(person("Sarah", "Koehler", email = "sakoehler7@gmail.com",
     role = c("aut")),
     person("Brooke", "Anderson", email = "brooke.anderson@colostate.edu",
