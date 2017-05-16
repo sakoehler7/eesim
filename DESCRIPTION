@@ -20,18 +20,17 @@ LazyData: TRUE
 URL: http://github.com/sakoehler7/eesim
 BugReports: http://github.com/sakoehler7/eesim/issues
 Imports:
-    dplyr,
+    dplyr (>= 0.5.0),
     lubridate (>= 1.5.6),
-    purrr,
+    purrr (>= 0.2.2),
     splines,
-    viridis
+    viridis (>= 0.4.0)
 RoxygenNote: 6.0.1
 Suggests: 
-    dlnm,
-    ggplot2 (>= 2.1.0),
-    gridExtra,
-    knitr,
-    rmarkdown,
-    tidyr,
-    viridisLite
+    dlnm (>= 2.3.2),
+    ggplot2 (>= 2.2.1),
+    gridExtra (>= 2.2.1),
+    knitr (>= 1.15.1),
+    rmarkdown (>= 1.5.0),
+    tidyr (>= 0.6.2)
 VignetteBuilder: knitr
