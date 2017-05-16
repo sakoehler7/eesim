@@ -101,6 +101,7 @@ bin_t <- function(n, p, trend = "no trend", slope = 1, amp = .01,
     arguments$n <- n
     arguments$p <- p
     seasont <- do.call(custom_func, arguments)
+    return(seasont)
   }
   else if (trend == "monthly"){
   }
