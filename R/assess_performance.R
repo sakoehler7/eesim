@@ -227,7 +227,8 @@ power_calc <- function(varying, values, n_reps, n = NULL, central, sd = NULL, ex
                        cust_exp_func = NULL, cust_exp_args = NULL,
                        cust_base_func = NULL, cust_lambda_func = NULL,
                        cust_base_args = NULL, cust_lambda_args = NULL,
-                       model, df_year = 7, plot = FALSE){
+                       model, df_year = 7, custom_model = NULL, custom_model_args = NULL,
+                       plot = FALSE){
 
   msg <- paste("This function may take a minute or two to run, especially with lots of",
                "replications (`n_reps`) or options for `values`.")
@@ -240,7 +241,8 @@ power_calc <- function(varying, values, n_reps, n = NULL, central, sd = NULL, ex
                                     exposure_trend=exposure_trend,exposure_amp=exposure_amp,
                                     average_outcome=average_outcome,outcome_trend=outcome_trend,
                                     outcome_amp = outcome_amp, rr=rr, start.date = start.date)
-    fits <- rep_df %>% purrr::map(fit_mods, model=model, df_year=df_year)
+    fits <- rep_df %>% purrr::map(fit_mods, model=model, df_year=df_year, custom_model=custom_model,
+                                  custom_model_args=custom_model_args)
     power <- fits %>% purrr::map(power_beta) #makes a list, want to extract the values of power and put in a data frame with values of n.
   }
   else if(varying == "rr"){
@@ -248,7 +250,8 @@ power_calc <- function(varying, values, n_reps, n = NULL, central, sd = NULL, ex
                                     exposure_trend=exposure_trend,exposure_amp=exposure_amp,
                                     average_outcome=average_outcome,outcome_trend=outcome_trend,
                                     outcome_amp = outcome_amp, start.date = start.date)
-    fits <- rep_df %>% purrr::map(fit_mods, model=model, df_year=df_year)
+    fits <- rep_df %>% purrr::map(fit_mods, model=model, df_year=df_year, custom_model=custom_model,
+                                  custom_model_args=custom_model_args)
     power <- fits %>% purrr::map(power_beta) #makes a list, want to extract the values of power and put in a data frame with values of rr.
   }
   else if(varying=="average_outcome"){
@@ -257,7 +260,8 @@ power_calc <- function(varying, values, n_reps, n = NULL, central, sd = NULL, ex
                                     sd=sd, exposure_type = exposure_type, exposure_trend=exposure_trend,
                                     exposure_amp=exposure_amp, outcome_trend=outcome_trend,
                                     outcome_amp = outcome_amp, rr=rr, start.date = start.date)
-    fits <- rep_df %>% purrr::map(fit_mods, model=model, df_year=df_year)
+    fits <- rep_df %>% purrr::map(fit_mods, model=model, df_year=df_year, custom_model=custom_model,
+                                  custom_model_args=custom_model_args)
     power <- fits %>% purrr::map(power_beta)
   }
   powervec <- rep(0, length(power))
