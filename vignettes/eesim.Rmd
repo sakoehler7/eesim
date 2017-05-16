@@ -132,7 +132,7 @@ ex_sim <- eesim(n_reps = 100, n = 365 * 5, central = 20, sd = 7,
                 exposure_amp = -.6, average_outcome = 50,
                 outcome_trend = "cos1", outcome_amp = 0.2, 
                 rr = 1.2, start.date = "1996-01-01",
-                model = "spline", df = 7)
+                custom_model = spline_mod, custom_model_args = list(df_year = 7))
 ```
 
 This call returns a list with three elements: 
@@ -264,7 +264,7 @@ ex_sim2 <- eesim(n_reps = 100, n = 365 * 5,
                  exposure_amp = -.6, average_outcome = 50,
                  outcome_trend = "cos1", outcome_amp = 0.2, 
                  rr = 1.05, start.date = "1996-01-01",
-                 model = "casecrossover")
+                 custom_model = spline_mod, custom_model_args = list(df_year = 7))
 ```
 
 ```{r fig.width = 4, fig.height = 5, fig.align = "center"}
@@ -279,14 +279,15 @@ ex_sim2[["overall_performance"]]
 
 [Add power calc example]
 
-```{r fig.width = 5, fig.height = 3.5, fig.align = "center"}
+```{r fig.width = 5, fig.height = 3.5, fig.align = "center", eval = FALSE}
 ex_power_calc <- power_calc(varying = "n", values = floor(365.25 * seq(1, 20, by = 2)),
                             n_reps = 100, rr = 1.05,
                             central = c(0, 0, 0, 0, 0, 0.05, 0.12, 0.02, 0, 0, 0, 0),
                             exposure_type = "binary", exposure_trend = "monthly", 
                             exposure_amp = -.6, average_outcome = 50,
                             outcome_trend = "cos1", outcome_amp = 0.2, 
-                            model = "spline", df_year = 7, plot = FALSE)
+                            custom_model = spline_mod, custom_model_args = list(df_year = 7),
+                            plot = FALSE)
 ex_power_calc %>% 
   ggplot(aes(x = values, y = power)) + 
   geom_line() + 
@@ -542,7 +543,7 @@ ex_sim2 <- eesim(n_reps = 3, n = 10,
                 cust_exp_func = sintrend,
                 cust_exp_args = list(n=10, mu=75,y=3),
                 average_outcome = 22, rr = 1.01, 
-                model = "spline", df_year = 1)
+                custom_model = spline_mod, custom_model_args = list(df_year = 1))
 ex_sim2
 ```
 
@@ -569,7 +570,7 @@ ex_sim3 <- eesim(n_reps = 3, n = 100, central = 100, sd = 10,
                 exposure_amp = .6, average_outcome = 22, rr = 1.01, 
                 cust_base_func = custombase,
                 cust_base_args = list(n=10, slope = .5, intercept = 12),
-                model = "spline", df_year = 2)
+                custom_model = spline_mod, custom_model_args = list(df_year = 2))
 ex_sim3[[1]]
 ```
 
