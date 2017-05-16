@@ -494,7 +494,7 @@ fit_mods <- function(data, custom_model = NULL, custom_model_args = list()){
 #'
 #' @return Output with the correct column names for use as a custom model in eesim.
 #'
-#' @example
+#' @examples
 #' dat <- data.frame(x=rnorm(1000, 0, 1), outcome = rnorm(1000, 5, 1))
 #' lin_mod <- lm(outcome~x, data=dat)
 #' format_out(lin_mod)
