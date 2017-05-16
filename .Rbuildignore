@@ -2,5 +2,6 @@
 ^\.Rproj\.user$
 ^writing$
 ^README\.Rmd$
+^README\.md$
 ^README-.*\.png$
 ^Legionnaires\ data$
