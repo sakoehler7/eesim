@@ -161,9 +161,9 @@ coverage_plot(ex_sim[["indiv_performance"]], true_param = 1.2)
 
 The third element of the list returned by a call to `eesim` gives the following overall summaries of model performance across all simulations:
 
-```{r echo = FALSE, eval = FALSE}
+```{r echo = FALSE}
 eesim_overall_output <- data_frame(element = paste0("`",
-                                                    colnames(ex_sim[[2]]),
+                                                    colnames(ex_sim[[3]]),
                                                     "`"),
                                    desc = c("**Mean beta hat**: The mean of the estimated log relative rate over all simulations.",
                                             "**Mean estimated relative rate**: The mean of the estimated relative rate over all simulations.",
