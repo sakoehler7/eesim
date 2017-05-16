@@ -5,6 +5,7 @@
 \title{Simulate continuous exposure data}
 \usage{
 continuous_exposure(n, mu, sd = 1, trend = "no trend", slope, amp = 0.6,
+  cust_expdraw = NULL, cust_expdraw_args = list(),
   start.date = "2000-01-01", ...)
 }
 \arguments{

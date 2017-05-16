@@ -9,7 +9,8 @@ power_calc(varying, values, n_reps, n = NULL, central, sd = NULL,
   outcome_trend = "no trend", outcome_amp, rr = NULL,
   start.date = "2000-01-01", cust_exp_func = NULL, cust_exp_args = NULL,
   cust_base_func = NULL, cust_lambda_func = NULL, cust_base_args = NULL,
-  cust_lambda_args = NULL, model, df_year = 7, plot = FALSE)
+  cust_lambda_args = NULL, model, df_year = 7, custom_model = NULL,
+  custom_model_args = NULL, plot = FALSE)
 }
 \arguments{
 \item{varying}{A character string of the parameter to be varied.  Choices are
@@ -119,6 +120,12 @@ user-specified custom lambda function}
 "spline" and "casecrossover"}
 
 \item{df_year}{A numeric value specifying the degrees of freedom per year}
+
+\item{custom_model}{A character string with the object name of an R function
+that defines the code that will be used to fit the model. See Details for more.}
+
+\item{custom_model_args}{A list of arguments and their values for a custom
+model.}
 
 \item{plot}{"TRUE" or "FALSE" for whether to produce a plot}
 }

@@ -168,6 +168,12 @@ binary_exposure <- function(n, p, trend = "no trend", slope, amp,
 #' @param sd A numeric value giving the standard deviation of the exposure
 #'    values from the exposure trend line (not the total standard deviation of
 #'    the exposure values).
+#' @param cust_expdraw A character string specifying a user-created function
+#'    which determines the distribution of random noise off of the trend line.
+#'    This function must have inputs "n" and "mean" and output a vector of simulated
+#'    exposure values.
+#' @param cust_expdraw_args A list of arguments other than "n" and "mean" required
+#'  by the cust_expdraw function.
 #' @inheritParams calc_t
 #' @inheritParams binary_exposure
 #'
@@ -175,16 +181,26 @@ binary_exposure <- function(n, p, trend = "no trend", slope, amp,
 #'
 #' @examples
 #' continuous_exposure(n = 5, mu = 100, sd = 10, trend = "cos1")
+#' continuous_exposure(n=10, mu=3, trend="linear", slope = 2,
+#'                     cust_expdraw=rnorm, cust_expdraw_args = list(sd=.5))
 #'
 #' @export
 continuous_exposure <- function(n, mu, sd = 1, trend = "no trend", slope, amp = .6,
+                                cust_expdraw = NULL, cust_expdraw_args=list(),
                                 start.date = "2000-01-01", ...){
   day <- c(1:n)
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
   t <- calc_t(n=n, trend=trend, slope=slope, amp=amp, ...)
   newmu <- mu * t
+  if(!is.null(cust_expdraw)){
+    cust_expdraw_args$mean <- newmu
+    cust_expdraw_args$n <-n
+    x <- do.call(cust_expdraw, cust_expdraw_args)
+  }
+  else {
   x <- stats::rnorm(n, newmu, sd)
+  }
   df <- data.frame(date, x)
   return(df)
 }
