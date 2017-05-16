@@ -47,6 +47,7 @@ The function specified by the \code{custom_model} argument should be
    exposure values and "outcome" for outcome values. The function must output a data
    frame with columns called \code{Estimate}, \code{Std. Error}, \code{t value},
    \code{Pr(>|t|)}, \code{2.5\%}, and \code{97.5\%}. Note that these columns are the output
+<<<<<<< HEAD
    from \code{summary} and \code{confint} for models fit using a \code{glm} call. For
    more details and examples, see the vignette for \code{eesim}.
 }
@@ -60,5 +61,18 @@ sims <- create_sims(n_reps = 10, n = 5 * 365, central = 100, sd = 10,
             exposure_amp = .6, average_outcome = 22,
             outcome_trend = "no trend", outcome_amp = .6, rr = 1.01)
 fit_mods(data = sims, custom_model = spline_mod, custom_model_args = list(df_year = 7))
+=======
+   from \code{summary} and \code{confint} for models fit using a \code{glm} call. You may
+   use the function \code{format_out} from eesim within your function to produce output
+   with these columns. For more details and examples, see the vignette for \code{eesim}.
+}
+\examples{
+sims <- create_sims(n_reps = 10, n = 50, central = 100, sd = 10,
+            exposure_type = "continuous", exposure_trend = "cos1",
+            exposure_amp = .6, average_outcome = 22,
+            outcome_trend = "no trend", outcome_amp = .6, rr = 1.01)
+fit_mods(data = sims, model = "spline", df_year=7)
+fit_mods(data=sims, custom_model=spline_mod, custom_model_args=c(df_year=7))
+>>>>>>> ec0726371ec8f4d7bbe716b72de64ff17c5f85ce
 
 }

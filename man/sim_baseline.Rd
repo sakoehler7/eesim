@@ -23,7 +23,6 @@ Options are:
   \item{"curvilinear"}
   \item{"cos1linear"}
   \item{"no trend"}
-  \item{"custom"}
 }
 See the package vignette for examples of the shapes of these trends.
 Default is "no trend".}
@@ -32,7 +31,7 @@ Default is "no trend".}
 with trend = "linear" or trend = "cos1linear".}
 
 \item{amp}{A numeric value specifying the amplitude of the seasonal trend.
-Must be between 0 and 1.}
+Must be between -1 and 1.}
 
 \item{start.date}{A date in the format "yyyy-mm-dd" specifying the first day
 for which to simulate data}

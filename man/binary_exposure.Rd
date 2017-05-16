@@ -21,14 +21,13 @@ are:
   \item{"linear"}
   \item{"monthly"}
   \item{"no trend"}
-  \item{"custom"}
 }}
 
 \item{slope}{A numeric value specifying the slope of the trend, to be used
 with trend = "linear" or trend = "cos1linear".}
 
 \item{amp}{A numeric value specifying the amplitude of the seasonal trend.
-Must be between 0 and .5.}
+Must be between -.5 and .5.}
 
 \item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
 simulating daily exposures}

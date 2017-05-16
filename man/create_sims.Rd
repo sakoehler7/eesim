@@ -4,7 +4,7 @@
 \alias{create_sims}
 \title{Create simulated data for many repetitions}
 \usage{
-create_sims(n_reps, n, central, sd = 1, exposure_type, exposure_trend,
+create_sims(n_reps, n, central, sd = NULL, exposure_type, exposure_trend,
   exposure_slope = 1, exposure_amp, average_outcome, outcome_trend,
   outcome_slope = 1, outcome_amp, rr, start.date = "2000-01-01",
   cust_exp_func = NULL, cust_exp_args = NULL, cust_base_func = NULL,

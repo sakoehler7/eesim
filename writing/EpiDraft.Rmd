@@ -101,15 +101,6 @@ Since it is unclear if the relationship between LD risk and weather variables is
 
 We can perform power analyses on real data to determine whether we have a large enough sample size, relative risk, or average outcome value to provide sufficient power for testing hypotheses.  Presented here is weekly data from the CDC on mortality related to Legionnaire's disease (citation?). We focus on data from New York City, Pennsylvania, and the Midatlantic region from 2006 through 2017.
 
-```{r, echo=FALSE}
-#I used the variable "Legionellosis, Current week" so hopefully that's right
-leg1 <- read.csv("../Legionnaires data/2014Leg.csv")[,c(2,3,24)]
-leg2 <- read.csv("../Legionnaires data/2015Leg.csv")[,c(2,3,24)]
-leg3 <- read.csv("../Legionnaires data/2016Leg.csv")[,c(2,3,24)]
-leg <- data.frame(year = c(leg1$MMWR.Year, leg2$MMWR.Year, leg3$MMWR.Year), week = c(leg1$MMWR.Week, leg2$MMWR.Week, leg3$MMWR.Week), cases = c(leg1$Legionellosis..Current.week, leg2$Legionellosis..Current.week, leg3$Legionellosis..Current.week))
-plot(leg$cases, xlab = "Week", ylab = "Number of Cases", main = "Legionnaire's Disease 2014-2016")
-```
-
 ```{r, echo=F, warning=F, message=F}
 #plot of CDC data
 library(rvest)
@@ -138,6 +129,7 @@ leg_cases[which(leg_cases$checknyc != "N.Y. City"),]
 leg_cases[which(leg_cases$checkpa != "Pa."),]
 
 #Row 48 is the only row with different states. 569 and 574 have NA in every column.
+
 ```
 
 ```{r}
@@ -145,7 +137,7 @@ library(lubridate)
 library(dplyr)
 #Precipitation data for New York City and Philadelphia:
 parain <- readRDS("data/pa.rds")
-nyrain <- readRDS("data/pa.rds")
+nyrain <- readRDS("data/ny.rds")
 paquant <- quantile(parain$prcp, probs = c(.75, .95, .99), na.rm=T)
 nyquant <- quantile(nyrain$prcp, probs = c(.75, .95, .99), na.rm=T)
 parain$quant75 <- ifelse(parain$prcp>paquant[1], 1,0)
@@ -159,36 +151,25 @@ parain$year <- year(parain$date)
 nyrain$month <- month(nyrain$date)
 nyrain$year <- year(nyrain$date)
 #Monthly rainfall above 75th, 95th, and 99th percentiles for Philly and NYC
-pamonthly <- group_by(parain, month, year) %>% summarise(quant75 =mean(quant75), quant95=mean(quant95), quant99=mean(quant99))
-nymonthly <- group_by(nyrain, month, year) %>% summarise(mean(quant75), mean(quant95), mean(quant99))
+pamonthly <- group_by(parain, year, month) %>% summarise(quant75 =mean(quant75), quant95=mean(quant95), quant99=mean(quant99))
+nymonthly <- group_by(nyrain, year, month) %>% summarise(mean(quant75), quant95 = mean(quant95), mean(quant99))
 #What pattern is this?
 ggplot(pamonthly, aes(x=1:136, y=quant95))+geom_line()+geom_vline(xintercept=seq(from=1, to=136, by=12), col="red") + ggtitle("Monthly rainfall for Philadelphia 2006-2017")+ ylab("Proportion of days over 95th percentile")
+
+#Check if proportion constant averaging over months:
+plot(pamonthly %>% group_by(month) %>% summarise(mean1 = mean(quant95, na.rm=T)))
+plot(nymonthly %>% group_by(month) %>% summarise(mean1 = mean(quant95, na.rm=T)))
+#These two plots display a similar pattern, so we will use the monthly probabilities for PA in our simulation.
+rainprobs <-pamonthly %>% group_by(month) %>% summarise(mean1 = mean(quant95, na.rm=T))
 ```
 
-```{r}
-#Power analysis using eesim
+### Simulated Data with Monthly Exposure Trend 
 
-```
-
-We can pull the trend from this data:
-
-```{r}
-```
-
-### Simulated Data with Similar Trend 
-
-Many epidemiologic data sets are of a sensitive nature and not publicly available.  We can use eesim to simulate data with a similar seasonal trend to fit and assess models.  
+Many epidemiologic data sets are of a sensitive nature and not publicly available.  We can use eesim to simulate data with a similar seasonal trend to fit and assess models.  Because rainfall in Pennsylvania and New York exhibited similar montly patterns, we will use the average proportion of days each month from 2006-2017 which had rainfall in the 95th percentile.  We will specify these proportions in the "monthly" exposure trend.
 
 ```{r, echo=F}
 #Means of real data:
 map(leg_cases[,2:4], mean, na.rm=T)
 #(ma=14.633, nyc=4.69, pa=5.314)
-exposure <- continuous_exposure(n=1001, mu = 65, sd = 5, trend = "cos1", amp=.4)
-#Make this into weekly data instead of daily.
-x <- seq.int(from=1, to=1001, by=7)
-weeklyexp <- exposure[x,]
-plot(weeklyexp, main = "Plot of Exposure values")
-outcome <- sim_outcome(weeklyexp, average_outcome = 4.69, trend = "no trend")
-plot(outcome$outcome)
-
+simdat <- eesim(n=3650, n_reps=1, rr=1.1, exposure_type = "binary", central = c(0.048, 0.035, 0.046, 0.036, 0.035, 0.055, 0.053, 0.067, 0.070, 0.053, 0.033, 0.067), exposure_trend = "monthly", average_outcome = 5.314453)
 ```

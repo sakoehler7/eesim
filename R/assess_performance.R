@@ -191,13 +191,15 @@ check_sims <- function(df, true_rr){
 #' model to detect the hypothesized association.
 #'
 #' @param varying A character string of the parameter to be varied.  Choices are
-#'    "n" (which varies the number of days in each dataset of simulated data) or
+#'    "n" (which varies the number of days in each dataset of simulated data),
 #'    "rr" (which varies the relative rate per unit increase in exposure that is used
-#'    to simulate the data). For whichever of these two values is not set to vary in this
-#'    argument, the user must specify a constant value to this funciton through either the
-#'    \code{n} or the \code{rr} argument.
+#'    to simulate the data), or "average_outcome" (which varies the average value
+#'    of the outcomes in each dataset). For whichever of these three values is not set to vary in this
+#'    argument, the user must specify a constant value to this function through the
+#'    \code{n}, \code{rr}, or \code{average_outcome} arguments.
 #' @param values A numeric vector with the values you would like to test for the varying
-#'    parameters. For example, \code{values = c(1.05, 1.10, 1.15)} would
+#'    parameters. For example, \code{values = c(1.05, 1.10, 1.15)} would produce power
+#'    estimates for the four specified values of relative risk.
 #' @param plot "TRUE" or "FALSE" for whether to produce a plot
 #' @inheritParams power_beta
 #' @inheritParams create_sims
@@ -224,7 +226,7 @@ check_sims <- function(df, true_rr){
 #'            custom_model = casecross_mod, plot = TRUE)
 #'
 #' @export
-power_calc <- function(varying, values, n_reps,custom_model, central, exposure_type,
+power_calc <- function(varying, values, n_reps, custom_model, central, exposure_type,
                        n = NULL, sd = NULL, exposure_trend = "no trend",
                        exposure_amp = NULL, average_outcome = NULL,
                        outcome_trend = "no trend", outcome_amp = NULL, rr = NULL,
@@ -258,7 +260,7 @@ power_calc <- function(varying, values, n_reps,custom_model, central, exposure_t
                                   custom_model_args = custom_model_args)
     power <- fits %>% purrr::map(power_beta) #makes a list, want to extract the values of power and put in a data frame with values of rr.
   }
-  else if(varying=="average_outcome"){
+  else if(varying == "average_outcome"){
     rep_df <- values %>% purrr::map(create_sims, n = n, n_reps = n_reps,
                                     central = central, sd = sd, exposure_type = exposure_type,
                                     exposure_trend = exposure_trend,

@@ -398,7 +398,7 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
 #'
 #' @export
 #'
-create_sims <- function(n_reps, n, central, sd=1, exposure_type, exposure_trend,
+create_sims <- function(n_reps, n, central, sd=NULL, exposure_type, exposure_trend,
                         exposure_slope=1, exposure_amp, average_outcome,
                         outcome_trend, outcome_slope=1,
                         outcome_amp, rr, start.date = "2000-01-01",
@@ -444,8 +444,9 @@ create_sims <- function(n_reps, n, central, sd=1, exposure_type, exposure_trend,
 #'    exposure values and "outcome" for outcome values. The function must output a data
 #'    frame with columns called \code{Estimate}, \code{Std. Error}, \code{t value},
 #'    \code{Pr(>|t|)}, \code{2.5\%}, and \code{97.5\%}. Note that these columns are the output
-#'    from \code{summary} and \code{confint} for models fit using a \code{glm} call. For
-#'    more details and examples, see the vignette for \code{eesim}.
+#'    from \code{summary} and \code{confint} for models fit using a \code{glm} call. You may
+#'    use the function \code{format_out} from eesim within your function to produce output
+#'    with these columns. For more details and examples, see the vignette for \code{eesim}.
 #'
 #' @return A data frame in which each row gives the results from the model-fitting function run
 #'   on one of the simulated datasets input to the function as the \code{data} object. The returned
@@ -486,6 +487,25 @@ fit_mods <- function(data, custom_model = NULL, custom_model_args = list()){
                        "lower_ci", "upper_ci")
   return(datframe)
 }
+
+#' Format output for custom model to use in eesim
+#'
+#' @param mod A model object from lm, glm, etc.
+#'
+#' @return Output with the correct column names for use as a custom model in eesim.
+#'
+#' @example
+#' dat <- data.frame(x=rnorm(1000, 0, 1), outcome = rnorm(1000, 5, 1))
+#' lin_mod <- lm(outcome~x, data=dat)
+#' format_out(lin_mod)
+#'
+#' @export
+format_out <- function(mod){
+  out_1 <- summary(mod)$coef[2, ]
+  out_2 <- stats::confint.default(mod)[2, ]
+  out <- c(out_1, out_2)
+  return(out)
+  }
 
 #' Simulate data, fit models, and assess models
 #'
