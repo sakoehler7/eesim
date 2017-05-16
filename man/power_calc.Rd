@@ -147,10 +147,12 @@ model to detect the hypothesized association.
 # every one-unit increase in exposure. The null hypothesis is that there is no association
 # between the exposure and the outcome. The model used to test for an association is a
 # case-crossover model
+\dontrun{
 pow <- power_calc(varying = "n", values = floor(365.25 * seq(1, 21, by = 5)), n_reps = 20,
            central = 100, sd = 10, rr = 1.001, exposure_type = "continuous",
            exposure_trend = "cos1", exposure_amp = .6, average_outcome = 22,
            outcome_trend = "no trend", outcome_amp = .6,
            custom_model = casecross_mod, plot = TRUE)
+}
 
 }
