@@ -165,20 +165,20 @@ custom_baseline <- function(n, df = dlnm::chicagoNMMAPS, outcome_type = "cvd",
 #' @param amp A numeric value specifying the amplitude of the seasonal trend.
 #'    Must be between 0 and 1.
 #' @param ... optional arguments to a custom baseline function
-#' @param average_outcome A numeric value specifying the average outcome value
+#' @param average_baseline A numeric value specifying the average outcome value
 #' @param cust_base_func A character string specifying a user-made custom
 #'    function for baseline trend
 #'
 #' @return A numeric vector of baseline outcome values
 #'
 #' @examples
-#' create_baseline(n = 5, average_outcome = 22, trend = "linear")
-#' create_baseline(n = 5, average_outcome = NULL, trend = NULL,
-#'                 custom_func = "custom_baseline", outcome_type = "death")
+#' create_baseline(n = 5, average_baseline = 22, trend = "linear")
+#' # create_baseline(n = 5, custom_func = "custom_baseline", outcome_type = "death")
 #'
 #' @export
 #'
-create_baseline <- function(n, average_baseline, trend, slope, amp,
+create_baseline <- function(n, average_baseline = NULL, trend = "no trend",
+                            slope = 1, amp = 0.6,
                             cust_base_func = NULL, ...){
   if(is.null(cust_base_func)){
     lambda <- average_baseline
@@ -213,13 +213,12 @@ create_baseline <- function(n, average_baseline, trend, slope, amp,
 #'
 #' @examples
 #' base <- create_baseline(n = 10, average_baseline = 22, trend = "linear",
-#'                         slope=.4)
+#'                         slope = .4)
 #' exp <- sim_exposure(n = 5, central = 100, sd = 10, amp = .6,
 #'                     exposure_type = "continuous")
-#' create_lambda(baseline = base, exposure = exp, rr = 1.01)
+#' create_lambda(baseline = base, exposure = exp$x, rr = 1.01)
 #'
 #' @export
-
 create_lambda <- function(baseline, exposure, rr, cust_lambda_func = NULL, ...){
   if(is.null(cust_lambda_func)){
     if("data.frame" %in% class(baseline)){ baseline <- baseline$baseline }
@@ -245,6 +244,7 @@ create_lambda <- function(baseline, exposure, rr, cust_lambda_func = NULL, ...){
 #'    simulating values
 #' @inheritParams create_baseline
 #' @inheritParams create_lambda
+#' @inheritParams create_sims
 #'
 #' @return A dataframe with a simulated time series, with columns for
 #'    \code{date}, \code{x} (exposure), and \code{outcome}.
@@ -360,6 +360,7 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
 #'        July). Negative values can be used to simulate a trend with lower values
 #'        at the time of year of the start of the dataset and higher values in the
 #'        opposite season.
+#' @param average_outcome A numeric value specifying the average outcome value.
 #' @param outcome_trend A character string specifying the seasonal trend in
 #'        health outcomes.  Options are the same as for continuous exposure
 #'        data.
@@ -421,22 +422,22 @@ create_sims <- function(n_reps, n, central, sd=1, exposure_type, exposure_trend,
   return(outcome)
 }
 
-#' Fit models
+#' Fit a model to simulated datasets
 #'
 #' Fits a specified model to each of the simulated datasets and returns a dataframe
 #' summarizing results from fitting the model to each dataset, including the estimated
-#' effect and the estimated standard error for that estimated effect.
+#' effect and the estimated standard error for that estimated effect. The model is specified
+#' through a user-created R function, which must take specific input and return
+#' output in a specific format. For more details, see the parameter definitions,
+#' the Details section, and the vignette for the \code{eesim} package.
 #'
 #' @param data A list of simulated data sets. Each simulated dataset must include a
-#'    columns called "x" with daily exposure values and a column called "outcome" with
+#'    column called \code{x} with daily exposure values and a column called \code{outcome} with
 #'    daily outcome values.
-#' @param model A character string specifying model to be used. Choices are
-#'    "spline" and "casecrossover"
-#' @param custom_model A character string with the object name of an R function
-#'    that defines the code that will be used to fit the model. See Details for more.
+#' @param custom_model The object name of an R function that defines the code that will be used
+#'     to fit the model. This object name should not be in quotations. See Details for more.
 #' @param custom_model_args A list of arguments and their values for a custom
-#'    model.
-#' @inheritParams spline_mod
+#'    model. These arguments are passed through to the function specified with \code{custom_model}.
 #'
 #' @details The function specified by the \code{custom_model} argument should be
 #'    a user-created function that inputs a data frame with columns named "x" for
@@ -462,25 +463,24 @@ create_sims <- function(n_reps, n, central, sd=1, exposure_type, exposure_trend,
 #'   }
 #'
 #' @examples
-#' sims <- create_sims(n_reps = 10, n = 50, central = 100, sd = 10,
+#' # Create a set of simulated datasets and then fit the model defined in `spline_mod` to
+#' # all datasets, using the argument `df_year = 7` in the call to `spline_mod`. The `spline_mod`
+#' # function is included in the `eesim` package and can be investigating by calling the function
+#' # name without parentheses (i.e., `spline_mod`).
+#' sims <- create_sims(n_reps = 10, n = 5 * 365, central = 100, sd = 10,
 #'             exposure_type = "continuous", exposure_trend = "cos1",
 #'             exposure_amp = .6, average_outcome = 22,
 #'             outcome_trend = "no trend", outcome_amp = .6, rr = 1.01)
-#' fit_mods(data = sims, model = "spline")
+#' fit_mods(data = sims, custom_model = spline_mod, custom_model_args = list(df_year = 7))
 #'
 #' @export
-fit_mods <- function(data, model = NULL, df_year = 7, custom_model = NULL,
-                     custom_model_args = list()){
-  if(is.null(custom_model)){
-  if(model == "spline"){
-    mods <- lapply(data, spline_mod, df_year = df_year)
-  }
-  else if(model == "casecrossover"){
-    mods <- lapply(data, casecross_mod)
-  }}
-  else if(!is.null(custom_model)){
-    mods <- lapply(data, custom_model, custom_model_args)
-  }
+fit_mods <- function(data, custom_model = NULL, custom_model_args = list()){
+  mods <- lapply(data, function(x){
+      args <- custom_model_args
+      args$df <- x
+      do.call(custom_model, args = args)
+    })
+
   datframe <- data.frame(do.call("rbind", mods))
   names(datframe) <- c("Estimate", "Std.Error", "t.value", "p.value",
                        "lower_ci", "upper_ci")
@@ -532,21 +532,34 @@ fit_mods <- function(data, model = NULL, df_year = 7, custom_model = NULL,
 #'     10(4):539-544.
 #'
 #' @examples
-#' eesim(n_reps = 3, n = 50, central = 100, sd = 10,
+#' # Run a simulation for a continuous exposure (mean = 100, standard
+#' # deviation after long-term and seasonal trends = 10) that increases
+#' # risk of a count outcome by 0.1% per unit increase, where the average
+#' # daily outcome is 22 per day. The exposure outcome has a seasonal trend,
+#' # with higher values in the winter, while the outcome has no seasonal
+#' # or long-term trends beyond those introduced through effects from the
+#' # exposure. The simulated data are fit with a model defined by the `spline_mod`
+#' # function (also in the `eesim` package), with its `df_year` argument set to 7.
+#'
+#' sims <- eesim(n_reps = 3, n = 5 * 365, central = 100, sd = 10,
 #'       exposure_type = "continuous", exposure_trend = "cos3",
-#'       exposure_amp = .6, average_outcome = 22, rr = 1.01, model = "spline",
-#'       df_year = 5)
+#'       exposure_amp = .6, average_outcome = 22, rr = 1.001,
+#'       custom_model = spline_mod, custom_model_args = list(df_year = 7))
+#' names(sims)
+#' sims[[2]]
+#' sims[[3]]
 #'
 #' @export
-eesim <- function(n_reps, n, rr, exposure_type, central = NULL, sd = NULL,
+eesim <- function(n_reps, n, rr, exposure_type, custom_model,
+                  central = NULL, sd = NULL,
                   exposure_trend = "no trend", exposure_slope = NULL,
                   exposure_amp = NULL, average_outcome = NULL,
                   outcome_trend = "no trend", outcome_slope = NULL,
                   outcome_amp = NULL, start.date = "2000-01-01",
                   cust_exp_func = NULL, cust_exp_args = NULL,
                   cust_base_func = NULL, cust_lambda_func = NULL,
-                  cust_base_args = NULL, cust_lambda_args = NULL, model = NULL,
-                  df_year = NULL, custom_model = NULL, custom_model_args = NULL){
+                  cust_base_args = NULL, cust_lambda_args = NULL,
+                  custom_model_args = NULL){
 
   msg <- paste("This function may take a minute or two to run, especially if you are creating lots of",
                "replications (`n_reps`).")
@@ -563,8 +576,8 @@ eesim <- function(n_reps, n, rr, exposure_type, central = NULL, sd = NULL,
                           cust_exp_args = cust_exp_args, cust_base_func = cust_base_func,
                           cust_lambda_func = cust_lambda_func, cust_base_args = cust_base_args,
                           cust_lambda_args = cust_lambda_args)
-  totalsims[[2]] <- fit_mods(totalsims[[1]], model = model, custom_model = custom_model,
-                   df_year = df_year, custom_model_args = custom_model_args)
+  totalsims[[2]] <- fit_mods(totalsims[[1]], custom_model = custom_model,
+                             custom_model_args = custom_model_args)
   totalsims[[3]] <- check_sims(df = totalsims[[2]], true_rr = rr)
   names(totalsims) <- c("simulated_datasets", "indiv_performance", "overall_performance")
   return(totalsims)

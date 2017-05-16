@@ -14,7 +14,8 @@
 #'             exposure_type="continuous", exposure_trend = "cos1",
 #'             exposure_amp = .6, average_outcome = 22,
 #'             outcome_trend = "no trend", outcome_amp = .6, rr = 1.01)
-#' fits <- fit_mods(outcome = sims, model = "spline")
+#' fits <- fit_mods(data = sims, custom_model = spline_mod,
+#'                  custom_model_args = list(df_year = 1))
 #' mean_beta(df=fits)
 #'
 #' @export
@@ -47,7 +48,8 @@ mean_beta <- function(df){
 #'                     average_outcome = 20,
 #'                     outcome_trend = "no trend",
 #'                     rr = 1.01)
-#' fits <- fit_mods(outcome = sims, model = "spline", df_year = 1)
+#' fits <- fit_mods(data = sims, custom_model = spline_mod,
+#'                  custom_model_args  = list(df_year = 1))
 #' beta_var(fits)
 #'
 #' @export
@@ -76,7 +78,8 @@ beta_var <- function(df){
 #'                     average_outcome = 20,
 #'                     outcome_trend = "no trend",
 #'                     rr = 1.01)
-#' fits <- fit_mods(data = sims, model = "spline", df_year = 1)
+#' fits <- fit_mods(data = sims, custom_model = spline_mod,
+#'                  custom_model_args = list(df_year = 1))
 #' beta_bias(fits, true_rr = 1.02)
 #'
 #' @export
@@ -105,7 +108,8 @@ beta_bias <- function(df, true_rr){
 #'                     average_outcome = 20,
 #'                     outcome_trend = "no trend",
 #'                     rr = 1.01)
-#' fits <- fit_mods(data = sims, model = "spline", df_year = 1)
+#' fits <- fit_mods(data = sims, custom_model = spline_mod,
+#'                  custom_model_args = list(df_year = 1))
 #' coverage_beta(df=fits, true_rr = 1.02)
 #'
 #' @export
@@ -132,7 +136,8 @@ coverage_beta <- function(df, true_rr){
 #'                     average_outcome = 20,
 #'                     outcome_trend = "no trend",
 #'                     rr = 1.01)
-#' fits <- fit_mods(data = sims, model = "spline", df_year = 1)
+#' fits <- fit_mods(data = sims, custom_model = spline_mod,
+#'                  custom_model_args = list(df_year = 1))
 #' power_beta(fits)
 #'
 #' @export
@@ -159,7 +164,8 @@ power_beta <- function(df){
 #'                     average_outcome = 20,
 #'                     outcome_trend = "no trend",
 #'                     rr = 1.02)
-#' fits <- fit_mods(data = sims, model = "spline", df_year = 1)
+#' fits <- fit_mods(data = sims, custom_model = spline_mod,
+#'                  custom_model_args = list(df_year = 1))
 #' check_sims(df = fits, true_rr = 1.02)
 #'
 #' @export
@@ -215,54 +221,61 @@ check_sims <- function(df, true_rr){
 #'            central = 100, sd = 10, rr = 1.001, exposure_type = "continuous",
 #'            exposure_trend = "cos1", exposure_amp = .6, average_outcome = 22,
 #'            outcome_trend = "no trend", outcome_amp = .6,
-#'            model = "casecrossover", plot=TRUE)
+#'            custom_model = casecross_mod, plot = TRUE)
 #'
 #' @export
-power_calc <- function(varying, values, n_reps, n = NULL, central, sd = NULL, exposure_type,
-                       exposure_trend = "no trend", exposure_amp, average_outcome,
-                       outcome_trend = "no trend", outcome_amp, rr = NULL,
+power_calc <- function(varying, values, n_reps,custom_model, central, exposure_type,
+                       n = NULL, sd = NULL, exposure_trend = "no trend",
+                       exposure_amp = NULL, average_outcome = NULL,
+                       outcome_trend = "no trend", outcome_amp = NULL, rr = NULL,
                        start.date = "2000-01-01",
                        cust_exp_func = NULL, cust_exp_args = NULL,
                        cust_base_func = NULL, cust_lambda_func = NULL,
                        cust_base_args = NULL, cust_lambda_args = NULL,
-                       model, df_year = 7, plot = FALSE){
+                       custom_model_args = NULL, plot = FALSE){
 
   msg <- paste("This function may take a minute or two to run, especially with lots of",
                "replications (`n_reps`) or options for `values`.")
-  msg <- paste(strwrap(msg), collapse="\n")
+  msg <- paste(strwrap(msg), collapse = "\n")
   message(msg)
 
   if(varying == "n"){
-    rep_df <- values %>% purrr::map(create_sims, n_reps=n_reps, central=central, sd=sd,
+    rep_df <- values %>% purrr::map(create_sims, n_reps = n_reps, central = central, sd = sd,
                                     exposure_type = exposure_type,
-                                    exposure_trend=exposure_trend,exposure_amp=exposure_amp,
-                                    average_outcome=average_outcome,outcome_trend=outcome_trend,
-                                    outcome_amp = outcome_amp, rr=rr, start.date = start.date)
-    fits <- rep_df %>% purrr::map(fit_mods, model=model, df_year=df_year)
+                                    exposure_trend = exposure_trend,exposure_amp = exposure_amp,
+                                    average_outcome = average_outcome, outcome_trend = outcome_trend,
+                                    outcome_amp = outcome_amp, rr = rr, start.date = start.date)
+    fits <- rep_df %>% purrr::map(fit_mods, custom_model = custom_model,
+                                  custom_model_args = custom_model_args)
     power <- fits %>% purrr::map(power_beta) #makes a list, want to extract the values of power and put in a data frame with values of n.
   }
   else if(varying == "rr"){
-    rep_df <- values %>% purrr::map(create_sims, n=n, n_reps=n_reps, central=central, sd=sd,                         exposure_type = exposure_type,
-                                    exposure_trend=exposure_trend,exposure_amp=exposure_amp,
-                                    average_outcome=average_outcome,outcome_trend=outcome_trend,
+    rep_df <- values %>% purrr::map(create_sims, n = n, n_reps = n_reps, central = central, sd = sd,                         exposure_type = exposure_type,
+                                    exposure_trend = exposure_trend, exposure_amp = exposure_amp,
+                                    average_outcome = average_outcome, outcome_trend = outcome_trend,
                                     outcome_amp = outcome_amp, start.date = start.date)
-    fits <- rep_df %>% purrr::map(fit_mods, model=model, df_year=df_year)
+    fits <- rep_df %>% purrr::map(fit_mods, custom_model = custom_model,
+                                  custom_model_args = custom_model_args)
     power <- fits %>% purrr::map(power_beta) #makes a list, want to extract the values of power and put in a data frame with values of rr.
   }
   else if(varying=="average_outcome"){
-    rep_df <- values %>% purrr::map(create_sims, n=n, n_reps=n_reps,
-                                    central=central,
-                                    sd=sd, exposure_type = exposure_type, exposure_trend=exposure_trend,
-                                    exposure_amp=exposure_amp, outcome_trend=outcome_trend,
-                                    outcome_amp = outcome_amp, rr=rr, start.date = start.date)
-    fits <- rep_df %>% purrr::map(fit_mods, model=model, df_year=df_year)
+    rep_df <- values %>% purrr::map(create_sims, n = n, n_reps = n_reps,
+                                    central = central, sd = sd, exposure_type = exposure_type,
+                                    exposure_trend = exposure_trend,
+                                    exposure_amp = exposure_amp, outcome_trend = outcome_trend,
+                                    outcome_amp = outcome_amp, rr = rr, start.date = start.date)
+    fits <- rep_df %>% purrr::map(fit_mods, custom_model = custom_model,
+                                  custom_model_args = custom_model_args)
     power <- fits %>% purrr::map(power_beta)
   }
+
   powervec <- rep(0, length(power))
   for (i in 1:length(power)){
-  powervec[i] <- power[[i]][,1]
+    powervec[i] <- power[[i]][ , 1]
   }
-  dat <- data.frame(values=values, power=powervec)
+
+  dat <- data.frame(values = values, power = powervec)
+
   if(plot == TRUE){
     my_plot <- ggplot2::ggplot(dat, ggplot2::aes_(x = ~ dat$values, y = ~ dat$power)) +
       ggplot2::geom_line() + ggplot2::theme_minimal() +
@@ -270,5 +283,6 @@ power_calc <- function(varying, values, n_reps, n = NULL, central, sd = NULL, ex
       ggplot2::ylim(0, 1)
     print(my_plot)
   }
+
   return(dat)
 }
