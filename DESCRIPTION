@@ -15,7 +15,7 @@ Description: Provides functions to create simulated time series of environmental
     from the National Institute of Environmental Health Sciences (R00ES022631) and
     a fellowship from the Colorado State University Programs for Research and
     Scholarly Excellence.
-License: GPL-2
+License: GPL (>= 2)
 LazyData: TRUE
 URL: http://github.com/sakoehler7/eesim
 BugReports: http://github.com/sakoehler7/eesim/issues
