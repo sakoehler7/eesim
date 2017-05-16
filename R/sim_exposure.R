@@ -94,6 +94,8 @@ calc_t <- function(n, trend = "no trend", slope=1, amp = .6, custom_func = NULL,
 bin_t <- function(n, p, trend = "no trend", slope = 1, amp = .01,
                   start.date = "2000-01-01", custom_func = NULL,...){
   day <- c(1:n)
+  start.date <- as.Date(start.date)
+  date <- seq(from = start.date, by = 1, length.out = n)
   if (!is.null(custom_func)) {
     arguments <- list(...)
     arguments$n <- n
