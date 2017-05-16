@@ -3,3 +3,4 @@
 ^writing$
 ^README\.Rmd$
 ^README-.*\.png$
+^Legionnaires\ data$
