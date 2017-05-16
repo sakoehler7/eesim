@@ -5,6 +5,7 @@
 \title{Simulate continuous exposure data}
 \usage{
 continuous_exposure(n, mu, sd = 1, trend = "no trend", slope, amp = 0.6,
+  cust_expdraw = NULL, cust_expdraw_args = list(),
   start.date = "2000-01-01", ...)
 }
 \arguments{
@@ -36,6 +37,14 @@ with trend = "linear" or trend = "cos1linear".}
 \item{amp}{A numeric value specifying the amplitude of the seasonal trend.
 Must be between -1 and 1.}
 
+\item{cust_expdraw}{A character string specifying a user-created function
+which determines the distribution of random noise off of the trend line.
+This function must have inputs "n" and "mean" and output a vector of simulated
+exposure values.}
+
+\item{cust_expdraw_args}{A list of arguments other than "n" and "mean" required
+by the cust_expdraw function.}
+
 \item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
 simulating daily exposures}
 
@@ -50,5 +59,7 @@ seasonal trend.
 }
 \examples{
 continuous_exposure(n = 5, mu = 100, sd = 10, trend = "cos1")
+continuous_exposure(n=10, mu=3, trend="linear", slope = 2,
+                    cust_expdraw=rnorm, cust_expdraw_args = list(sd=.5))
 
 }

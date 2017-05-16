@@ -57,3 +57,12 @@ customlambda <- function(exposure, rr, constant, baseline){
 #Example:
 testlambda <- customlambda(testexp$x, testbase$baseline, rr=1.01, constant = 4)
 ```
+
+#Custom draws
+
+```{r}
+custrnorm <- function(n, mu, sd, c){
+  out <- c+rnorm(n, mu, sd)
+  return(out)
+}
+```
