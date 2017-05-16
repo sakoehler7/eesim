@@ -38,9 +38,6 @@ spline_mod <- function(df, df_year = 7){
 #' @return Summary of the estimated log relative risk for a 1-unit increase in
 #'    exposure
 #'
-#' @examples
-#' casecross_mod(df = out)
-#'
 #' @export
 casecross_mod <- function(df){
   df$stratum <- factor(format(df$date, "%Y.%m"))
@@ -79,9 +76,6 @@ casecross_mod <- function(df){
 #' @return Summary of the estimated log relative risk for a 1-unit increase in
 #'    exposure
 #'
-#' @examples
-#' crossyear_mod(df = out)
-#'
 #' @export
 crossyear_mod <- function(df){
   df$stratum <- factor(format(df$date, "%j"))
@@ -89,13 +83,11 @@ crossyear_mod <- function(df){
 
   if (sum(df$x == 0 | df$x == 1) == length(df$x)){
     event.check <- as.matrix(table(df$stratum, df$x))
-    informative.strata <- rownames(event.check)[apply(event.check,
-                                                      1, prod) > 0]
-    df <- subset(df, stratum %in% informative.strata)
+    informative.strata <- rownames(event.check)[apply(event.check, 1, prod) > 0]
+    df <- dplyr::filter(df, ~ stratum %in% informative.strata)
 
     if(length(informative.strata) > 1){
-      mod <- stats::glm(y ~ x + stratum,
-                 data = df,
+      mod <- stats::glm(y ~ x + stratum, data = df,
                  family = stats::quasipoisson(link = "log"))
     } else {
       mod <- stats::glm(y ~ x,
@@ -103,8 +95,7 @@ crossyear_mod <- function(df){
                  family = stats::quasipoisson(link = "log"))
     }
   } else {
-    mod <- stats::glm(y ~ x + stratum,
-               data = df,
+    mod <- stats::glm(y ~ x + stratum, data = df,
                family = stats::quasipoisson(link = "log"))
   }
 
