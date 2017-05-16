@@ -14,7 +14,6 @@ library(eesim)
 library(ggplot2)
 library(dplyr)
 library(tidyr)
-library(viridisLite)
 library(gridExtra)
 ```
 
