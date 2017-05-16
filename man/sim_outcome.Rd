@@ -12,7 +12,7 @@ sim_outcome(exposure, average_outcome = NULL, trend = "no trend",
 \arguments{
 \item{exposure}{A numeric vector of exposure values}
 
-\item{average_outcome}{A numeric value specifying the average outcome value}
+\item{average_outcome}{A numeric value specifying the average outcome value.}
 
 \item{trend}{outcome_trend A character string specifying the seasonal trend in
     health outcomes.  Options are Options are:

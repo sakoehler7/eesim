@@ -4,13 +4,12 @@
 \alias{eesim}
 \title{Simulate data, fit models, and assess models}
 \usage{
-eesim(n_reps, n, rr, exposure_type, central = NULL, sd = NULL,
+eesim(n_reps, n, rr, exposure_type, custom_model, central = NULL, sd = NULL,
   exposure_trend = "no trend", exposure_slope = NULL, exposure_amp = NULL,
   average_outcome = NULL, outcome_trend = "no trend",
   outcome_slope = NULL, outcome_amp = NULL, start.date = "2000-01-01",
   cust_exp_func = NULL, cust_exp_args = NULL, cust_base_func = NULL,
   cust_lambda_func = NULL, cust_base_args = NULL, cust_lambda_args = NULL,
-  model = NULL, df_year = NULL, custom_model = NULL,
   custom_model_args = NULL)
 }
 \arguments{
@@ -26,6 +25,9 @@ would simulate a dataset with a year's worth of data).}
 
 \item{exposure_type}{A character string specifying the type of exposure.
 Choices are "binary" or "continuous".}
+
+\item{custom_model}{The object name of an R function that defines the code that will be used
+to fit the model. This object name should not be in quotations. See Details for more.}
 
 \item{central}{A numeric value specifying the mean probability of exposure
 (for binary data) or the mean exposure value (for continuous data).}
@@ -81,7 +83,7 @@ July). Negative values can be used to simulate a trend with lower values
 at the time of year of the start of the dataset and higher values in the
 opposite season.}
 
-\item{average_outcome}{A numeric value specifying the average outcome value}
+\item{average_outcome}{A numeric value specifying the average outcome value.}
 
 \item{outcome_trend}{A character string specifying the seasonal trend in
 health outcomes.  Options are the same as for continuous exposure
@@ -117,16 +119,8 @@ user-specified custom baseline function}
 \item{cust_lambda_args}{A list of arguments and their values used in the
 user-specified custom lambda function}
 
-\item{model}{A character string specifying model to be used. Choices are
-"spline" and "casecrossover"}
-
-\item{df_year}{A numeric value specifying the degrees of freedom per year}
-
-\item{custom_model}{A character string with the object name of an R function
-that defines the code that will be used to fit the model. See Details for more.}
-
 \item{custom_model_args}{A list of arguments and their values for a custom
-model.}
+model. These arguments are passed through to the function specified with \code{custom_model}.}
 }
 \value{
 A list object with three elements:
@@ -161,10 +155,22 @@ step of the simulation process; see the \code{eesim} vignette for more details a
 examples.
 }
 \examples{
-eesim(n_reps = 3, n = 50, central = 100, sd = 10,
+# Run a simulation for a continuous exposure (mean = 100, standard
+# deviation after long-term and seasonal trends = 10) that increases
+# risk of a count outcome by 0.1\% per unit increase, where the average
+# daily outcome is 22 per day. The exposure outcome has a seasonal trend,
+# with higher values in the winter, while the outcome has no seasonal
+# or long-term trends beyond those introduced through effects from the
+# exposure. The simulated data are fit with a model defined by the `spline_mod`
+# function (also in the `eesim` package), with its `df_year` argument set to 7.
+
+sims <- eesim(n_reps = 3, n = 5 * 365, central = 100, sd = 10,
       exposure_type = "continuous", exposure_trend = "cos3",
-      exposure_amp = .6, average_outcome = 22, rr = 1.01, model = "spline",
-      df_year = 5)
+      exposure_amp = .6, average_outcome = 22, rr = 1.001,
+      custom_model = spline_mod, custom_model_args = list(df_year = 7))
+names(sims)
+sims[[2]]
+sims[[3]]
 
 }
 \references{

@@ -27,7 +27,8 @@ sims <- create_sims(n_reps = 10, n = 600, central = 100,
                     average_outcome = 20,
                     outcome_trend = "no trend",
                     rr = 1.01)
-fits <- fit_mods(data = sims, model = "spline", df_year = 1)
+fits <- fit_mods(data = sims, custom_model = spline_mod,
+                 custom_model_args = list(df_year = 1))
 coverage_beta(df=fits, true_rr = 1.02)
 
 }

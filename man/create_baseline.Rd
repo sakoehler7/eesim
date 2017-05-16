@@ -4,12 +4,14 @@
 \alias{create_baseline}
 \title{Create a series of baseline outcomes}
 \usage{
-create_baseline(n, average_baseline, trend, slope, amp, cust_base_func = NULL,
-  ...)
+create_baseline(n, average_baseline = NULL, trend = "no trend", slope = 1,
+  amp = 0.6, cust_base_func = NULL, ...)
 }
 \arguments{
 \item{n}{A numeric value specifying the number of days for which to simulate
 data}
+
+\item{average_baseline}{A numeric value specifying the average outcome value}
 
 \item{trend}{outcome_trend A character string specifying the seasonal trend in
     health outcomes.  Options are Options are:
@@ -34,8 +36,6 @@ Must be between 0 and 1.}
 function for baseline trend}
 
 \item{...}{optional arguments to a custom baseline function}
-
-\item{average_outcome}{A numeric value specifying the average outcome value}
 }
 \value{
 A numeric vector of baseline outcome values
@@ -45,8 +45,7 @@ This function creates a time series of baseline outcome values and allows the
 user to input a custom function if desired to specify outcome trend.
 }
 \examples{
-create_baseline(n = 5, average_outcome = 22, trend = "linear")
-create_baseline(n = 5, average_outcome = NULL, trend = NULL,
-                custom_func = "custom_baseline", outcome_type = "death")
+create_baseline(n = 5, average_baseline = 22, trend = "linear")
+# create_baseline(n = 5, custom_func = "custom_baseline", outcome_type = "death")
 
 }

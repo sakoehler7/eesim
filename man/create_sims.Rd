@@ -76,7 +76,7 @@ July). Negative values can be used to simulate a trend with lower values
 at the time of year of the start of the dataset and higher values in the
 opposite season.}
 
-\item{average_outcome}{A numeric value specifying the average outcome value}
+\item{average_outcome}{A numeric value specifying the average outcome value.}
 
 \item{outcome_trend}{A character string specifying the seasonal trend in
 health outcomes.  Options are the same as for continuous exposure

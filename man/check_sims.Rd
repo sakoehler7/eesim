@@ -27,7 +27,8 @@ sims <- create_sims(n_reps = 100, n = 1000, central = 100,
                     average_outcome = 20,
                     outcome_trend = "no trend",
                     rr = 1.02)
-fits <- fit_mods(data = sims, model = "spline", df_year = 1)
+fits <- fit_mods(data = sims, custom_model = spline_mod,
+                 custom_model_args = list(df_year = 1))
 check_sims(df = fits, true_rr = 1.02)
 
 }

@@ -17,7 +17,3 @@ Summary of the estimated log relative risk for a 1-unit increase in
 \description{
 This function fits a cross-year model to your data.
 }
-\examples{
-crossyear_mod(df = out)
-
-}

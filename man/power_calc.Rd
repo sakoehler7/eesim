@@ -4,12 +4,13 @@
 \alias{power_calc}
 \title{Power Calculations}
 \usage{
-power_calc(varying, values, n_reps, n = NULL, central, sd = NULL,
-  exposure_type, exposure_trend = "no trend", exposure_amp, average_outcome,
-  outcome_trend = "no trend", outcome_amp, rr = NULL,
-  start.date = "2000-01-01", cust_exp_func = NULL, cust_exp_args = NULL,
-  cust_base_func = NULL, cust_lambda_func = NULL, cust_base_args = NULL,
-  cust_lambda_args = NULL, model, df_year = 7, plot = FALSE)
+power_calc(varying, values, n_reps, custom_model, central, exposure_type,
+  n = NULL, sd = NULL, exposure_trend = "no trend", exposure_amp = NULL,
+  average_outcome = NULL, outcome_trend = "no trend", outcome_amp = NULL,
+  rr = NULL, start.date = "2000-01-01", cust_exp_func = NULL,
+  cust_exp_args = NULL, cust_base_func = NULL, cust_lambda_func = NULL,
+  cust_base_args = NULL, cust_lambda_args = NULL,
+  custom_model_args = NULL, plot = FALSE)
 }
 \arguments{
 \item{varying}{A character string of the parameter to be varied.  Choices are
@@ -27,18 +28,21 @@ parameters. For example, \code{values = c(1.05, 1.10, 1.15)} would}
 specified characteristics, which can be used for a power analysis or to investigate
 the performance of a proposed model).}
 
-\item{n}{A numeric value specifying the number of days to simulate (e.g., \code{n = 365}
-would simulate a dataset with a year's worth of data).}
+\item{custom_model}{The object name of an R function that defines the code that will be used
+to fit the model. This object name should not be in quotations. See Details for more.}
 
 \item{central}{A numeric value specifying the mean probability of exposure
 (for binary data) or the mean exposure value (for continuous data).}
 
+\item{exposure_type}{A character string specifying the type of exposure.
+Choices are "binary" or "continuous".}
+
+\item{n}{A numeric value specifying the number of days to simulate (e.g., \code{n = 365}
+would simulate a dataset with a year's worth of data).}
+
 \item{sd}{A numeric value giving the standard deviation of the exposure
 values from the exposure trend line (not the total standard deviation of
 the exposure values).}
-
-\item{exposure_type}{A character string specifying the type of exposure.
-Choices are "binary" or "continuous".}
 
 \item{exposure_trend}{A character string specifying a seasonal and / or long-term trend for
     expected mean exposure. See the vignette for \code{eesim} for examples of each option.
@@ -81,7 +85,7 @@ July). Negative values can be used to simulate a trend with lower values
 at the time of year of the start of the dataset and higher values in the
 opposite season.}
 
-\item{average_outcome}{A numeric value specifying the average outcome value}
+\item{average_outcome}{A numeric value specifying the average outcome value.}
 
 \item{outcome_trend}{A character string specifying the seasonal trend in
 health outcomes.  Options are the same as for continuous exposure
@@ -113,10 +117,8 @@ user-specified custom baseline function}
 \item{cust_lambda_args}{A list of arguments and their values used in the
 user-specified custom lambda function}
 
-\item{model}{A character string specifying model to be used. Choices are
-"spline" and "casecrossover"}
-
-\item{df_year}{A numeric value specifying the degrees of freedom per year}
+\item{custom_model_args}{A list of arguments and their values for a custom
+model. These arguments are passed through to the function specified with \code{custom_model}.}
 
 \item{plot}{"TRUE" or "FALSE" for whether to produce a plot}
 }
@@ -147,6 +149,6 @@ pow <- power_calc(varying = "n", values = floor(365.25 * seq(1, 21, by = 5)), n_
            central = 100, sd = 10, rr = 1.001, exposure_type = "continuous",
            exposure_trend = "cos1", exposure_amp = .6, average_outcome = 22,
            outcome_trend = "no trend", outcome_amp = .6,
-           model = "casecrossover", plot=TRUE)
+           custom_model = casecross_mod, plot = TRUE)
 
 }

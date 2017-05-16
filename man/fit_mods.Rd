@@ -2,26 +2,20 @@
 % Please edit documentation in R/customizable_functions.R
 \name{fit_mods}
 \alias{fit_mods}
-\title{Fit models}
+\title{Fit a model to simulated datasets}
 \usage{
-fit_mods(data, model = NULL, df_year = 7, custom_model = NULL,
-  custom_model_args = list())
+fit_mods(data, custom_model = NULL, custom_model_args = list())
 }
 \arguments{
 \item{data}{A list of simulated data sets. Each simulated dataset must include a
-columns called "x" with daily exposure values and a column called "outcome" with
+column called \code{x} with daily exposure values and a column called \code{outcome} with
 daily outcome values.}
 
-\item{model}{A character string specifying model to be used. Choices are
-"spline" and "casecrossover"}
-
-\item{df_year}{A numeric value specifying the degrees of freedom per year}
-
-\item{custom_model}{A character string with the object name of an R function
-that defines the code that will be used to fit the model. See Details for more.}
+\item{custom_model}{The object name of an R function that defines the code that will be used
+to fit the model. This object name should not be in quotations. See Details for more.}
 
 \item{custom_model_args}{A list of arguments and their values for a custom
-model.}
+model. These arguments are passed through to the function specified with \code{custom_model}.}
 }
 \value{
 A data frame in which each row gives the results from the model-fitting function run
@@ -38,31 +32,33 @@ A data frame in which each row gives the results from the model-fitting function
     \item{\code{upper_ci}: The upper value in the 95\% confidence interval estimated for
       \eqn{\beta}.}
   }
-
-
-in which each row includes an estimate of beta hat,
-   standard error, t-value, p-value, and 2.5\% and 97.5\% confidence bounds
-   for each repetition of the simulation
 }
 \description{
 Fits a specified model to each of the simulated datasets and returns a dataframe
 summarizing results from fitting the model to each dataset, including the estimated
-effect and the estimated standard error for that estimated effect.
+effect and the estimated standard error for that estimated effect. The model is specified
+through a user-created R function, which must take specific input and return
+output in a specific format. For more details, see the parameter definitions,
+the Details section, and the vignette for the \code{eesim} package.
 }
 \details{
 The function specified by the \code{custom_model} argument should be
    a user-created function that inputs a data frame with columns named "x" for
    exposure values and "outcome" for outcome values. The function must output a data
-   frame with columns called "Estimate", "Std. Error", "t value", "Pr(>|t|)",
-   "2.5\%", and "97.5\%", the output from \code{summary} and \code{confint} for
-   models fit using a standard \code{glm} call. For more details and examples, see
-   the vignette for \code{eesim}.
+   frame with columns called \code{Estimate}, \code{Std. Error}, \code{t value},
+   \code{Pr(>|t|)}, \code{2.5\%}, and \code{97.5\%}. Note that these columns are the output
+   from \code{summary} and \code{confint} for models fit using a \code{glm} call. For
+   more details and examples, see the vignette for \code{eesim}.
 }
 \examples{
-sims <- create_sims(n_reps=10, n=50, central = 100, sd = 10,
-            exposure_type="continuous", exposure_trend = "cos1",
+# Create a set of simulated datasets and then fit the model defined in `spline_mod` to
+# all datasets, using the argument `df_year = 7` in the call to `spline_mod`. The `spline_mod`
+# function is included in the `eesim` package and can be investigating by calling the function
+# name without parentheses (i.e., `spline_mod`).
+sims <- create_sims(n_reps = 10, n = 5 * 365, central = 100, sd = 10,
+            exposure_type = "continuous", exposure_trend = "cos1",
             exposure_amp = .6, average_outcome = 22,
             outcome_trend = "no trend", outcome_amp = .6, rr = 1.01)
-fit_mods(data = sims, model = "spline")
+fit_mods(data = sims, custom_model = spline_mod, custom_model_args = list(df_year = 7))
 
 }
