@@ -237,7 +237,6 @@ power_calc <- function(varying, values, n_reps, custom_model, central, exposure_
                        cust_base_func = NULL, cust_lambda_func = NULL,
                        cust_base_args = NULL, cust_lambda_args = NULL,
                        custom_model_args = NULL, plot = FALSE){
-
   msg <- paste("This function may take a minute or two to run, especially with lots of",
                "replications (`n_reps`) or options for `values`.")
   msg <- paste(strwrap(msg), collapse = "\n")

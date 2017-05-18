@@ -165,11 +165,14 @@ rainprobs <-pamonthly %>% group_by(month) %>% summarise(mean1 = mean(quant95, na
 
 ### Simulated Data with Monthly Exposure Trend 
 
-Many epidemiologic data sets are of a sensitive nature and not publicly available.  We can use eesim to simulate data with a similar seasonal trend to fit and assess models.  Because rainfall in Pennsylvania and New York exhibited similar montly patterns, we will use the average proportion of days each month from 2006-2017 which had rainfall in the 95th percentile.  We will specify these proportions in the "monthly" exposure trend.
+Many epidemiologic data sets are of a sensitive nature and not publicly available.  We can use eesim to simulate data with a similar seasonal trend to fit and assess models.  Because rainfall in Philadelphia and New York exhibited similar montly patterns, we will use the average proportion of days each month from 2006-2017 which had rainfall in the 95th percentile.  We will specify these proportions in the "monthly" exposure trend.
+5.3 is the weekly mean Legionnaire outcome value in Pennsylvania, and we divide by 7 to get the daily mean.
 
 ```{r, echo=F}
 #Means of real data:
 map(leg_cases[,2:4], mean, na.rm=T)
 #(ma=14.633, nyc=4.69, pa=5.314)
-simdat <- eesim(n=3650, n_reps=1, rr=1.1, exposure_type = "binary", central = c(0.048, 0.035, 0.046, 0.036, 0.035, 0.055, 0.053, 0.067, 0.070, 0.053, 0.033, 0.067), exposure_trend = "monthly", average_outcome = 5.314453)
+simdat <- eesim(n=3650, n_reps=1, rr=1.1, exposure_type = "binary", central = c(0.048, 0.035, 0.046, 
+0.036, 0.035, 0.055, 0.053, 0.067, 0.070, 0.053, 0.033, 0.067), exposure_trend = "monthly", 
+average_outcome = 5.3/7, custom_model = spline_mod)
 ```

@@ -21,7 +21,7 @@
 #' @param amp A numeric value specifying the amplitude of the seasonal trend.
 #'    Must be between -1 and 1.
 #' @param custom_func A character string specifying a customized function from
-#'    which to create a trend variable.
+#'    which to create a trend variable. Must accept an argument "n".
 #' @param ... optional arguments to a custom trend function
 #'
 #' @return A numeric vector used to generate data with seasonal trends.
@@ -82,6 +82,8 @@ calc_t <- function(n, trend = "no trend", slope=1, amp = .6, custom_func = NULL,
 #'    Must be between -.5 and .5.
 #' @param start.date A date of the format "yyyy-mm-dd" from which to begin
 #'    simulating values
+#' @param custom_func A character string specifying a customized function from
+#'    which to create a trend variable. Must accept arguments "n" and "p".
 #' @inheritParams calc_t
 #'
 #' @return A numeric vector used to generate binary exposure data with seasonal
