@@ -397,6 +397,7 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
 #' @param cust_lambda_args A list of arguments and their values used in the
 #'    user-specified custom lambda function
 #' @inheritParams std_exposure
+#' @inheritParams sim_exposure
 #' @inheritParams sim_outcome
 #'
 #' @return A list object, in which each list element is one of the synthetic datasets
@@ -422,22 +423,28 @@ create_sims <- function(n_reps, n, central, sd=NULL, exposure_type, exposure_tre
                         outcome_trend, outcome_slope=1,
                         outcome_amp, rr, start.date = "2000-01-01",
                         cust_exp_func = NULL, cust_exp_args = NULL,
+                        cust_expdraw = NULL, cust_expdraw_args = NULL,
                         cust_base_func = NULL, cust_lambda_func = NULL,
-                        cust_base_args = NULL, cust_lambda_args = NULL){
+                        cust_base_args = NULL, cust_lambda_args = NULL,
+                        cust_outdraw=NULL, cust_outdraw_args=NULL){
 
   exposure <- lapply(rep(n, times = n_reps), sim_exposure, central = central,
                      sd = sd, exposure_type = exposure_type,
                      slope = exposure_slope, amp = exposure_amp,
                      trend = exposure_trend, start.date = start.date,
                      cust_exp_func = cust_exp_func,
-                     cust_exp_args = cust_exp_args)
+                     cust_exp_args = cust_exp_args,
+                     cust_expdraw = cust_expdraw,
+                     cust_expdraw_args = cust_expdraw_args)
   outcome <- lapply(exposure, sim_outcome, average_outcome = average_outcome,
                     trend = outcome_trend, slope = outcome_slope,
                     amp = outcome_amp, rr = rr,
                     start.date = start.date, cust_base_func = cust_base_func,
                     cust_lambda_func = cust_lambda_func,
                     cust_base_args = cust_base_args,
-                    cust_lambda_args = cust_lambda_args)
+                    cust_lambda_args = cust_lambda_args,
+                    cust_outdraw=cust_outdraw,
+                    cust_outdraw_args=cust_outdraw_args)
   return(outcome)
 }
 
@@ -596,8 +603,10 @@ eesim <- function(n_reps, n, rr, exposure_type, custom_model,
                   outcome_trend = "no trend", outcome_slope = NULL,
                   outcome_amp = NULL, start.date = "2000-01-01",
                   cust_exp_func = NULL, cust_exp_args = NULL,
+                  cust_expdraw = NULL, cust_expdraw_args = NULL,
                   cust_base_func = NULL, cust_lambda_func = NULL,
                   cust_base_args = NULL, cust_lambda_args = NULL,
+                  cust_outdraw = NULL, cust_outdraw_args = NULL,
                   custom_model_args = NULL){
 
   msg <- paste("This function may take a minute or two to run, especially if you are creating lots of",
@@ -612,9 +621,14 @@ eesim <- function(n_reps, n, rr, exposure_type, custom_model,
                           average_outcome = average_outcome, outcome_trend = outcome_trend,
                           outcome_slope = outcome_slope, outcome_amp = outcome_amp,
                           rr = rr, start.date = "2000-01-01", cust_exp_func = cust_exp_func,
-                          cust_exp_args = cust_exp_args, cust_base_func = cust_base_func,
-                          cust_lambda_func = cust_lambda_func, cust_base_args = cust_base_args,
-                          cust_lambda_args = cust_lambda_args)
+                          cust_exp_args = cust_exp_args, cust_expdraw=cust_expdraw,
+                          cust_expdraw_args = cust_expdraw_args,
+                          cust_base_func = cust_base_func,
+                          cust_lambda_func = cust_lambda_func,
+                          cust_base_args = cust_base_args,
+                          cust_lambda_args = cust_lambda_args,
+                          cust_outdraw=cust_outdraw,
+                          cust_outdraw_args=cust_outdraw_args)
   totalsims[[2]] <- fit_mods(totalsims[[1]], custom_model = custom_model,
                              custom_model_args = custom_model_args)
   totalsims[[3]] <- check_sims(df = totalsims[[2]], true_rr = rr)
