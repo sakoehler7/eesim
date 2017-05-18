@@ -65,4 +65,9 @@ custrnorm <- function(n, mu, sd, c){
   out <- c+rnorm(n, mu, sd)
   return(out)
 }
+
+rnorm2 <- function(n, lambda, sd){
+  out <- rnorm(n, mean=lambda, sd)
+  return(out)
+}
 ```
