@@ -141,6 +141,12 @@ bin_t <- function(n, p, trend = "no trend", slope = 1, amp = .01,
 #'
 #' @param start.date A date of the format "yyyy-mm-dd" from which to begin
 #'    simulating daily exposures
+#' @param cust_expdraw A character string specifying a user-created function
+#'    which determines the distribution of random noise off of the trend line.
+#'    This function must have inputs "n" and "prob" and output a vector of simulated
+#'    exposure values.
+#' @param cust_expdraw_args A list of arguments other than "n" and "prob" required
+#'  by the cust_expdraw function.
 #' @inheritParams bin_t
 #'
 #' @return A data frame with the dates and daily exposure values from n days
@@ -148,14 +154,23 @@ bin_t <- function(n, p, trend = "no trend", slope = 1, amp = .01,
 #' @examples
 #' binary_exposure(n = 5, p = 0.1, trend = "cos1", amp = .02,
 #'                 start.date = "2001-02-01")
-#'
+#' binary_exposure(n=10, p=.1, cust_expdraw=rnbinom,
+#'                 cust_expdraw_args=list(size=10))
 #'
 #' @export
-binary_exposure <- function(n, p, trend = "no trend", slope, amp,
-                            start.date = "2000-01-01", custom_func = NULL, ...){
+binary_exposure <- function(n, p, trend = "no trend", slope, amp=.05,
+                            start.date = "2000-01-01", cust_expdraw=NULL,
+                            cust_expdraw_args = list(), custom_func = NULL, ...){
   t <- bin_t(n=n, p=p, trend = trend, slope=slope, amp = amp, start.date = start.date,
              custom_func = custom_func)
+  if(!is.null(cust_expdraw)){
+    cust_expdraw_args$prob <- t
+    cust_expdraw_args$n <- n
+    x <- do.call(cust_expdraw, cust_expdraw_args)
+  }
+  else{
   x <- stats::rbinom(length(t), size = 1, prob = t)
+  }
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
   df <- data.frame(date, x)
@@ -227,6 +242,8 @@ continuous_exposure <- function(n, mu, sd = 1, trend = "no trend", slope, amp = 
 #' std_exposure(n = 5, central = .1, trend = "cos1", amp = .02)
 #' std_exposure(n = 5, central = 50, sd = 5, trend = "cos3", amp = .6,
 #'              exposure_type = "continuous", start.date = "2001-04-01")
+#' std_exposure(n=50, central=.1, amp=.05,cust_expdraw=rnbinom,
+#'              cust_expdraw_args=list(size=10))
 #'
 #' @export
 std_exposure <- function(n, central, sd = NULL, trend = "no trend",

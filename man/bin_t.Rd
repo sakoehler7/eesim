@@ -33,7 +33,7 @@ Must be between -.5 and .5.}
 simulating values}
 
 \item{custom_func}{A character string specifying a customized function from
-which to create a trend variable.}
+which to create a trend variable. Must accept arguments "n" and "p".}
 
 \item{...}{optional arguments to a custom trend function}
 }

@@ -31,7 +31,7 @@ with trend = "linear" or trend = "cos1linear".}
 Must be between -1 and 1.}
 
 \item{custom_func}{A character string specifying a customized function from
-which to create a trend variable.}
+which to create a trend variable. Must accept an argument "n".}
 
 \item{...}{optional arguments to a custom trend function}
 }
