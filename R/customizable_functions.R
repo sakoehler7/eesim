@@ -48,6 +48,13 @@ custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, metric = "temp",
 #'    exposure values.
 #' @param cust_exp_args A list of arguments used in the user-specified custom
 #'    function.
+#' @param cust_expdraw A character string specifying a user-created function
+#'    which determines the distribution of random noise off of the trend line.
+#'    This function must have inputs "n" and "prob" for a binary exposure
+#'    function and inputs "n" and "mean" for a continuous exposure function.
+#'    The custom function must output a vector of simulated exposure values.
+#' @param cust_expdraw_args A list of arguments other than "n" and "prob" or
+#' "mean" required by the cust_expdraw function.
 #' @inheritParams std_exposure
 #' @inheritParams continuous_exposure
 #' @inheritParams binary_exposure
@@ -71,7 +78,8 @@ custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, metric = "temp",
 sim_exposure <- function(n, central = NULL, sd = NULL, trend = "no trend",
                          slope = 1, amp = .6, exposure_type = NULL,
                          start.date = "2001-01-01", cust_exp_func = NULL,
-                         cust_exp_args = NULL){
+                         cust_exp_args = NULL, cust_expdraw = NULL,
+                         cust_expdraw_args = list()){
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = n)
   if(is.null(cust_exp_args)){
@@ -240,6 +248,12 @@ create_lambda <- function(baseline, exposure, rr, cust_lambda_func = NULL, ...){
 #'    user-specified custom lambda function
 #' @param cust_base_args A list of arguments and their values used in the
 #'    user-specified custom baseline function
+#' @param cust_outdraw A character string specifying a user-created function to
+#' randomize the outcome values off of the baseline for outcome values. This
+#' function must take inputs "n" and "lambda" and output a vector of outcome
+#' values.
+#' @param cust_outdraw_args A list of arguments besides "n" and "lamba" passed
+#' to the user-created custom outcome draw function.
 #' @param start.date A date of the format "yyyy-mm-dd" from which to begin
 #'    simulating values
 #' @inheritParams create_baseline
@@ -258,7 +272,8 @@ create_lambda <- function(baseline, exposure, rr, cust_lambda_func = NULL, ...){
 sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
                         slope = 1, amp = .6, rr = 1.01, start.date="2000-01-01",
                         cust_base_func = NULL, cust_lambda_func = NULL,
-                        cust_base_args = list(), cust_lambda_args = list()){
+                        cust_base_args = list(), cust_lambda_args = list(),
+                        cust_outdraw = NULL, cust_outdraw_args = list()){
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = nrow(exposure))
   average_baseline <- average_outcome/exp(log(rr)*mean(exposure$x))
@@ -274,13 +289,11 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
     lambda <- create_lambda(baseline = baseline,
                             exposure = exposure$x,
                             rr = rr)
-    outcome <- stats::rpois(n = nrow(exposure), lambda = lambda)
   } else if (is.null(cust_lambda_func) & !is.null(cust_base_func)){
     baseline <- do.call(cust_base_func, cust_base_args)
     lambda <- create_lambda(baseline = baseline,
                             exposure = exposure$x,
                             rr = rr)
-    outcome <- stats::rpois(n = nrow(exposure), lambda = lambda)
   } else if (is.null(cust_base_func) & !is.null(cust_lambda_func)){
     baseline <- create_baseline(n = nrow(exposure),
                                 average_baseline = average_baseline,
@@ -288,12 +301,18 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
                                 amp = amp)
     cust_lambda_args$baseline <- baseline$baseline
     lambda <- do.call(cust_lambda_func, cust_lambda_args)
-    outcome <- stats::rpois(n = nrow(exposure), lambda = lambda)
   } else {
     baseline <- do.call(cust_base_func, cust_base_args)
     cust_lambda_args$baseline <- baseline
     lambda <- do.call(cust_lambda_func, cust_lambda_args)
-    outcome <- stats::rpois(n = nrow(exposure), lambda = lambda)
+  }
+  if (is.null(cust_outdraw)){
+  outcome <- stats::rpois(n = nrow(exposure), lambda = lambda)
+  }
+  else {
+    cust_outdraw_args$lambda <- lambda
+    cust_outdraw_args$n <- nrow(exposure)
+    outcome <- do.call(cust_outdraw, cust_outdraw_args)
   }
   df <- data.frame(date, x = exposure$x, outcome)
   return(df)
@@ -378,6 +397,7 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
 #' @param cust_lambda_args A list of arguments and their values used in the
 #'    user-specified custom lambda function
 #' @inheritParams std_exposure
+#' @inheritParams sim_exposure
 #' @inheritParams sim_outcome
 #'
 #' @return A list object, in which each list element is one of the synthetic datasets
@@ -404,22 +424,28 @@ create_sims <- function(n_reps, n, rr, central,average_outcome, sd=NULL, exposur
                         outcome_trend, outcome_slope=1,
                         outcome_amp, start.date = "2000-01-01",
                         cust_exp_func = NULL, cust_exp_args = NULL,
+                        cust_expdraw = NULL, cust_expdraw_args = NULL,
                         cust_base_func = NULL, cust_lambda_func = NULL,
-                        cust_base_args = NULL, cust_lambda_args = NULL){
+                        cust_base_args = NULL, cust_lambda_args = NULL,
+                        cust_outdraw=NULL, cust_outdraw_args=NULL){
 
   exposure <- lapply(rep(n, times = n_reps), sim_exposure, central = central,
                      sd = sd, exposure_type = exposure_type,
                      slope = exposure_slope, amp = exposure_amp,
                      trend = exposure_trend, start.date = start.date,
                      cust_exp_func = cust_exp_func,
-                     cust_exp_args = cust_exp_args)
+                     cust_exp_args = cust_exp_args,
+                     cust_expdraw = cust_expdraw,
+                     cust_expdraw_args = cust_expdraw_args)
   outcome <- lapply(exposure, sim_outcome, average_outcome = average_outcome,
                     trend = outcome_trend, slope = outcome_slope,
                     amp = outcome_amp, rr = rr,
                     start.date = start.date, cust_base_func = cust_base_func,
                     cust_lambda_func = cust_lambda_func,
                     cust_base_args = cust_base_args,
-                    cust_lambda_args = cust_lambda_args)
+                    cust_lambda_args = cust_lambda_args,
+                    cust_outdraw=cust_outdraw,
+                    cust_outdraw_args=cust_outdraw_args)
   return(outcome)
 }
 
@@ -578,8 +604,10 @@ eesim <- function(n_reps, n, rr, exposure_type, custom_model,
                   outcome_trend = "no trend", outcome_slope = NULL,
                   outcome_amp = NULL, start.date = "2000-01-01",
                   cust_exp_func = NULL, cust_exp_args = NULL,
+                  cust_expdraw = NULL, cust_expdraw_args = NULL,
                   cust_base_func = NULL, cust_lambda_func = NULL,
                   cust_base_args = NULL, cust_lambda_args = NULL,
+                  cust_outdraw = NULL, cust_outdraw_args = NULL,
                   custom_model_args = NULL){
 
   msg <- paste("This function may take a minute or two to run, especially if you are creating lots of",
@@ -594,9 +622,14 @@ eesim <- function(n_reps, n, rr, exposure_type, custom_model,
                           average_outcome = average_outcome, outcome_trend = outcome_trend,
                           outcome_slope = outcome_slope, outcome_amp = outcome_amp,
                           rr = rr, start.date = "2000-01-01", cust_exp_func = cust_exp_func,
-                          cust_exp_args = cust_exp_args, cust_base_func = cust_base_func,
-                          cust_lambda_func = cust_lambda_func, cust_base_args = cust_base_args,
-                          cust_lambda_args = cust_lambda_args)
+                          cust_exp_args = cust_exp_args, cust_expdraw=cust_expdraw,
+                          cust_expdraw_args = cust_expdraw_args,
+                          cust_base_func = cust_base_func,
+                          cust_lambda_func = cust_lambda_func,
+                          cust_base_args = cust_base_args,
+                          cust_lambda_args = cust_lambda_args,
+                          cust_outdraw=cust_outdraw,
+                          cust_outdraw_args=cust_outdraw_args)
   totalsims[[2]] <- fit_mods(totalsims[[1]], custom_model = custom_model,
                              custom_model_args = custom_model_args)
   totalsims[[3]] <- check_sims(df = totalsims[[2]], true_rr = rr)
