@@ -398,10 +398,11 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
 #'
 #' @export
 #'
-create_sims <- function(n_reps, n, central, sd=NULL, exposure_type, exposure_trend,
-                        exposure_slope=1, exposure_amp, average_outcome,
+create_sims <- function(n_reps, n, rr, central,average_outcome, sd=NULL, exposure_type,
+                        exposure_trend,
+                        exposure_slope=1, exposure_amp,
                         outcome_trend, outcome_slope=1,
-                        outcome_amp, rr, start.date = "2000-01-01",
+                        outcome_amp, start.date = "2000-01-01",
                         cust_exp_func = NULL, cust_exp_args = NULL,
                         cust_base_func = NULL, cust_lambda_func = NULL,
                         cust_base_args = NULL, cust_lambda_args = NULL){
