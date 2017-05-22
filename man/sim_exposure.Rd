@@ -6,7 +6,8 @@
 \usage{
 sim_exposure(n, central = NULL, sd = NULL, trend = "no trend",
   slope = 1, amp = 0.6, exposure_type = NULL, start.date = "2001-01-01",
-  cust_exp_func = NULL, cust_exp_args = NULL)
+  cust_exp_func = NULL, cust_exp_args = NULL, cust_expdraw = NULL,
+  cust_expdraw_args = list())
 }
 \arguments{
 \item{n}{A numeric value specifying the number of days to simulate.}
@@ -49,6 +50,15 @@ exposure values.}
 
 \item{cust_exp_args}{A list of arguments used in the user-specified custom
 function.}
+
+\item{cust_expdraw}{A character string specifying a user-created function
+which determines the distribution of random noise off of the trend line.
+This function must have inputs "n" and "prob" for a binary exposure
+function and inputs "n" and "mean" for a continuous exposure function.
+The custom function must output a vector of simulated exposure values.}
+
+\item{cust_expdraw_args}{A list of arguments other than "n" and "prob" or
+"mean" required by the cust_expdraw function.}
 }
 \value{
 A data frame with two columns: date (\code{date}) and simulated

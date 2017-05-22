@@ -533,14 +533,30 @@ qplot(customexp$date, customexp$x)+geom_point()+labs(title = "Exposure values wi
 calendar_plot(customexp, type = "continuous")
 ```
 
-This custom exposure function can be called with eesim:
+We can also customize the randomization of the exposure values from the trend line using the cust_expdraws argument.  The default randomization for continuous exposure values is from the normal distribution where the mean is the trend line and the standard deviation is specified by the 'sd' argument in the 'eesim' function.  The default for binary exposure values is a binomial distribution where the probability is the trend line. 
+
+A function for custom randomization of exposure values must input values "n" and "mean" for continuous exposure and "n" and "prob" for binary exposure. Any arguments other than these should be put in a list for the 'cust_expdraw_args' argument. The function must output a vector of numeric exposure values. 
+
+Here is an example of using a custom function for the randomization of draws off of the trend line:
+
+```{r,fig.width = 5, fig.height = 3, fig.align = "center"}
+newrgamma <- function(n, mean, rate){
+  out <- rgamma(n=n, shape=mean, rate=rate)
+  return(out)
+}
+customexp2 <- sim_exposure(n=1000, exposure_type = "continuous", cust_exp_func = sintrend, cust_exp_args = list(n=1000, mu = 75, y=3), cust_expdraw = newrgamma, cust_expdraw_args = list(rate=2))
+qplot(customexp2$date, customexp2$x)+geom_point()+labs(title = "Exposure values with a custom trend and custom randomization", x="Date", y="Exposure")+theme_bw()
+```
+
+These custom exposure functions can be called with eesim:
 
 ```{r, warning=F}
 ex_sim2 <- eesim(n_reps = 3, n = 10, 
-                exposure_type = "continuous", 
-                exposure_trend = "custom", 
+                exposure_type = "continuous",
                 cust_exp_func = sintrend,
-                cust_exp_args = list(n=10, mu=75,y=3),
+                cust_exp_args = list(n=10, mu=75, y=3),
+                cust_expdraw = newrgamma,
+                cust_expdraw_args = list(rate=2),
                 average_outcome = 22, rr = 1.01, 
                 custom_model = spline_mod, custom_model_args = list(df_year = 1))
 ex_sim2
