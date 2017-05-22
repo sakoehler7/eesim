@@ -545,7 +545,7 @@ newrgamma <- function(n, mean, rate){
   return(out)
 }
 customexp2 <- sim_exposure(n=1000, exposure_type = "continuous", cust_exp_func = sintrend, cust_exp_args = list(n=1000, mu = 75, y=3), cust_expdraw = newrgamma, cust_expdraw_args = list(rate=2))
-qplot(customexp2$date, customexp2$x)+geom_point()+labs(title = "Exposure values with a custom trend and custom randomization", x="Date", y="Exposure")+theme_bw()
+qplot(customexp2$date, customexp2$x)+geom_point()+labs(title = "Exposure values with custom randomization", x="Date", y="Exposure")+theme_bw()
 ```
 
 These custom exposure functions can be called with eesim:
