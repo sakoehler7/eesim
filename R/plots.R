@@ -72,6 +72,9 @@ calendar_plot <- function(df, type = "continuous", labels = NULL, legend_name = 
   if(type == "continuous"){
     exposure <- df$x
   } else if(type == "discrete"){
+    if(length(labels) == 0){
+      labels <- as.character(1:length(levels(factor(df$x))))
+      }
     exposure <- factor(df$x, levels = levels(factor(df$x)), labels = labels)
   } else {
     stop('The parameter `type` must be "continuous" or "discrete".')
