@@ -582,13 +582,14 @@ custombase <- function(n, slope, intercept){
 #Example:
 custombase(n=5, slope = .3, intercept = 55)
 
-ex_sim3 <- eesim(n_reps = 3, n = 10, central = 100, sd = 10,
+ex_sim3 <- eesim(n_reps = 3, n = 100, central = 100, sd = 10,
                 exposure_type = "continuous", exposure_trend = "cos1",
                 exposure_amp = .6, average_outcome = 22, rr = 1.01, 
                 cust_base_func = custombase,
                 cust_base_args = list(n=10, slope = .5, intercept = 12),
                 custom_model = spline_mod, custom_model_args = list(df_year = 2))
 ex_sim3[[1]]
+#[Show plot of data instead of data]
 ```
 
 The second way of customizing the outcome simulation is to use a custom function to incorporate the added risk from the exposure when calculating the expected daily outcome count for a day, $\lambda_t$, from the inputs of exposure ($X_t$) and outcome baseline ($B_t$) for the day. Here is an example of creating a custom lambda, meaning a custom function relating relative risk and exposure to outcomes, and using it in eesim with the custom baseline function created above. The custom lambda function must input arguments `exposure`, `rr`, and `baseline` and output a vector of lambda values.  
@@ -600,7 +601,7 @@ customlambda <- function(exposure, rr, constant, baseline){
   return(lambda)
 }
 
-ex_sim4 <- eesim(n_reps = 3, n = 10, central = 100, sd = 10,
+ex_sim4 <- eesim(n_reps = 3, n = 100, central = 100, sd = 10,
                 exposure_type = "continuous", exposure_trend = "cos1",
                 exposure_amp = .6, average_outcome = 22, rr = 1.01, 
                 cust_base_func = custombase,
