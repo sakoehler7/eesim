@@ -7,8 +7,10 @@
 create_sims(n_reps, n, central, sd = NULL, exposure_type, exposure_trend,
   exposure_slope = 1, exposure_amp, average_outcome, outcome_trend,
   outcome_slope = 1, outcome_amp, rr, start.date = "2000-01-01",
-  cust_exp_func = NULL, cust_exp_args = NULL, cust_base_func = NULL,
-  cust_lambda_func = NULL, cust_base_args = NULL, cust_lambda_args = NULL)
+  cust_exp_func = NULL, cust_exp_args = NULL, cust_expdraw = NULL,
+  cust_expdraw_args = NULL, cust_base_func = NULL,
+  cust_lambda_func = NULL, cust_base_args = NULL, cust_lambda_args = NULL,
+  cust_outdraw = NULL, cust_outdraw_args = NULL)
 }
 \arguments{
 \item{n_reps}{A numeric value specifying the number of datasets to simulate (e.g.,
@@ -102,6 +104,15 @@ trend function to generate exposure data}
 \item{cust_exp_args}{A list of arguments and their values for the
 user-specified custom exposure function.}
 
+\item{cust_expdraw}{A character string specifying a user-created function
+which determines the distribution of random noise off of the trend line.
+This function must have inputs "n" and "prob" for a binary exposure
+function and inputs "n" and "mean" for a continuous exposure function.
+The custom function must output a vector of simulated exposure values.}
+
+\item{cust_expdraw_args}{A list of arguments other than "n" and "prob" or
+"mean" required by the cust_expdraw function.}
+
 \item{cust_base_func}{A character string specifying a user-made custom
 function for baseline trend}
 
@@ -113,6 +124,14 @@ user-specified custom baseline function}
 
 \item{cust_lambda_args}{A list of arguments and their values used in the
 user-specified custom lambda function}
+
+\item{cust_outdraw}{A character string specifying a user-created function to
+randomize the outcome values off of the baseline for outcome values. This
+function must take inputs "n" and "lambda" and output a vector of outcome
+values.}
+
+\item{cust_outdraw_args}{A list of arguments besides "n" and "lamba" passed
+to the user-created custom outcome draw function.}
 }
 \value{
 A list object, in which each list element is one of the synthetic datasets

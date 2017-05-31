@@ -4,8 +4,9 @@
 \alias{binary_exposure}
 \title{Simulate binary exposure data}
 \usage{
-binary_exposure(n, p, trend = "no trend", slope, amp,
-  start.date = "2000-01-01", custom_func = NULL, ...)
+binary_exposure(n, p, trend = "no trend", slope, amp = 0.05,
+  start.date = "2000-01-01", cust_expdraw = NULL,
+  cust_expdraw_args = list(), custom_func = NULL, ...)
 }
 \arguments{
 \item{n}{A numeric value specifying the number of days to simulate.}
@@ -32,6 +33,14 @@ Must be between -.5 and .5.}
 \item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
 simulating daily exposures}
 
+\item{cust_expdraw}{A character string specifying a user-created function
+which determines the distribution of random noise off of the trend line.
+This function must have inputs "n" and "prob" and output a vector of simulated
+exposure values.}
+
+\item{cust_expdraw_args}{A list of arguments other than "n" and "prob" required
+by the cust_expdraw function.}
+
 \item{custom_func}{A character string specifying a customized function from
 which to create a trend variable. Must accept arguments "n" and "p".}
 
@@ -47,6 +56,7 @@ trends.
 \examples{
 binary_exposure(n = 5, p = 0.1, trend = "cos1", amp = .02,
                 start.date = "2001-02-01")
-
+binary_exposure(n=10, p=.1, cust_expdraw=rnbinom,
+                cust_expdraw_args=list(size=10))
 
 }

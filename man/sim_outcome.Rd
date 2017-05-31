@@ -7,7 +7,8 @@
 sim_outcome(exposure, average_outcome = NULL, trend = "no trend",
   slope = 1, amp = 0.6, rr = 1.01, start.date = "2000-01-01",
   cust_base_func = NULL, cust_lambda_func = NULL, cust_base_args = list(),
-  cust_lambda_args = list())
+  cust_lambda_args = list(), cust_outdraw = NULL,
+  cust_outdraw_args = list())
 }
 \arguments{
 \item{exposure}{A numeric vector of exposure values}
@@ -49,6 +50,14 @@ user-specified custom baseline function}
 
 \item{cust_lambda_args}{A list of arguments and their values used in the
 user-specified custom lambda function}
+
+\item{cust_outdraw}{A character string specifying a user-created function to
+randomize the outcome values off of the baseline for outcome values. This
+function must take inputs "n" and "lambda" and output a vector of outcome
+values.}
+
+\item{cust_outdraw_args}{A list of arguments besides "n" and "lamba" passed
+to the user-created custom outcome draw function.}
 }
 \value{
 A dataframe with a simulated time series, with columns for
