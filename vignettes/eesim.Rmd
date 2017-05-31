@@ -29,7 +29,7 @@ This package allows you to simulate time series of environmental health data and
 
 The user has the option to customize different aspects of the simulation at each of these steps.
 
-The package creates simulated time series data that are relevant for environmental epidemiology studies of ambient exposures (e.g., studies of acute mortality risks associated with daily air pollution concentration, daily temperature, or occurance of a community-wide extreme event like a heat wave). Such time series are often characterized by both seasonal and long-term trends in both the exposure of interest and the outcome. For example, the following plot shows time series of daily ozone concentration (in parts per billion [ppb]) and cardiovascular deaths in Chicago, IL (1996--2000), with smoothed lines overlaid on the raw data to show patterns over time. 
+The package creates simulated time series data that are relevant for environmental epidemiology studies of ambient exposures (e.g., studies of acute mortality risks associated with daily air pollution concentration, daily temperature, or occurance of a community-wide extreme event like a heat wave). Simulated environmental datasets like those created by the package can be used in to assess the performance of statistical models meant to estimate the association between exposure level and outcome risk, to estimate power for a planned study, and to develop a better understanding of the data generating processes behind observed environmental datasets. Such time series are often characterized by both seasonal and long-term trends in both the exposure of interest and the outcome. For example, the following plot shows time series of daily ozone concentration (in parts per billion [ppb]) and cardiovascular deaths in Chicago, IL (1996--2000), with smoothed lines overlaid on the raw data to show patterns over time. 
 
 ```{r message = FALSE, echo = FALSE, fig.width = 5, fig.align = "center"}
 library(dlnm)
@@ -48,12 +48,6 @@ chicagoNMMAPS %>%
   theme_classic() + 
   labs(x = "Date", y = "Variable value")
 ```
-
-Simulated environmental datasets have been used in a number of studies to assess the performance of statistical models meant to estimate the association between exposure level and outcome risk, including: 
-
-- [Example study 1]
-- [Example study 2]
-- ...
 
 ## Basic example of using the package
 
