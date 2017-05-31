@@ -166,13 +166,13 @@ The third element of the list returned by a call to `eesim` gives the following 
 eesim_overall_output <- data_frame(element = paste0("`",
                                                     colnames(ex_sim[[3]]),
                                                     "`"),
-                                   desc = c("**Mean beta hat**: The mean of the estimated log relative rate over all simulations.",
+                                   desc = c("**Mean estimate**: The mean of the estimated log relative rate over all simulations.",
                                             "**Mean estimated relative rate**: The mean of the estimated relative rate over all simulations.",
-                                            "Variance of the point estimates of the estimated effect over all simulations",
-                                            "The mean across simulations of the variances of each estimated effect",
-                                            "Relative bias of the mean of the estimated coefficients",
-                                            "**95% confidence inverval coverage**: Percent of simulations for which the 95% confidence interval estimate includes the true value. [Johnson2015, Beaujean2014]",
-                                            "**Power**: Percent of simulations in which a true effect, with an effect size given by an alternative hypothesis, is identified with a p-value of 0.05 or lower; i.e., probability of rejecting the null hypothesis when the the specified alternative hypothesis is true. [Bellan2015, Johnson2015, Gaye2015, Green2016, Beaujean2014]"))
+                                            "**Variance across estimates**: Variance of the point estimates (estimated log relative risk) over all simulations.",
+                                            "**Mean variance of estimate**: The mean of the variances of the estimated effect (estimated log relative risk) across all simulations.",
+                                            "**Relative bias**: Difference between the estimated log relative risk and true relative risk as a proportion of the true relative risk.",
+                                            "**95% confidence inverval coverage**: Percent of simulations for which the 95% confidence interval estimate includes the true value. ",
+                                            "**Power**: Percent of simulations in which a true effect, with an effect size given by an alternative hypothesis, is identified with a p-value of 0.05 or lower."))
 knitr::kable(eesim_overall_output, col.names = c("Variable", "Description"))
 ```
 
@@ -279,7 +279,7 @@ ex_sim2[["overall_performance"]]
 
 [Add power calc example]
 
-```{r fig.width = 5, fig.height = 3.5, fig.align = "center", eval = FALSE}
+```{r fig.width = 5, fig.height = 3.5, fig.align = "center"}
 ex_power_calc <- power_calc(varying = "n", values = floor(365.25 * seq(1, 20, by = 2)),
                             n_reps = 100, rr = 1.05,
                             central = c(0, 0, 0, 0, 0, 0.05, 0.12, 0.02, 0, 0, 0, 0),
