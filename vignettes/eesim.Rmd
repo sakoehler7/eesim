@@ -277,9 +277,11 @@ Here are the overall estimates in this case for model performance:
 ex_sim2[["overall_performance"]]
 ```
 
-[Add power calc example]
+The `power_calc` function in the package allows you to extend on this simulation functionality to create power curves for an analysis given an anticipated underlying process of data generation. This function will create simulation for several different values of number of days in the study (`n`), average daily outcome counts (`average_outcome`), or expected association between exposure and outcome (`rr`). 
 
-```{r fig.width = 5, fig.height = 3.5, fig.align = "center"}
+For example, the following call generates a power curve that explores how expected power changes with an increasing number of days for the heat wave analysis example just presented (as a warning, this call takes a few minutes to run, since it's simulating many datasets):
+
+```{r fig.width = 5, fig.height = 3.5, fig.align = "center", eval = FALSE}
 ex_power_calc <- power_calc(varying = "n", values = floor(365.25 * seq(1, 20, by = 2)),
                             n_reps = 100, rr = 1.05,
                             central = c(0, 0, 0, 0, 0, 0.05, 0.12, 0.02, 0, 0, 0, 0),
