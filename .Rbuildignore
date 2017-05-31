@@ -5,3 +5,4 @@
 ^README\.md$
 ^README-.*\.png$
 ^Legionnaires\ data$
+^\.travis\.yml$
