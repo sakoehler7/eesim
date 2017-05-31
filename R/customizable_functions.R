@@ -274,7 +274,6 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
                         cust_base_func = NULL, cust_lambda_func = NULL,
                         cust_base_args = list(), cust_lambda_args = list(),
                         cust_outdraw = NULL, cust_outdraw_args = list()){
-
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = nrow(exposure))
   average_baseline <- average_outcome / exp(log(rr) * mean(exposure$x))
@@ -311,10 +310,12 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
     cust_lambda_args$exposure <- exposure$x
     lambda <- do.call(cust_lambda_func, cust_lambda_args)
   }
+
+  lambda <- lambda * average_outcome / mean(lambda) # Make sure we have desired mean
+
   if (is.null(cust_outdraw)){
   outcome <- stats::rpois(n = nrow(exposure), lambda = lambda)
-  }
-  else {
+  } else {
     cust_outdraw_args$lambda <- lambda
     cust_outdraw_args$n <- nrow(exposure)
     outcome <- do.call(cust_outdraw, cust_outdraw_args)
