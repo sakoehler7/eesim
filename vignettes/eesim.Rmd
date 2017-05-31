@@ -3,6 +3,7 @@ title: "Using the `eesim` package"
 author: "Sarah Koehler and Brooke Anderson"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
+bibliography: eesim_bibfile.bib
 vignette: >
   %\VignetteIndexEntry{Using the eesim package}
   %\VignetteEngine{knitr::rmarkdown}
@@ -604,18 +605,4 @@ customlambda <- function(exposure, rr, constant, baseline){
 [For this example, it would be interesting to instead show a `customlambda` that calculates lambda based on a model with separate relative rates for lag 0 and lag 1 of the exposure. Alternatively, it would be interesting to show how to simulate exposure if is has a risk both from the exposure we care about (e.g., PM2.5 concentration) and an exposure that might be a confounder (e.g., temperature). I wonder if we could write this function in a way that a second simulated exposure also contributes to lambda? I'm thinking we could actually call `sim_exposure` from within this custom function to simulate the second exposure (temperature), and then have an equation for log_lambda that includes terms for both exposures.]
 
 
-# Case study
-
-[Using this package to re-do the analysis in Bateson and Schwartz, 1999]
-
-```{r eval = FALSE}
-case_study_1 <- eesim(n_reps = 10, n = 1096, 
-           central = 0.25,
-           exposure_type = "binary", exposure_trend = "cos1",
-           exposure_amp = -0.2, average_outcome = 22,
-           outcome_trend = "cos1linear", outcome_amp = 0.2, 
-           rr = 1.10, model = "casecrossover")
-case_study_1[[2]]
-coverage_plot(sample_n(case_study_1[[1]], 100), true_param = 1.10)
-```
-
+## References
