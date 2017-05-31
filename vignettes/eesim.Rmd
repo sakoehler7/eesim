@@ -592,7 +592,7 @@ ex_sim3 <- eesim(n_reps = 3, n = 10, central = 100, sd = 10,
 ex_sim3[[1]]
 ```
 
-The second way of customizing the outcome simulation is to use a custom function to incorporate the added risk from the exposure when calculating the expected daily outcome count for a day, $\lambda_t$, from the inputs of exposure ($X_t$) and outcome baseline ($B_t$) for the day. Here is an example of creating a custom lambda, meaning a custom function relating relative risk and exposure to outcomes, and using it in eesim with the custom baseline function created above:
+The second way of customizing the outcome simulation is to use a custom function to incorporate the added risk from the exposure when calculating the expected daily outcome count for a day, $\lambda_t$, from the inputs of exposure ($X_t$) and outcome baseline ($B_t$) for the day. Here is an example of creating a custom lambda, meaning a custom function relating relative risk and exposure to outcomes, and using it in eesim with the custom baseline function created above. The custom lambda function must input arguments `exposure`, `rr`, and `baseline` and output a vector of lambda values.  
 
 ```{r, warning = F}
 customlambda <- function(exposure, rr, constant, baseline){
