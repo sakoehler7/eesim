@@ -277,7 +277,7 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
 
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = nrow(exposure))
-  average_baseline <- average_outcome/exp(log(rr)*mean(exposure$x))
+  average_baseline <- average_outcome / exp(log(rr) * mean(exposure$x))
   if(is.null(cust_base_func) & is.null(cust_lambda_func)){
     if(is.null(average_outcome)){
       stop(paste0("If custom functions are not used to generate outcomes,
