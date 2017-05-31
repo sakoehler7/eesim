@@ -457,12 +457,16 @@ Once the expected count ($\lambda_t$) on each day of the simulated time series i
 
 Here is an example of generating health outcome data with an upward linear trend using exposure data with a "cos1" trend. In this case, there is a steady increase in the baseline outcome count over time, as well as a seasonal trend linked to the risk associated with the seasonally-varying exposure:
 
-```{r fig.width = 5.5, fig.height = 5, fig.align = "center"}
+```{r}
 testexp2 <- sim_exposure(n = 1000, central = 100, sd = 10, trend = "cos1",
                          exposure_type = "continuous")
 testout <- sim_outcome(exposure = testexp2, average_outcome = 22,
                        trend = "linear", rr = 1.01)
+```
 
+Here are plots of the resulting output:
+
+```{r echo = FALSE, fig.width = 5.5, fig.height = 5, fig.align = "center"}
 a <- ggplot(testout, aes(x = date, y = outcome)) + 
   geom_point(alpha = 0.5, size = 0.8) +
   labs(title = "Health outcomes with a linear trend", x = "Date", y = "Outcome") + 
@@ -474,32 +478,31 @@ b <- calendar_plot(testout %>% select(date, outcome), type = "continuous",
 grid.arrange(a, b, ncol = 1)
 ```
 
-[It seems that the `sim_outcome` is consistently giving a higher mean than the `average_outcome` specified (although just by a bit). Any ideas why? Does this have to do with adding our trends?]
-
 As with the exposure simulation step, this step can also be extensively customized by using a user-created function. This customization will be demonstrated in a later section of the vignette.
 
 ### Fitting models
 
 Next, the `eesim` package allows you to generate many simulated data sets and then to fit statistical models to these generated datasets. This step allows tests of model performance.  The built-in model choices are a spline model and a case-crossover model. The fit_mods function outputs a data frame with estimates of the log relative risk, p-values, and upper and lower 95% confidence bounds for each simulated data set.
 
-Here is an example of fitting the spline model with 7 degrees of freedom: [need to fix for updated `fit_mods` code]
+Here is an example of fitting the spline model coded in the `spline_mod` function, with 7 degrees of freedom per year used to model long-term and seasonal trends (`df_year = 7` passed in a list to the model with the `custom_model_args` argument): 
 
 ```{r eval = FALSE}
 sims <- create_sims(n_reps = 10, n = 100, central = 100, sd = 10,
              exposure_type="continuous", exposure_trend = "cos1",
              exposure_amp = .6, average_outcome = 22,
              outcome_trend = "no trend", outcome_amp = .6, rr = 1.01)
-fits <- fit_mods(outcome = sims, model = "spline", df_year = 7)
+fits <- fit_mods(data = sims, custom_model = spline_mod, 
+                 custom_model_args = list(df_year = 7))
 fits
 ```
 
 ### Evaluating the models
 
-Next, `eesim` evaluates model performance with several different measures.  The check_sims function takes the true relative risk as input and returns mean beta and relative risk estimates across all simulated data sets, variance of the estimates of beta, the mean of the variances of each beta hat, the relative bias of the mean of the beta hats, the percent coverage of the true beta, and the power of the test at the 5% significance level. 
+Next, `eesim` evaluates model performance with several different measures.  The check_sims function takes the true relative risk as input and returns values for the mean effect estimate (log relative risk) and relative risk estimates across all simulated data sets, variance of the estimates of beta, the mean of the variances of each estimated log relative risk, the relative bias of the mean of the log relative risks, the percent coverage confidence intervals of the true log relative risk, and the power of the test at the 5% significance level (see the table near the beginning of the vignette). 
 
 Here is an example of the use of the check_sims function:
 
-```{r eval = FALSE}
+```{r}
 check_sims(fits, true_rr = 1.01)
 ```
 
