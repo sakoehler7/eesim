@@ -298,7 +298,7 @@ ex_power_calc %>%
   theme_bw()
 ```
 
-##Piece-by-piece breakdown of package utility
+## Piece-by-piece breakdown of package utility
 
 To demonstrate how the `eesim` function works, here is a breakdown of each of the four main parts: generating exposure data, generating outcome data, fitting models, and evaluating models. The helper functions used for each step are described in detail in this section.
 
@@ -424,7 +424,7 @@ b <- calendar_plot(testbin, type = "discrete", labels = c("Not exposed", "Expose
 grid.arrange(a, b, ncol = 1)
 ```
 
-The `sim_exposure` function works by first calculating the expected exposure on any date in the simulated time series (figure below, left). This expected value is a mean for a continuous exposure and a probability for a binary exposure. The `sim_exposure` function then draws random values from the appropriate distribution (normal distribution for a continuous exposure, binomial distribution for a binary exposure) based on this day-specific expected exposure value and, in the case of continuous exposure, the standard deviation of the exposure (figure below, right). For continuous exposure data, the standard deviation [double-check-- is this right?]
+The `sim_exposure` function works by first calculating the expected exposure on any date in the simulated time series (figure below, left). This expected value is a mean for a continuous exposure and a probability for a binary exposure. The `sim_exposure` function then draws random values from the appropriate distribution (normal distribution for a continuous exposure, binomial distribution for a binary exposure) based on this day-specific expected exposure value and, in the case of continuous exposure, the standard deviation of the exposure (figure below, right). For continuous exposure data, the standard deviation specified in the call to `eesim` should measure the standard deviation of each point from its expected value (i.e., from the expected line shown on the left below), not the overall standard deviation of exposure values across all days in the simulated data.
 
 ```{r echo = FALSE, fig.width = 8, fig.height = 3}
 continuous_trend <- data_frame(t = calc_t(n = 1000, trend = "cos1")) %>% 
