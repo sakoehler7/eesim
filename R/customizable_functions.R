@@ -274,6 +274,7 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
                         cust_base_func = NULL, cust_lambda_func = NULL,
                         cust_base_args = list(), cust_lambda_args = list(),
                         cust_outdraw = NULL, cust_outdraw_args = list()){
+
   start.date <- as.Date(start.date)
   date <- seq(from = start.date, by = 1, length.out = nrow(exposure))
   average_baseline <- average_outcome/exp(log(rr)*mean(exposure$x))
@@ -300,6 +301,8 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
                                 trend = trend, slope=slope,
                                 amp = amp)
     cust_lambda_args$baseline <- baseline$baseline
+    cust_lambda_args$rr <- rr
+    cust_lambda_args$exposure <- exposure$x
     lambda <- do.call(cust_lambda_func, cust_lambda_args)
   } else {
     baseline <- do.call(cust_base_func, cust_base_args)
