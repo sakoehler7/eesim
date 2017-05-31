@@ -4,11 +4,11 @@
 \alias{create_sims}
 \title{Create simulated data for many repetitions}
 \usage{
-create_sims(n_reps, n, central, sd = NULL, exposure_type, exposure_trend,
-  exposure_slope = 1, exposure_amp, average_outcome, outcome_trend,
-  outcome_slope = 1, outcome_amp, rr, start.date = "2000-01-01",
-  cust_exp_func = NULL, cust_exp_args = NULL, cust_expdraw = NULL,
-  cust_expdraw_args = NULL, cust_base_func = NULL,
+create_sims(n_reps, n, rr, central, average_outcome, sd = NULL, exposure_type,
+  exposure_trend, exposure_slope = 1, exposure_amp = NULL,
+  outcome_trend = NULL, outcome_slope = 1, outcome_amp = NULL,
+  start.date = "2000-01-01", cust_exp_func = NULL, cust_exp_args = NULL,
+  cust_expdraw = NULL, cust_expdraw_args = NULL, cust_base_func = NULL,
   cust_lambda_func = NULL, cust_base_args = NULL, cust_lambda_args = NULL,
   cust_outdraw = NULL, cust_outdraw_args = NULL)
 }
@@ -21,8 +21,12 @@ the performance of a proposed model).}
 \item{n}{A numeric value specifying the number of days to simulate (e.g., \code{n = 365}
 would simulate a dataset with a year's worth of data).}
 
+\item{rr}{A numeric value specifying the relative risk}
+
 \item{central}{A numeric value specifying the mean probability of exposure
 (for binary data) or the mean exposure value (for continuous data).}
+
+\item{average_outcome}{A numeric value specifying the average outcome value.}
 
 \item{sd}{A numeric value giving the standard deviation of the exposure
 values from the exposure trend line (not the total standard deviation of
@@ -78,8 +82,6 @@ July). Negative values can be used to simulate a trend with lower values
 at the time of year of the start of the dataset and higher values in the
 opposite season.}
 
-\item{average_outcome}{A numeric value specifying the average outcome value.}
-
 \item{outcome_trend}{A character string specifying the seasonal trend in
 health outcomes.  Options are the same as for continuous exposure
 data.}
@@ -92,8 +94,6 @@ generate data with decreasing expected value over the years.}
 
 \item{outcome_amp}{A numeric value specifying the amplitude of the outcome
 trend.  Must be between -1 and 1.}
-
-\item{rr}{A numeric value specifying the relative risk}
 
 \item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
 simulating daily exposures}
