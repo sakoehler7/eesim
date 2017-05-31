@@ -511,59 +511,64 @@ check_sims(fits, true_rr = 1.01)
 
 ## Using custom functions
 
-An important feature of eesim is that the user may input custom functions for any part of the simulation process.  For example, the user may wish to generate exposure data with a custom trend, then automate the process of generating outcomes, fitting models, and evaluating performance using the built-in features of eesim. Functions the user has the option to customize within the eesim framework are exposure trend, outcome baseline, and outcome lambda. A custom model may also be used as long as returns the necessary output if the model assessmen tools in eesim are to be used.
+An important feature of `eesim` is that the user can create and use custom functions for any part of the simulation process.  For example, the user may wish to generate exposure data with a custom trend, then automate the process of generating outcomes, fitting models, and evaluating performance using the built-in features of eesim. Functions the user has the option to customize within the `eesim` framework are:  
 
-To use custom functions within eesim, the user must input the name of the custom function as well as a list of all arguments for the custom function and their values. Many inputs for the eesim functions may no longer be necessary when a custom function is used, in which case they can simply be left out.  
+- The underlying expected exposure value on each day. Through this, the user can use customized long-term and seasonal trend patterns or can build a simulation starting from the running mean of real exposure data. 
+- How exposure values are randomized from the underlying trend. This allows a user to, for example, use a distribution other than normal (for continuous exposure data) or binomial (for binary data) as the underlying distribution of the exposure data. 
+- The underlying pattern in the expected outcome baseline, before the influence of the exposure is added. Through this, the user can use a custom pattern of long-term and seasonal trends in expected health outcome rates in the simulated data. This functionality can also be used to include influence on the baseline outcome rate from daily-varying values other than the exposure of interest. 
+- How exposure influences the expected outcome rate. The user can create a function that inputs the expected baseline outcome count and simulated exposure levels for each day and outputs the expected outcome rate on each day, including any added or reduced risks caused by the exposure. This functionality can be used, for example, to simulate outcomes with a non-linear relationship with the exposure or with lagged exposure effects. 
+- How outcome counts are randomized from the underlying expected outcome rate. This allows users to, for example, use a negative binomial or overdispersed Poisson distribution as the underlying distribution of the outcome counts. 
+
+To use custom functions within eesim, the user must input the name of the custom function as well as a list of all arguments for the custom function and their values (examples shown below). This allows the user to pass the function and required arguments directly within a call to the main `eesim` function. When a custom function is used, many inputs that are otherwise required for the `eesim` function may no longer be necessary, in which case they can simply be left out of the `eesim` call. As a note, if extensive customize is required for several steps of the simulation process, it may make more sense to code the full simulation by hand rather than using the `eesim` framework.
 
 ### Customizing the exposure trend
 
-Here is an example of using a custom function to specify an exposure trend that is not built in to eesim:
+To take advantage of any of the customization options, you need to write a function that follows certain input and output (i.e., interface) rules. First, you can use a custom function for the underlying trend in expected exposure. This function must take the inputs: 
 
-```{r, fig.width = 5, fig.height = 3, fig.align = "center"}
-sintrend <- function(n, mu, y){
+- `n` (the number of days to simulate)
+- `mean` for a continuous exposure (the average value of the outcome) or `prob` for a binary exposure (the average probability of exposure)
+
+The function can take any other additional inputs, as well, but any such extra arguments (as well as `mean`) will need to be input to the `eesim` function in a list for the 'cust_expdraw_args' argument (example below). The value for `n` will pass through directly from the `n` value specified for the call to `eesim`. The function must output a numeric vector that gives the simulated exposure values for each day in the simulated data.  
+
+For example, the following function creates a custom exposure trend with a long-term and seasonal trend, similar to trends available through the default package options. However, this function specifies a minimum value that the exposure trend cannot fall below-- if the `base` exposure value is every set below this `minimum` within the algorithm, the value is reset to the `minimum` before the final values are output. This function can be useful in cases where the exposure cannot fall below a certain value (for example, a pollution concentration could not be lower than 0). This custom exposure function can also be used to customize how values are simulated from the expected exposure on each day (based on the expected distribution of the exposure). In the case of the example ozone concentration data from Chicago shown earlier in this vignette, we may want to simulate exposure based on the assumption that the square root of exposure is normally distributed, which will prevent negative values and may also help to simulate occasional very high values. 
+
+```{r}
+above_min_trend <- function(n, mean, sd_of_sqrt, minimum = 0){
   day <- c(1:n)
-  base <- mu + y * sin(2 * pi * (day / 365))
-  rnorm(n, mean = base, sd = 1)
+  
+  ## Calculate a baseline exposure for each day
+  base <- mean + -10 * cos(2 * pi * (day / 365))
+  base[base < minimum] <- minimum            # Reset any values below 0 to 0
+  
+  ## Simulate exposure values from the baseline
+  sqrt_base <- sqrt(base)                   # Transform to square root
+  sqrt_sim <- rnorm(n, mean = sqrt_base, sd = sd_of_sqrt)
+  sqrt_sim ^ 2                              # Transform back
 }
-customexp <- sim_exposure(n=1000, exposure_type = "continuous", cust_exp_func = sintrend, cust_exp_args = list(n=1000, mu = 75, y=3))
-head(customexp)
-qplot(customexp$date, customexp$x)+geom_point()+labs(title = "Exposure values with a custom trend", x="Date", y="Exposure")+theme_bw()
 ```
 
-```{r fig.align = "center", fig.width = 8, fig.height = 2.5}
-calendar_plot(customexp, type = "continuous")
+Here is an example of running this custom exposure simulation function over 5 years, with a smooth line added to the plot to help show the seasonal trend included:
+
+```{r fig.width = 5, fig.height = 2, fig.align = "center"}
+above_min_trend(n = 365.25 * 5, mean = 20, minimum = 0, sd_of_sqrt = 0.9) %>% 
+  tbl_df() %>% 
+  mutate(day = 1:n()) %>% 
+  ggplot(aes(x = day, y = value)) + 
+  geom_point(alpha = 0.5, size = 0.8) + 
+  theme_classic() + 
+  geom_smooth(se = FALSE, span = 0.1, method = "loess", color = "red")
 ```
 
-We can also customize the randomization of the exposure values from the trend line using the cust_expdraws argument.  The default randomization for continuous exposure values is from the normal distribution where the mean is the trend line and the standard deviation is specified by the 'sd' argument in the 'eesim' function.  The default for binary exposure values is a binomial distribution where the probability is the trend line. 
+You can then pass this custom function into the `eesim` function using the `cust_exp_func` argument. The value for `n` input to the custom function will be the value you input to `eesim` for `n`. For any other arguments you want to pass to the function (in the function we just created, you'll want to pass values for `mean`, `minimum`, and `sd_of_sqrt`), you can include specifications for these as a list for the `cust_exp_args` argument of `eesim`. For example, the following call would run a simulation using this custom function for exposure:
 
-A function for custom randomization of exposure values must input values "n" and "mean" for continuous exposure and "n" and "prob" for binary exposure. Any arguments other than these should be put in a list for the 'cust_expdraw_args' argument. The function must output a vector of numeric exposure values. 
-
-Here is an example of using a custom function for the randomization of draws off of the trend line:
-
-```{r,fig.width = 5, fig.height = 3, fig.align = "center"}
-newrgamma <- function(n, mean, rate){
-  out <- rgamma(n=n, shape=mean, rate=rate)
-  return(out)
-}
-customexp2 <- sim_exposure(n=1000, exposure_type = "continuous", cust_exp_func = sintrend, cust_exp_args = list(n=1000, mu = 75, y=3), cust_expdraw = newrgamma, cust_expdraw_args = list(rate=2))
-qplot(customexp2$date, customexp2$x)+geom_point()+labs(title = "Exposure values with custom randomization", x="Date", y="Exposure")+theme_bw()
+```{r message = FALSE}
+ex_sim2 <- eesim(n_reps = 1, n = round(365.25 * 5), 
+                 exposure_type = "continuous",
+                 cust_exp_func = above_min_trend,
+                 cust_exp_args = list(mean = 20, minimum = 0, sd_of_sqrt = 0.9),
+                 average_outcome = 50, rr = 1.01, 
+                 custom_model = spline_mod, custom_model_args = list(df_year = 7))
 ```
-
-These custom exposure functions can be called with eesim:
-
-```{r, warning=F}
-ex_sim2 <- eesim(n_reps = 3, n = 10, 
-                exposure_type = "continuous",
-                cust_exp_func = sintrend,
-                cust_exp_args = list(n=10, mu=75, y=3),
-                cust_expdraw = newrgamma,
-                cust_expdraw_args = list(rate=2),
-                average_outcome = 22, rr = 1.01, 
-                custom_model = spline_mod, custom_model_args = list(df_year = 1))
-ex_sim2
-```
-
-[For this step, is there a way to customize how random values are drawn from the distribution once you've figured out the expected value? For the data from Chicago that I've added to the start of the vignette, it looks like ozone concentration is really closer to normally distributed if you do a square root transformation first, then draw from a normal with the expected value of the square root of ozone concentration, then square to get back to the right scale for using to simulate the outcome. As another example, it could be useful to be able to simulate daily values under the case of autocorrelation. I think both of these would come in at the level of simulating from the distribution.]
 
 ### Customizing the outcome simulation
 
