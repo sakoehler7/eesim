@@ -1,4 +1,6 @@
 
+[![Travis-CI Build Status](https://travis-ci.org/sakoehler7/eesim.svg?branch=master)](https://travis-ci.org/sakoehler7/eesim)
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 Overview of package
 -------------------
