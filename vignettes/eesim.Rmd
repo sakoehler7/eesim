@@ -482,7 +482,16 @@ As with the exposure simulation step, this step can also be extensively customiz
 
 ### Fitting models
 
-Next, the `eesim` package allows you to generate many simulated data sets and then to fit statistical models to these generated datasets. This step allows tests of model performance.  The built-in model choices are a spline model and a case-crossover model. The fit_mods function outputs a data frame with estimates of the log relative risk, p-values, and upper and lower 95% confidence bounds for each simulated data set.
+Next, the `eesim` package allows you to generate many simulated data sets and then to fit statistical models to these generated datasets. This step allows tests of model performance. You must create an R function that fits the model you'd like to fit to the simulated dataset. This function needs to follow certain input / output rules to work correctly in the `eesim` framework. First, it must input the simulated dataframe with the argument `df`. When writing the function, you should assume that this simulated dataframe has at least the columns `date` (in a Date format), `x` (numeric class, this gives a daily value for exposure, with 0 for unexposed and 1 for exposed in the case of binary exposure), and `outcome` (non-negative integer, this gives the simulated outcome count each day). Other arguments can also be passed to this function is desired. The function should fit a desired model to this dataframe and then should return a numeric vector of length 6 with values, in this order, for the log relative risk point estimate from the model (`Estimate`), the standard error for this point estimate (`Std. Error`), the t-statistic for a hypothesis test with the null hypothesis that this estimate is zero (`t value`), a p-value for that test (`Pr(>|t|)`), and the lower and upper 95% confidence intervals for the point estimate (`2.5 %` and `97.5 %`). 
+
+The `spline_mod` function that comes with the package is an example of such a function. In this case, the function fits a GLM to the simulated data, with ...
+
+```{r}
+spline_mod
+```
+
+
+The `fit_mods` function outputs a data frame with estimates of the log relative risk, p-values, and upper and lower 95% confidence bounds for each simulated data set.
 
 Here is an example of fitting the spline model coded in the `spline_mod` function, with 7 degrees of freedom per year used to model long-term and seasonal trends (`df_year = 7` passed in a list to the model with the `custom_model_args` argument): 
 
