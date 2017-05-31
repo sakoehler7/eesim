@@ -572,7 +572,7 @@ ex_sim2 <- eesim(n_reps = 1, n = round(365.25 * 5),
 
 ### Customizing the outcome simulation
 
-There are two ways to customize the simulated outcome data: creating a custom baseline for outcome values or customizing the relationship between outcome and exposure.  
+There are three ways to customize the simulated outcome data: creating a custom baseline for outcome values, customizing the relationship between outcome and exposure, and like with the exposure values, customizing the randomization of the outcome values. 
 
 The outcome baseline ($B_t$) is comprised of the values the user expects the outcomes to have on each day of the simulated dataset without risk associated with the exposure factored in. The user may write a function to specify the trend of the baseline, then use it as an input in `sim_outcome` or `eesim`. Here is an example of creating a custom baseline function and using it in the `eesim` function:
 
@@ -586,7 +586,7 @@ custombase <- function(n, slope, intercept){
 #Example:
 custombase(n=5, slope = .3, intercept = 55)
 
-ex_sim3 <- eesim(n_reps = 3, n = 100, central = 100, sd = 10,
+ex_sim3 <- eesim(n_reps = 3, n = 10, central = 100, sd = 10,
                 exposure_type = "continuous", exposure_trend = "cos1",
                 exposure_amp = .6, average_outcome = 22, rr = 1.01, 
                 cust_base_func = custombase,
@@ -595,9 +595,7 @@ ex_sim3 <- eesim(n_reps = 3, n = 100, central = 100, sd = 10,
 ex_sim3[[1]]
 ```
 
-[It may be more useful here to show an example of the simulated data, rather than the model performance values.]
-
-The other way of customizing the outcome simulation is to use a custom function to incorporate the added risk from the exposure when calculating the expected daily outcome count for a day, $\lambda_t$, from the inputs of exposure ($X_t$) and outcome baseline ($B_t$) for the day. Here is an example of creating a custom lambda, meaning a custom function relating relative risk and exposure to outcomes, and using it in eesim with the custom baseline function created above:
+The second way of customizing the outcome simulation is to use a custom function to incorporate the added risk from the exposure when calculating the expected daily outcome count for a day, $\lambda_t$, from the inputs of exposure ($X_t$) and outcome baseline ($B_t$) for the day. Here is an example of creating a custom lambda, meaning a custom function relating relative risk and exposure to outcomes, and using it in eesim with the custom baseline function created above. The custom lambda function must input arguments `exposure`, `rr`, and `baseline` and output a vector of lambda values.  
 
 ```{r, warning = F}
 customlambda <- function(exposure, rr, constant, baseline){
@@ -605,9 +603,27 @@ customlambda <- function(exposure, rr, constant, baseline){
   lambda <- exp(log_lambda)
   return(lambda)
 }
+
+ex_sim4 <- eesim(n_reps = 3, n = 10, central = 100, sd = 10,
+                exposure_type = "continuous", exposure_trend = "cos1",
+                exposure_amp = .6, average_outcome = 22, rr = 1.01, 
+                cust_base_func = custombase,
+                cust_base_args = list(n=10, slope = .5, intercept = 12),
+                cust_lambda_func = customlambda, cust_lambda_args = list(constant=4),
+                custom_model = spline_mod, custom_model_args = list(df_year = 2))
 ```
 
 [For this example, it would be interesting to instead show a `customlambda` that calculates lambda based on a model with separate relative rates for lag 0 and lag 1 of the exposure. Alternatively, it would be interesting to show how to simulate exposure if is has a risk both from the exposure we care about (e.g., PM2.5 concentration) and an exposure that might be a confounder (e.g., temperature). I wonder if we could write this function in a way that a second simulated exposure also contributes to lambda? I'm thinking we could actually call `sim_exposure` from within this custom function to simulate the second exposure (temperature), and then have an equation for log_lambda that includes terms for both exposures.]
 
+The third way to customize the outcome simulation is to customize the randomization of the outcome values from the trend created by relating the baseline outcomes and the exposure (what we have called lambda).  When the `cust_outdraw` argument is not specified in the `eesim` function, the function draws outcome values from a Poisson distribution with mean lambda.  A custom function for outcome draws must input values called `n` and `lambda`, and any other arguments must be included in the `cust_outdraw_args` argument. Here is an example of using the custom functions to specify a negative binomial distribution for outcome randomization:
+
+```{r}
+custnbinom <- function(n, lambda, prob){
+  out <- rnbinom(n=n, size=lambda, prob=prob)
+  return(out)
+}
+
+
+```
 
 ## References

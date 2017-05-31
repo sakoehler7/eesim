@@ -307,6 +307,8 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
   } else {
     baseline <- do.call(cust_base_func, cust_base_args)
     cust_lambda_args$baseline <- baseline
+    cust_lambda_args$rr <- rr
+    cust_lambda_args$exposure <- exposure$x
     lambda <- do.call(cust_lambda_func, cust_lambda_args)
   }
   if (is.null(cust_outdraw)){
