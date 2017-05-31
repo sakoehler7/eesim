@@ -486,7 +486,7 @@ Next, the `eesim` package allows you to generate many simulated data sets and th
 
 Here is an example of fitting the spline model coded in the `spline_mod` function, with 7 degrees of freedom per year used to model long-term and seasonal trends (`df_year = 7` passed in a list to the model with the `custom_model_args` argument): 
 
-```{r eval = FALSE}
+```{r}
 sims <- create_sims(n_reps = 10, n = 100, central = 100, sd = 10,
              exposure_type="continuous", exposure_trend = "cos1",
              exposure_amp = .6, average_outcome = 22,
