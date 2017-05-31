@@ -446,7 +446,7 @@ Later in this vignette, we show how you can further customize this step of gener
 Next, the `sim_outcome` function simulates outcome data. The health data can have an underlying seasonal [and / or long term?] trend in its baseline value, and then that baseline is adjusted for the risk associated with exposure, based on the generated exposure data for that day. The baseline outcome count for a given day ($B_t$) are based on a user-specified trend and user-specified average outcome per day over the simulated time period. Further, the expected outcome count on a given day is adjusted for exposure-related risk through a user-specified relative rate per unit increase in exposure ($RR$) and the simulated exposure for that day ($X_t$). The `eesim` function then uses the following equation to calculate the expected outcome count ($\lambda$) on a given day in the simulated time series, based on the expected baseline rate and exposure-related risk for that day:
 
 $$
-log(\lambda_t) = \log{(B_t)}+\log{(RR)}*X_t
+\log(\lambda_t) = \log{(B_t)}+\log{(RR)}*X_t
 $$
 
 For a binary outcome, the baseline count on a given day ($B_t$) is the expected outcome count for the day if there is not an event (e.g., in a heat wave study, a non-heat wave day). For a continuous exposure, the baseline count on a given day ($B_t$) is the expected outcome count for the day if .... [is it if exposure equals 0? or if exposure is at its mean value?] [We may want to add a note here about how we tweak these to ensure that the final mean value for the whole dataset is the desired value specified by the user.]
@@ -458,8 +458,10 @@ Once the expected count ($\lambda_t$) on each day of the simulated time series i
 Here is an example of generating health outcome data with an upward linear trend using exposure data with a "cos1" trend. In this case, there is a steady increase in the baseline outcome count over time, as well as a seasonal trend linked to the risk associated with the seasonally-varying exposure:
 
 ```{r fig.width = 5.5, fig.height = 5, fig.align = "center"}
-testexp2 <- sim_exposure(n = 1000, central = 100, sd = 10, trend = "cos1", exposure_type = "continuous")
-testout <- sim_outcome(exposure = testexp2, average_outcome = 22, trend = "linear", rr = 1.01)
+testexp2 <- sim_exposure(n = 1000, central = 100, sd = 10, trend = "cos1",
+                         exposure_type = "continuous")
+testout <- sim_outcome(exposure = testexp2, average_outcome = 22,
+                       trend = "linear", rr = 1.01)
 
 a <- ggplot(testout, aes(x = date, y = outcome)) + 
   geom_point(alpha = 0.5, size = 0.8) +
