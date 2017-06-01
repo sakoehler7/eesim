@@ -118,7 +118,11 @@ b <- calendar_plot(sim_chicago[[1]] %>% select(date, x), type = "continuous") +
 grid.arrange(a, b, ncol = 1)
 ```
 
-You can use the `eesim` function to generate multiple similar simulated datasets and investigate how the performance of a case-crossover model in estimating the association between ozone concentration and the risk of cardiovascular death in 20 simulated datasets.
+You can use the `eesim` function to generate multiple similar simulated datasets and investigate the performance of a specified model in estimating the association between ozone concentration and the risk of cardiovascular death in 20 simulated datasets. You must write a function with the code to fit the model you desire to the simulated data (more details for writing this function are provided later in the vignette), and then you can use the `eesim` function to generate lots of simulated datasets, fit that model, and assess its performance: 
+
+```{r echo = FALSE}
+set.seed(16)
+```
 
 ```{r, warning = FALSE, message = FALSE}
 ex_sim <- eesim(n_reps = 100, n = 365 * 5, central = 20, sd = 7,
@@ -129,7 +133,7 @@ ex_sim <- eesim(n_reps = 100, n = 365 * 5, central = 20, sd = 7,
                 custom_model = spline_mod, custom_model_args = list(df_year = 7))
 ```
 
-This call returns a list with three elements: 
+The `eesim` function returns a list with three elements: 
 
 ```{r}
 names(ex_sim)
@@ -140,7 +144,6 @@ The first element of the returned object is a list with all of the simulated dat
 ```{r fig.height = 3, fig.width = 7, fig.align = "center"}
 calendar_plot(ex_sim[["simulated_datasets"]][[1]] %>% select(date, x), type = "continuous")
 ```
-
 
 The second element of the returned object can be used to explore the behavior of individual simulations: 
 
@@ -194,7 +197,6 @@ chicagoNMMAPS %>%
   theme_classic() + 
   labs(x = "Date", y = "Variable value")
 ```
-
 
 ```{r echo = FALSE, results="hide"}
 chicagoNMMAPS %>% 
@@ -251,6 +253,10 @@ The comparison of the observed and simulated data in this case suggests some clu
 
 The `eesim` function can be used to assess the performance of a case-crossover model in estimating relative risk of cardiovascular mortality for extreme heat days compared to other days using:
 
+```{r echo = FALSE}
+set.seed(2416)
+```
+
 ```{r}
 ex_sim2 <- eesim(n_reps = 100, n = 365 * 5, 
                  central = c(0, 0, 0, 0, 0, 0.05, 0.12, 0.02, 0, 0, 0, 0),
@@ -275,8 +281,8 @@ The `power_calc` function in the package allows you to extend on this simulation
 
 For example, the following call generates a power curve that explores how expected power changes with an increasing number of days for the heat wave analysis example just presented (as a warning, this call takes a few minutes to run, since it's simulating many datasets):
 
-```{r fig.width = 5, fig.height = 3.5, fig.align = "center", eval = FALSE}
-ex_power_calc <- power_calc(varying = "n", values = floor(365.25 * seq(1, 20, by = 2)),
+```{r fig.width = 5, fig.height = 3.5, fig.align = "center"}
+ex_power_calc <- power_calc(varying = "n", values = floor(365.25 * seq(1, 20, by = 5)),
                             n_reps = 100, rr = 1.05,
                             central = c(0, 0, 0, 0, 0, 0.05, 0.12, 0.02, 0, 0, 0, 0),
                             exposure_type = "binary", exposure_trend = "monthly", 
@@ -446,10 +452,10 @@ Later in this vignette, we show how you can further customize this step of gener
 Next, the `sim_outcome` function simulates outcome data. The health data can have an underlying seasonal [and / or long term?] trend in its baseline value, and then that baseline is adjusted for the risk associated with exposure, based on the generated exposure data for that day. The baseline outcome count for a given day ($B_t$) are based on a user-specified trend and user-specified average outcome per day over the simulated time period. Further, the expected outcome count on a given day is adjusted for exposure-related risk through a user-specified relative rate per unit increase in exposure ($RR$) and the simulated exposure for that day ($X_t$). The `eesim` function then uses the following equation to calculate the expected outcome count ($\lambda$) on a given day in the simulated time series, based on the expected baseline rate and exposure-related risk for that day:
 
 $$
-log(\lambda_t) = \log{(B_t)}+\log{(RR)}*X_t
+\log(\lambda_t) = \log{(B_t)}+\log{(RR)}*X_t
 $$
 
-For a binary outcome, the baseline count on a given day ($B_t$) is the expected outcome count for the day if there is not an event (e.g., in a heat wave study, a non-heat wave day). For a continuous exposure, the baseline count on a given day ($B_t$) is the expected outcome count for the day if .... [is it if exposure equals 0? or if exposure is at its mean value?] [We may want to add a note here about how we tweak these to ensure that the final mean value for the whole dataset is the desired value specified by the user.]
+For a binary outcome, the baseline count on a given day ($B_t$) is the expected outcome count for the day if there is not an event (e.g., in a heat wave study, a non-heat wave day). For a continuous exposure, the baseline count on a given day ($B_t$) is the expected outcome count for the day if exposure is at its mean value.
 
 [When simulating the outcome, if you are using a continuous exposure, do you incorporate the baseline as the expected count at the mean value of the exposure, and a mean-centered value for exposure when incorporating added risk from the exposure? If so, let's clarify that here.]
 
@@ -457,10 +463,16 @@ Once the expected count ($\lambda_t$) on each day of the simulated time series i
 
 Here is an example of generating health outcome data with an upward linear trend using exposure data with a "cos1" trend. In this case, there is a steady increase in the baseline outcome count over time, as well as a seasonal trend linked to the risk associated with the seasonally-varying exposure:
 
-```{r fig.width = 5.5, fig.height = 5, fig.align = "center"}
-testexp2 <- sim_exposure(n = 1000, central = 100, sd = 10, trend = "cos1", exposure_type = "continuous")
-testout <- sim_outcome(exposure = testexp2, average_outcome = 22, trend = "linear", rr = 1.01)
+```{r}
+testexp2 <- sim_exposure(n = 1000, central = 100, sd = 10, trend = "cos1",
+                         exposure_type = "continuous")
+testout <- sim_outcome(exposure = testexp2, average_outcome = 22,
+                       trend = "linear", rr = 1.01)
+```
 
+Here are plots of the resulting output:
+
+```{r echo = FALSE, fig.width = 5.5, fig.height = 5, fig.align = "center"}
 a <- ggplot(testout, aes(x = date, y = outcome)) + 
   geom_point(alpha = 0.5, size = 0.8) +
   labs(title = "Health outcomes with a linear trend", x = "Date", y = "Outcome") + 
@@ -472,38 +484,115 @@ b <- calendar_plot(testout %>% select(date, outcome), type = "continuous",
 grid.arrange(a, b, ncol = 1)
 ```
 
-[It seems that the `sim_outcome` is consistently giving a higher mean than the `average_outcome` specified (although just by a bit). Any ideas why? Does this have to do with adding our trends?]
-
 As with the exposure simulation step, this step can also be extensively customized by using a user-created function. This customization will be demonstrated in a later section of the vignette.
 
 ### Fitting models
 
-Next, the `eesim` package allows you to generate many simulated data sets and then to fit statistical models to these generated datasets. This step allows tests of model performance.  The built-in model choices are a spline model and a case-crossover model. The fit_mods function outputs a data frame with estimates of the log relative risk, p-values, and upper and lower 95% confidence bounds for each simulated data set.
+Next, the `eesim` package allows you to generate many simulated data sets and then to fit statistical models to these generated datasets. This step allows tests of model performance. You must create an R function that fits the model you'd like to fit to the simulated dataset. This function needs to follow certain input / output rules to work correctly in the `eesim` framework. First, it must input the simulated dataframe with the argument `df`. When writing the function, you should assume that this simulated dataframe has at least the columns `date` (in a Date format), `x` (numeric class, this gives a daily value for exposure, with 0 for unexposed and 1 for exposed in the case of binary exposure), and `outcome` (non-negative integer, this gives the simulated outcome count each day). Other arguments can also be passed to this function is desired. The function should fit a desired model to this dataframe and then should return a numeric vector of length 6 with values, in this order, for the log relative risk point estimate from the model (`Estimate`), the standard error for this point estimate (`Std. Error`), the t-statistic for a hypothesis test with the null hypothesis that this estimate is zero (`t value`), a p-value for that test (`Pr(>|t|)`), and the lower and upper 95% confidence intervals for the point estimate (`2.5 %` and `97.5 %`). 
 
-Here is an example of fitting the spline model with 7 degrees of freedom: [need to fix for updated `fit_mods` code]
+The `spline_mod` function that comes with the package is an example of such a function. In this case, the function fits a GLM to the simulated data, with a natural cubic spline used to control for long-term and seasonal trends in mortality. The function, in addition to inputing the dataframe of simulated data (`df`) also allows an argument to use to set the smoothness of the time spline (`df_year`):
 
-```{r eval = FALSE}
+```{r}
+spline_mod
+```
+
+Here are examples of applying this function to a simulated dataframe: 
+
+```{r}
 sims <- create_sims(n_reps = 10, n = 100, central = 100, sd = 10,
              exposure_type="continuous", exposure_trend = "cos1",
              exposure_amp = .6, average_outcome = 22,
              outcome_trend = "no trend", outcome_amp = .6, rr = 1.01)
-fits <- fit_mods(outcome = sims, model = "spline", df_year = 7)
+head(sims[[1]])
+```
+
+```{r}
+spline_mod(df = sims[[1]])
+spline_mod(df = sims[[1]], df_year = 6)
+```
+
+Once you've created the function, you can input it in a call to `eesim` using the `custom_model` argument. You can pass any additional arguments (`df_year` in our example) through to the function using the `custom_model_args` argument. This argument takes a list, with the argument name and value for each argument you wish to pass to the modeling function. For example, the following call passes the `spline_mod` function shown above as the function to use for modeling the simulated data:
+
+```{r eval = FALSE}
+ex_sim2 <- eesim(n_reps = 100, n = 365 * 5, 
+                 central = c(0, 0, 0, 0, 0, 0.05, 0.12, 0.02, 0, 0, 0, 0),
+                 exposure_type = "binary", exposure_trend = "monthly",
+                 exposure_amp = -.6, average_outcome = 50,
+                 outcome_trend = "cos1", outcome_amp = 0.2, 
+                 rr = 1.05, start.date = "1996-01-01",
+                 custom_model = spline_mod, custom_model_args = list(df_year = 7))
+```
+
+The `eesim` function does this by applying the modeling function across all simulating datasets using a function called `fit_mods`. If you'd like, you can run that function independently. The `fit_mods` function outputs a data frame with estimates of the log relative risk, p-values, and upper and lower 95% confidence bounds for each simulated data set.
+
+Here is an example of fitting the spline model coded in the `spline_mod` function, with 7 degrees of freedom per year used to model long-term and seasonal trends (`df_year = 7` passed in a list to the model with the `custom_model_args` argument): 
+
+```{r}
+fits <- fit_mods(data = sims, custom_model = spline_mod, 
+                 custom_model_args = list(df_year = 7))
 fits
 ```
 
+As a note, the output of the `fit_mods` function is the output given as the second element of the list returned by a call to `eesim`. 
+
 ### Evaluating the models
 
-Next, `eesim` evaluates model performance with several different measures.  The check_sims function takes the true relative risk as input and returns mean beta and relative risk estimates across all simulated data sets, variance of the estimates of beta, the mean of the variances of each beta hat, the relative bias of the mean of the beta hats, the percent coverage of the true beta, and the power of the test at the 5% significance level. 
+The final step of the `eesim` function is to evaluate model performance across all simulations with several different measures.  Within the `eesim` function, the `check_sims` function takes as inputs the true relative risk as well as the results from fitting the modeling function to all the simulations using the `fim_mods` function. It returns values for the mean effect estimate (log relative risk) and relative risk estimates across all simulated data sets, variance of the estimates of beta, the mean of the variances of each estimated log relative risk, the relative bias of the mean of the log relative risks, the percent coverage confidence intervals of the true log relative risk, and the power of the test at the 5% significance level (see the table near the beginning of the vignette). 
 
-Here is an example of the use of the check_sims function:
+Here is an example of the use of the `check_sims` function:
 
-```{r eval = FALSE}
+```{r}
 check_sims(fits, true_rr = 1.01)
 ```
 
+In a run of `eesim`, this output is given in the third element of the list returned by `eesim`.
+
 ### Generating power curves
 
-[Details of using `eesim` functions to generate power curves. One interesting example here may be what the power to detect a relative rate of 1.05 in mortality for extreme heat days is under different average daily mortality values (which would roughly translate to different population sizes).]
+The other main functionality of the `eesim` package is to run through simulations under varying data generating scenarios to help estimate expected power of an analysis under different scenarios. For example, you can explore how expected power varies for different expected effect sizes (relative risk of the outcome associated with a change in exposure) or for different average daily number of outcomes. This is run using the `power_calc` function in the package. 
+
+The `power_calc` function allows you to put in varying values for one of the following three specifications in the simulations: 
+
+- Relative risk (`rr`): How you strongly expect the exposure and outcome to be associated
+- Number of days in the study (`n`): How long you expect each study to last (or how many days of historical data you expect to be able to collect)
+- Average daily count of outcomes (`average_outcome`): For the outcome of interest, how common it is on days in the study (this will usually be strongly associated with the size of the population being studied)
+
+For whichever of these you choose to vary, you can specify different values to test. The `power_calc` function then loops through those values and runs `eesim` for each of them. From this, it can estimate the power ...
+
+Here is an example of running a power calculation with varying number of days in the study (`n`). The `values` argument is used to specify different values of `n` we would like to test (here, it's testing power for studies with daily data for between 1 and 21 years):
+
+```{r fig.align = "center", fig.width = 5, fig.height = 3}
+pow <- power_calc(varying = "n", values = floor(365.25 * seq(1, 21, by = 5)), n_reps = 20,
+                  central = 100, sd = 10, rr = 1.001, exposure_type = "continuous",
+                  exposure_trend = "cos1", exposure_amp = .6, average_outcome = 22,
+                  outcome_trend = "no trend", outcome_amp = .6,
+                  custom_model = spline_mod, plot = TRUE)
+```
+
+This call returns a dataframe with the estimated power for each of the values of `n` tested: 
+
+```{r}
+pow
+```
+
+Because the argument `plot` is set to `TRUE`, it also generates a power curve plot as a side effect. 
+
+Here is another example, but this time we assume that all studies will have 4,000 days of daily data, but we explore estimated power as the average daily outcome count varies: 
+
+```{r fig.align = "center", fig.width = 5, fig.height = 3}
+pow2 <- power_calc(varying = "average_outcome", values = c(1, 5, 10, 20, 30, 40),
+                   n_reps = 20,
+                   central = 100, sd = 10, rr = 1.001, exposure_type = "continuous",
+                   exposure_trend = "cos1", exposure_amp = .6, n = 4000,
+                   outcome_trend = "no trend", outcome_amp = .6,
+                   custom_model = spline_mod, plot = TRUE)
+```
+
+```{r}
+pow2
+```
+
+Because these power curves and calculations are based on simulated data, there will be some randomness to results. Curves will be smoother as more simulations are used for each run (`n_reps`), although this will also increase the time needed to run the simulation. 
 
 ## Using custom functions
 
