@@ -118,12 +118,11 @@ b <- calendar_plot(sim_chicago[[1]] %>% select(date, x), type = "continuous") +
 grid.arrange(a, b, ncol = 1)
 ```
 
-You can use the `eesim` function to generate multiple similar simulated datasets and investigate how the performance of a case-crossover model in estimating the association between ozone concentration and the risk of cardiovascular death in 20 simulated datasets.
+You can use the `eesim` function to generate multiple similar simulated datasets and investigate the performance of a specified model in estimating the association between ozone concentration and the risk of cardiovascular death in 20 simulated datasets. You must write a function with the code to fit the model you desire to the simulated data (more details for writing this function are provided later in the vignette), and then you can use the `eesim` function to generate lots of simulated datasets, fit that model, and assess its performance: 
 
 ```{r echo = FALSE}
 set.seed(16)
 ```
-
 
 ```{r, warning = FALSE, message = FALSE}
 ex_sim <- eesim(n_reps = 100, n = 365 * 5, central = 20, sd = 7,
@@ -134,7 +133,7 @@ ex_sim <- eesim(n_reps = 100, n = 365 * 5, central = 20, sd = 7,
                 custom_model = spline_mod, custom_model_args = list(df_year = 7))
 ```
 
-This call returns a list with three elements: 
+The `eesim` function returns a list with three elements: 
 
 ```{r}
 names(ex_sim)
@@ -145,7 +144,6 @@ The first element of the returned object is a list with all of the simulated dat
 ```{r fig.height = 3, fig.width = 7, fig.align = "center"}
 calendar_plot(ex_sim[["simulated_datasets"]][[1]] %>% select(date, x), type = "continuous")
 ```
-
 
 The second element of the returned object can be used to explore the behavior of individual simulations: 
 
@@ -199,7 +197,6 @@ chicagoNMMAPS %>%
   theme_classic() + 
   labs(x = "Date", y = "Variable value")
 ```
-
 
 ```{r echo = FALSE, results="hide"}
 chicagoNMMAPS %>% 
@@ -260,7 +257,6 @@ The `eesim` function can be used to assess the performance of a case-crossover m
 set.seed(2416)
 ```
 
-
 ```{r}
 ex_sim2 <- eesim(n_reps = 100, n = 365 * 5, 
                  central = c(0, 0, 0, 0, 0, 0.05, 0.12, 0.02, 0, 0, 0, 0),
@@ -285,8 +281,8 @@ The `power_calc` function in the package allows you to extend on this simulation
 
 For example, the following call generates a power curve that explores how expected power changes with an increasing number of days for the heat wave analysis example just presented (as a warning, this call takes a few minutes to run, since it's simulating many datasets):
 
-```{r fig.width = 5, fig.height = 3.5, fig.align = "center", eval = FALSE}
-ex_power_calc <- power_calc(varying = "n", values = floor(365.25 * seq(1, 20, by = 2)),
+```{r fig.width = 5, fig.height = 3.5, fig.align = "center"}
+ex_power_calc <- power_calc(varying = "n", values = floor(365.25 * seq(1, 20, by = 5)),
                             n_reps = 100, rr = 1.05,
                             central = c(0, 0, 0, 0, 0, 0.05, 0.12, 0.02, 0, 0, 0, 0),
                             exposure_type = "binary", exposure_trend = "monthly", 
