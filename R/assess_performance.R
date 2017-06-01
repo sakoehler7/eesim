@@ -224,7 +224,7 @@ check_sims <- function(df, true_rr){
 #'            central = 100, sd = 10, rr = 1.001, exposure_type = "continuous",
 #'            exposure_trend = "cos1", exposure_amp = .6, average_outcome = 22,
 #'            outcome_trend = "no trend", outcome_amp = .6,
-#'            custom_model = casecross_mod, plot = TRUE)
+#'            custom_model = spline_mod, plot = TRUE)
 #'}
 #'
 #' @export
