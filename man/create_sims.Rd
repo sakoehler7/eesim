@@ -13,22 +13,24 @@ create_sims(n_reps, n, rr, central, average_outcome, sd = NULL, exposure_type,
   cust_outdraw = NULL, cust_outdraw_args = NULL)
 }
 \arguments{
-\item{n_reps}{A numeric value specifying the number of datasets to simulate (e.g.,
+\item{n_reps}{An integer specifying the number of datasets to simulate (e.g.,
 \code{n_reps = 1000} would simulate one thousand time series datasets with the
 specified characteristics, which can be used for a power analysis or to investigate
 the performance of a proposed model).}
 
-\item{n}{A numeric value specifying the number of days to simulate (e.g., \code{n = 365}
+\item{n}{An integer specifying the number of days to simulate (e.g., \code{n = 365}
 would simulate a dataset with a year's worth of data).}
 
-\item{rr}{A numeric value specifying the relative risk}
+\item{rr}{A non-negative numeric value specifying the relative risk (i.e., the
+relative risk per unit increase in the exposure).}
 
 \item{central}{A numeric value specifying the mean probability of exposure
 (for binary data) or the mean exposure value (for continuous data).}
 
-\item{average_outcome}{A numeric value specifying the average outcome value.}
+\item{average_outcome}{A non-negative numeric value specifying the average
+daily outcome count.}
 
-\item{sd}{A numeric value giving the standard deviation of the exposure
+\item{sd}{A non-negative numeric value giving the standard deviation of the exposure
 values from the exposure trend line (not the total standard deviation of
 the exposure values).}
 
@@ -41,34 +43,33 @@ Choices are "binary" or "continuous".}
     For trends with a seasonal component, the amplitude of the seasonal trend can be
     customized using the \code{exposure\_amp} argument. For trends with a long-term
     pattern, the slope of the long-term trend can be set using the \code{exposure\_slope}
-    argument. If using the "custom" option, you must ... .
+    argument.
     If using the "monthly" option for a binary exposure, you must input a numeric
     vector of length 12 for the \code{central} argument that gives the probability of
     exposure for each month, starting in January and ending in December.
     Options for continuous exposure are:
-    \itemize{
+\itemize{
+  \item{"no trend": No trend, either seasonal or long-term (default).}
   \item{"cos1": A seasonal trend only.}
   \item{"cos2": A seasonal trend with variable amplitude across years.}
   \item{"cos3": A seasonal trend with steadily decreasing amplitude over time.}
   \item{"linear": A linear long-term trend with no seasonal trend.}
   \item{"curvilinear": A curved long-term trend with no seasonal trend.}
   \item{"cos1linear": A seasonal trend plus a linear long-term trend.}
-  \item{"no trend": No trend, either seasonal or long-term (default).}
-  \item{"custom": Uses a custom trend function input by the user.}
   }
    Options for binary exposure are:
    \itemize{
+  \item{"no trend": No trend, either seasonal or long-term (default).}
   \item{"cos1": A seasonal trend only.}
   \item{"cos2": A seasonal trend with variable amplitude across years.}
   \item{"cos3": A seasonal trend with steadily decreasing amplitude over time.}
   \item{"linear": A linear long-term trend with no seasonal trend.}
   \item{"monthly": Uses a user-specified probability of exposure for each month.}
-  \item{"no trend": No trend, either seasonal or long-term (default).}
-  \item{"custom": Uses a custom trend function input by the user.}
 }}
 
 \item{exposure_slope}{A numeric value specifying the linear slope of the
-exposure, to be used with exposure_trend = "linear" or "cos1linear".
+exposure, to be used with \code{exposure_trend = "linear"} or
+\code{exposure_trend = "cos1linear"}.
 The default value is 1. Positive values will generate data with an
 increasing expected value over the years while negative values will
 generate data with decreasing expected value over the years.}
@@ -87,8 +88,9 @@ health outcomes.  Options are the same as for continuous exposure
 data.}
 
 \item{outcome_slope}{A numeric value specifying the linear slope of the
-outcome trend, to be used with outcome_trend = "linear" or
-"cos1linear". The default value is 1. Positive values will generate data with an
+outcome trend, to be used with \code{outcome_trend = "linear"} or
+\code{outcome_trend = "cos1linear"}. The default value is 1.
+Positive values will generate data with an
 increasing expected value over the years while negative values will
 generate data with decreasing expected value over the years.}
 
@@ -98,25 +100,25 @@ trend.  Must be between -1 and 1.}
 \item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
 simulating daily exposures}
 
-\item{cust_exp_func}{A character string specifying the name of a custom
+\item{cust_exp_func}{An R object name specifying the name of a custom
 trend function to generate exposure data}
 
 \item{cust_exp_args}{A list of arguments and their values for the
 user-specified custom exposure function.}
 
-\item{cust_expdraw}{A character string specifying a user-created function
+\item{cust_expdraw}{An R object specifying a user-created function
 which determines the distribution of random noise off of the trend line.
-This function must have inputs "n" and "prob" for a binary exposure
-function and inputs "n" and "mean" for a continuous exposure function.
+This function must have inputs \code{n} and \code{prob} for a binary exposure
+function and inputs \code{n} and \code{mean} for a continuous exposure function.
 The custom function must output a vector of simulated exposure values.}
 
-\item{cust_expdraw_args}{A list of arguments other than "n" and "prob" or
-"mean" required by the cust_expdraw function.}
+\item{cust_expdraw_args}{A list of arguments other than \code{n} required by the
+\code{cust_expdraw} function.}
 
-\item{cust_base_func}{A character string specifying a user-made custom
-function for baseline trend}
+\item{cust_base_func}{A R object name specifying a user-made custom
+function for baseline trend.}
 
-\item{cust_lambda_func}{A character string specifying a user-made custom
+\item{cust_lambda_func}{An R object name specifying a user-made custom
 function for relating baseline, relative risk, and exposure}
 
 \item{cust_base_args}{A list of arguments and their values used in the
@@ -125,18 +127,19 @@ user-specified custom baseline function}
 \item{cust_lambda_args}{A list of arguments and their values used in the
 user-specified custom lambda function}
 
-\item{cust_outdraw}{A character string specifying a user-created function to
+\item{cust_outdraw}{An R object name specifying a user-created function to
 randomize the outcome values off of the baseline for outcome values. This
-function must take inputs "n" and "lambda" and output a vector of outcome
+function must take inputs \code{n} and \code{lambda} and output a vector of outcome
 values.}
 
-\item{cust_outdraw_args}{A list of arguments besides "n" and "lamba" passed
+\item{cust_outdraw_args}{A list of arguments besides \code{n} passed
 to the user-created custom outcome draw function.}
 }
 \value{
-A list object, in which each list element is one of the synthetic datasets
-   simulated under the input conditions. Each synthetic dataset includes columns for
-   for date, daily exposure (\code{x}), and daily outcome count.
+A list object of length \code{n_rep}, in which each list element is one of the
+   synthetic datasets simulated under the input conditions. Each synthetic dataset includes
+   columns for for date (\code{date}), daily exposure (\code{x}), and daily outcome count
+   (\code{outcome}).
 }
 \description{
 Creates a collection of synthetic datasets that follow a set of user-specified

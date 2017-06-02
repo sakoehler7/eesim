@@ -8,34 +8,32 @@ std_exposure(n, central, sd = NULL, trend = "no trend",
   exposure_type = "binary", slope, amp, start.date = "2000-01-01", ...)
 }
 \arguments{
-\item{n}{A numeric value specifying the number of days to simulate.}
+\item{n}{A non-negative integer specifying the number of days to simulate.}
 
 \item{central}{A numeric value specifying the mean probability of exposure
 (for binary data) or the mean exposure value (for continuous data).}
 
 \item{sd}{A numeric value giving the standard deviation of the exposure
-values from the exposure trend line (not the total standard deviation of
-the exposure values).}
+values from the exposure trend line.}
 
 \item{trend}{A character string that specifies the desired trend function.
 Options are:
 \itemize{
-  \item{"cos1"}
-  \item{"cos2"}
-  \item{"cos3"}
-  \item{"linear"}
-  \item{"curvilinear"}
-  \item{"cos1linear"}
-  \item{"no trend"}
-}
-See the package vignette for examples of the shapes of these trends.
-Default is "no trend".}
+  \item{"no trend": No trend, either seasonal or long-term (default).}
+  \item{"cos1": A seasonal trend only.}
+  \item{"cos2": A seasonal trend with variable amplitude across years.}
+  \item{"cos3": A seasonal trend with steadily decreasing amplitude over time.}
+  \item{"linear": A linear long-term trend with no seasonal trend.}
+  \item{"curvilinear": A curved long-term trend with no seasonal trend.}
+  \item{"cos1linear": A seasonal trend plus a linear long-term trend.}
+  }
+See the package vignette for examples of the shapes of these trends.}
 
 \item{exposure_type}{A character string specifying the type of exposure.
 Choices are "binary" or "continuous".}
 
 \item{slope}{A numeric value specifying the slope of the trend, to be used
-with trend = "linear" or trend = "cos1linear".}
+with \code{trend = "linear"} or \code{trend = "cos1linear"}.}
 
 \item{amp}{A numeric value specifying the amplitude of the seasonal trend.
 Must be between -1 and 1.}
@@ -43,7 +41,7 @@ Must be between -1 and 1.}
 \item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
 simulating daily exposures}
 
-\item{...}{optional arguments to a custom trend function}
+\item{...}{Optional arguments to a custom trend function}
 }
 \value{
 A data frame with two columns: date (\code{date}) and simulated

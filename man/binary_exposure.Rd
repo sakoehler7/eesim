@@ -9,23 +9,24 @@ binary_exposure(n, p, trend = "no trend", slope, amp = 0.05,
   cust_expdraw_args = list(), custom_func = NULL, ...)
 }
 \arguments{
-\item{n}{A numeric value specifying the number of days to simulate.}
+\item{n}{A non-negative integer specifying the number of days to simulate.}
 
-\item{p}{A numeric value giving the mean probability of exposure}
+\item{p}{A numeric value between 0 and 1 giving the mean probability of exposure
+across study days.}
 
 \item{trend}{A character string that gives the trend function to use. Options
-are:
+ are:
 \itemize{
-  \item{"cos1"}
-  \item{"cos2"}
-  \item{"cos3"}
-  \item{"linear"}
-  \item{"monthly"}
-  \item{"no trend"}
-}}
+   \item{"no trend": No trend, either seasonal or long-term (default).}
+   \item{"cos1": A seasonal trend only.}
+   \item{"cos2": A seasonal trend with variable amplitude across years.}
+   \item{"cos3": A seasonal trend with steadily decreasing amplitude over time.}
+   \item{"linear": A linear long-term trend with no seasonal trend.}
+   \item{"monthly": Uses a user-specified probability of exposure for each month.}
+ }}
 
 \item{slope}{A numeric value specifying the slope of the trend, to be used
-with trend = "linear" or trend = "cos1linear".}
+with \code{trend = "linear"} or \code{trend = "cos1linear"}.}
 
 \item{amp}{A numeric value specifying the amplitude of the seasonal trend.
 Must be between -.5 and .5.}
@@ -33,21 +34,23 @@ Must be between -.5 and .5.}
 \item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
 simulating daily exposures}
 
-\item{cust_expdraw}{A character string specifying a user-created function
+\item{cust_expdraw}{An R object name specifying a user-created function
 which determines the distribution of random noise off of the trend line.
 This function must have inputs "n" and "prob" and output a vector of simulated
 exposure values.}
 
-\item{cust_expdraw_args}{A list of arguments other than "n" and "prob" required
-by the cust_expdraw function.}
+\item{cust_expdraw_args}{A list of arguments other than \code{n} required
+by the \code{cust_expdraw} function.}
 
-\item{custom_func}{A character string specifying a customized function from
-which to create a trend variable. Must accept arguments "n" and "p".}
+\item{custom_func}{An R object specifying a customized function from
+which to create a trend variable. Must accept arguments \code{n} and
+\code{p}.}
 
-\item{...}{optional arguments to a custom trend function}
+\item{...}{Optional arguments to a custom trend function}
 }
 \value{
-A data frame with the dates and daily exposure values from n days
+A data frame with columns for the dates and daily exposure values for
+ \code{n} days.
 }
 \description{
 Simulates a time series of binary exposure values with or without seasonal

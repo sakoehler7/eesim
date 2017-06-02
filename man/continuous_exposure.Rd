@@ -9,30 +9,28 @@ continuous_exposure(n, mu, sd = 1, trend = "no trend", slope, amp = 0.6,
   start.date = "2000-01-01", ...)
 }
 \arguments{
-\item{n}{A numeric value specifying the number of days to simulate.}
+\item{n}{A non-negative integer specifying the number of days to simulate.}
 
-\item{mu}{A numeric value giving the mean exposure.}
+\item{mu}{A numeric value giving the mean exposure across all study days.}
 
 \item{sd}{A numeric value giving the standard deviation of the exposure
-values from the exposure trend line (not the total standard deviation of
-the exposure values).}
+values from the exposure trend line.}
 
 \item{trend}{A character string that specifies the desired trend function.
 Options are:
 \itemize{
-  \item{"cos1"}
-  \item{"cos2"}
-  \item{"cos3"}
-  \item{"linear"}
-  \item{"curvilinear"}
-  \item{"cos1linear"}
-  \item{"no trend"}
-}
-See the package vignette for examples of the shapes of these trends.
-Default is "no trend".}
+  \item{"no trend": No trend, either seasonal or long-term (default).}
+  \item{"cos1": A seasonal trend only.}
+  \item{"cos2": A seasonal trend with variable amplitude across years.}
+  \item{"cos3": A seasonal trend with steadily decreasing amplitude over time.}
+  \item{"linear": A linear long-term trend with no seasonal trend.}
+  \item{"curvilinear": A curved long-term trend with no seasonal trend.}
+  \item{"cos1linear": A seasonal trend plus a linear long-term trend.}
+  }
+See the package vignette for examples of the shapes of these trends.}
 
 \item{slope}{A numeric value specifying the slope of the trend, to be used
-with trend = "linear" or trend = "cos1linear".}
+with \code{trend = "linear"} or \code{trend = "cos1linear"}.}
 
 \item{amp}{A numeric value specifying the amplitude of the seasonal trend.
 Must be between -1 and 1.}
@@ -48,14 +46,14 @@ by the cust_expdraw function.}
 \item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
 simulating daily exposures}
 
-\item{...}{optional arguments to a custom trend function}
+\item{...}{Optional arguments to a custom trend function}
 }
 \value{
-A data frame with the dates and daily exposure values from n days
+A data frame with the dates and simulated daily exposure values from \code{n} days.
 }
 \description{
 Simulates a time series of continuous exposure values with or without a
-seasonal trend.
+seasonal and / or long-term trend.
 }
 \examples{
 continuous_exposure(n = 5, mu = 100, sd = 10, trend = "cos1")

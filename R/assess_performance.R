@@ -1,13 +1,14 @@
 #' Average Estimated Coefficient
 #'
-#' This function gives the mean value of the \eqn{\hat{\beta}}s and the mean
-#' estimated relative risk over the n simulations.
+#' This function gives the mean value of the estimated log relative risks (\eqn{\hat{\beta}}s)
+#' and the mean of the estimated relative risk values over the \code{n} simulations.
 #'
 #' @param df A data frame of replicated simulations which must include a column
-#'    titled "Estimate"
+#'    titled "Estimate" with the effect estimate from the fitted model.
 #'
-#' @return A data frame with the mean estimated coefficient and mean estimated
-#'    relative risk
+#' @return A data frame with the mean estimated log relative risk and mean estimated
+#'    relative risk. The mean estimated risk is based on first calculating the
+#'    mean log relative risk and then exponentiating this mean value.
 #'
 #' @examples
 #' sims <- create_sims(n_reps=10, n=50, central = 100, sd = 10,
@@ -24,15 +25,16 @@ mean_beta <- function(df){
     stop("Input must be a data frame")
   }
   beta_hat <- mean(df$Estimate)
-  rr_hat <- mean(exp(df$Estimate))
+  rr_hat <- mean(beta_hat)
   out <- data.frame(beta_hat, rr_hat)
   return(out)
 }
 
 #' Standard Deviation of Estimated Coefficients
 #'
-#' This function gives the variance of the point estimates of beta hat over
-#' the n simulations and the mean of the variances of each beta hat.
+#' Measures the variance of the point estimates of the estimated log relative risk
+#' (\eqn{\hat{beta}}{b}) over the \code{n_rep} simulations and the mean of
+#' the variances of each \eqn{\hat{\beta}}{b}.
 #'
 #' @param df A data frame of replicated simulations which must include columns
 #'    titled "Estimate" and "Std.Error".
@@ -64,11 +66,18 @@ beta_var <- function(df){
 #'
 #' This function returns the relative bias of the mean of the estimated coefficients.
 #'
-#' @inheritParams mean_beta
-#' @param true_rr The true relative risk used to simulate your data
 #'
-#' @return The percent bias of the mean of the estimated coefficients over n
-#'    simulations
+#' @details This function estimates the percent bias in the estimated log relative risk
+#'    (\eqn{b}) as:
+#' \deqn{100 * \frac{\beta - \hat{\beta}}{\beta}}{100 ((\beta - b) / \beta)}
+#' where \eqn{\hat{\beta}}{b} is the mean of the estimated log relative risk values from all
+#' simulations and \eqn{\beta} is the true log relative risk used to simulate the data.
+#'
+#' @inheritParams mean_beta
+#' @param true_rr The true relative risk used to simulate the data.
+#'
+#' @return A data frame with a single value: the percent bias of the mean of the estimated
+#'    coefficients over \code{n_reps} simulations.
 #'
 #' @examples
 #' sims <- create_sims(n_reps = 10, n = 600, central = 100,
@@ -88,17 +97,20 @@ beta_bias <- function(df, true_rr){
   out <- data.frame(percent_bias)
   return(out)
 }
+
+#' Empirical coverage of confidence intervals
 #'
-#' Percent Coverage of Estimated Coefficients
-#'
-#' This function gives the percent coverage of the true coefficient.
+#' Calculates the percent of simulations in which the estimated 95\% confidence
+#' interval for the log relative risk includes the true value of the log
+#' relative risk.
 #'
 #' @param df A data frame of replicated simulations which must include columns
-#'    titled "lower_ci" and "upper_ci"
-#' @param true_rr The true relative risk used to simulate your data
+#'    titled \code{lower_ci} and \code{upper_ci}.
+#' @param true_rr The true relative risk used to simulate the data.
 #'
-#' @return The percent of confidence intervals for the estimated relative risk
-#'    over n simulations which include the true relative risk
+#' @return A data frame with the percent of confidence intervals for the
+#'    estimated log relative risk over \code{n_reps} simulations which include
+#'    the true log relative risk.
 #'
 #' @examples
 #' sims <- create_sims(n_reps = 10, n = 600, central = 100,
@@ -120,13 +132,15 @@ coverage_beta <- function(df, true_rr){
   return(out)
 }
 
-#' Power
+#' Estimate power
 #'
-#' This function gives the power of the test at a 5% siginificance level.
+#' Calculates the estimated power of a hypothesis test that the log relative risk
+#' equals 0 at a 5\% siginificance level across all simulated data.
 #'
 #' @inheritParams coverage_beta
 #'
-#' @return Power at the 5% significance level
+#' @return A data frame with one row with the estimated power of the analysis
+#'    at the 5\% significance level.
 #'
 #' @examples
 #' sims <- create_sims(n_reps = 10, n = 600, central = 100,
@@ -147,14 +161,33 @@ power_beta <- function(df){
   return(out)
 }
 
-#' Model Performance Assessment
+#' Assess model performance
 #'
-#' This function gives several measures of model performance.
+#' Calculates several measures of model performance, based on results of fitting
+#' a model to all simulated datasets.
 #'
 #' @inheritParams beta_bias
 #'
-#' @return Mean beta estimate, mean relative risk estimate, variance across
-#'    betas, mean variance of the estimates, percent bias, coverage, and power.
+#' @return A dataframe with one row with model assessment across all simulations.
+#'   Includes values for:
+#'   \itemize{
+#'     \item{\code{beta_hat}: Mean of the estimated log relative risk across all simulations.}
+#'     \item{\code{rr_hat}: Mean value of the estimated relative risk across all simulations.}
+#'     \item{\code{var_across_betas}: Variance of the estimated log relative risk across all
+#'           simulations}
+#'     \item{\code{mean_beta_var}: The mean of the estimated variances of the estimated log
+#'           relative risks across all simulations.}
+#'     \item{\code{percent_bias}: The relative bias of the estimated log relative risks compared
+#'           to the true log relative risk.}
+#'     \item{\code{coverage}: Percent of simulations for which the estimated 95\% confidence
+#'           interval for log relative risk includes the true log relative risk.}
+#'     \item{\code{power}: Percent of simulations for which the null hypothesis that the log
+#'           relative risk equals zero is rejected based on a p-value of 0.05.}
+#'   }
+#'
+#' @seealso The following functions are used to calculate these measurements:
+#'    \code{\link{beta_bias}}, \code{\link{beta_var}}, \code{\link{coverage_beta}},
+#'    \code{\link{mean_beta}}, \code{\link{power_beta}}
 #'
 #' @examples
 #' sims <- create_sims(n_reps = 100, n = 1000, central = 100,
@@ -183,31 +216,35 @@ check_sims <- function(df, true_rr){
 
 #' Power Calculations
 #'
-#' Calculate the expected power of an enviromental epidemiology time series study based
+#' Calculates the expected power of an enviromental epidemiology time series analysis based
 #' on simulated datasets. This function uses the simulation provided by \code{eesim} to
 #' simulate multiple environmental epidemiology datasets under different scenarios (e.g.,
 #' total days in study, size of association between exposure and outcome, or baseline
 #' average daily count of the outcome in the study) and estimates the power of a specified
-#' model to detect the hypothesized association.
+#' analysis to detect the hypothesized association.
 #'
-#' @param varying A character string of the parameter to be varied.  Choices are
-#'    "n" (which varies the number of days in each dataset of simulated data),
-#'    "rr" (which varies the relative rate per unit increase in exposure that is used
-#'    to simulate the data), or "average_outcome" (which varies the average value
+#' @param varying A character string specifying the parameter to be varied.  Choices are
+#'    \code{'n'} (which varies the number of days in each dataset of simulated data),
+#'    \code{'rr'} (which varies the relative rate per unit increase in exposure that is used
+#'    to simulate the data), or \code{'average_outcome'} (which varies the average value
 #'    of the outcomes in each dataset). For whichever of these three values is not set to vary in this
 #'    argument, the user must specify a constant value to this function through the
 #'    \code{n}, \code{rr}, or \code{average_outcome} arguments.
 #' @param values A numeric vector with the values you would like to test for the varying
 #'    parameters. For example, \code{values = c(1.05, 1.10, 1.15)} would produce power
-#'    estimates for the four specified values of relative risk.
+#'    estimates for the four specified values of relative risk if the user has specified
+#'    \code{varying = 'rr'}.
 #' @param plot "TRUE" or "FALSE" for whether to produce a plot
 #' @inheritParams power_beta
 #' @inheritParams create_sims
 #' @inheritParams fit_mods
 #'
-#' @return Data frame with the values of the varying parameter and their
-#'    corresponding power. If the \code{plot} argument is set to \code{TRUE},
-#'    it also returns a power curve plot as a side effect.
+#' @return Data frame with the values of the varying parameter and the estimated power
+#' for each. If the \code{plot} argument is set to \code{TRUE}, it also returns a power
+#' curve plot as a side effect. Because these estimates are based on simulations, there
+#' will be some random variation in estimates of power. Esetimates will be more stable
+#' if a higher value is used for \code{n_reps}, although this will increase the time it
+#' takes the function to run.
 #'
 #' @examples
 #'

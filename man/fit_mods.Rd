@@ -9,7 +9,7 @@ fit_mods(data, custom_model = NULL, custom_model_args = list())
 \arguments{
 \item{data}{A list of simulated data sets. Each simulated dataset must include a
 column called \code{x} with daily exposure values and a column called \code{outcome} with
-daily outcome values.}
+daily outcome values. Typically, this will be the outcome from \code{\link{create_sims}}.}
 
 \item{custom_model}{The object name of an R function that defines the code that will be used
 to fit the model. This object name should not be in quotations. See Details for more.}
@@ -49,7 +49,8 @@ The function specified by the \code{custom_model} argument should be
    \code{Pr(>|t|)}, \code{2.5\%}, and \code{97.5\%}. Note that these columns are the output
    from \code{summary} and \code{confint} for models fit using a \code{glm} call. You may
    use the function \code{format_out} from eesim within your function to produce output
-   with these columns. For more details and examples, see the vignette for \code{eesim}.
+   with these columns if this model is fit using \code{glm} or something similar.
+   For more details and examples, see the vignette for \code{eesim}.
 }
 \examples{
 # Create a set of simulated datasets and then fit the model defined in `spline_mod` to

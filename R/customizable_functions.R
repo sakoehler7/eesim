@@ -1,5 +1,7 @@
 #' Pull exposure series from data set
 #'
+#' Example of a custom exposure function that can be passed to \code{\link{eesim}} or
+#' \code{\link{power_calc}}.
 #' By default, this function pulls exposure data from the Chicago NMMAPS data
 #' set in the dlnm package.  The user may specify a different data set from
 #' which to pull exposure values.
@@ -15,11 +17,12 @@
 #'      \item"rhum"
 #'      \item"pm10"
 #'      \item"o3"}
+#' (Note: These are the column names for exposure measurements in the observed data.)
 #' @param start.date A date of the format "yyyy-mm-dd" from which to begin
 #'    pulling exposure values. Dates in the Chicago NMMAPS data set are from
 #'    1987-01-01 to 2000-12-31.
 #'
-#' @return A numeric vector of exposure values
+#' @return A numeric vector of length \code{n} giving exposure values.
 #'
 #' @examples
 #' custom_exposure(n = 5, metric = "temp", start.date = "2000-01-01")
@@ -44,17 +47,17 @@ custom_exposure <- function(n, df = dlnm::chicagoNMMAPS, metric = "temp",
 #' without seasonal trends. It also allows the user to use a custom function for
 #' the shape of the exposure trend.
 #'
-#' @param cust_exp_func The name of a function to use to generate custom
+#' @param cust_exp_func An R object specifying the function to use to generate custom
 #'    exposure values.
 #' @param cust_exp_args A list of arguments used in the user-specified custom
 #'    function.
-#' @param cust_expdraw A character string specifying a user-created function
+#' @param cust_expdraw An R object specifying a user-created function
 #'    which determines the distribution of random noise off of the trend line.
-#'    This function must have inputs "n" and "prob" for a binary exposure
-#'    function and inputs "n" and "mean" for a continuous exposure function.
+#'    This function must have inputs \code{n} and \code{prob} for a binary exposure
+#'    function and inputs \code{n} and \code{mean} for a continuous exposure function.
 #'    The custom function must output a vector of simulated exposure values.
-#' @param cust_expdraw_args A list of arguments other than "n" and "prob" or
-#' "mean" required by the cust_expdraw function.
+#' @param cust_expdraw_args A list of arguments other than \code{n} required by the
+#'    \code{cust_expdraw} function.
 #' @inheritParams std_exposure
 #' @inheritParams continuous_exposure
 #' @inheritParams binary_exposure
@@ -118,9 +121,12 @@ sim_exposure <- function(n, central = NULL, sd = NULL, trend = "no trend",
 
 #' Pull smoothed Chicago NMMAPS health outcome data
 #'
-#' By default, this function pulls smoothed data from the chicagoNMMAPS data set
-#' in the dlnm package.  The user may also input a different data set from which
-#'    to pull data.
+#' Example of a custom baseline function that can be passed to \code{\link{eesim}} or
+#' \code{\link{power_calc}}.
+#' By default, this function pulls smoothed data from the \code{chicagoNMMAPS} data set
+#' in the \code{dlnm} package.  The user may also input a different data set from which
+#' to pull data. The function uses a smoothed function of this observed data as the
+#' underlying baseline outcome trend in simulating data.
 #'
 #' @inheritParams custom_exposure
 #' @inheritParams std_exposure
@@ -130,9 +136,10 @@ sim_exposure <- function(n, central = NULL, sd = NULL, trend = "no trend",
 #'      \item"death"
 #'      \item"cvd"
 #'      \item"resp"}
+#' (Note: These are the column names for outcome counts in the observed data.)
 #'
 #' @return A data frame with one column for date and one column for baseline
-#'    outcome values
+#'    outcome values.
 #'
 #' @examples
 #' custom_baseline(n = 5)
@@ -152,36 +159,21 @@ custom_baseline <- function(n, df = dlnm::chicagoNMMAPS, outcome_type = "cvd",
 
 #' Create a series of baseline outcomes
 #'
-#' This function creates a time series of baseline outcome values and allows the
+#' Creates a time series of baseline outcome values. This function allows the
 #' user to input a custom function if desired to specify outcome trend.
 #'
 #' @inheritParams sim_baseline
-#' @param trend outcome_trend A character string specifying the seasonal trend in
-#'        health outcomes.  Options are Options are:
-#'    \itemize{
-#'      \item{"cos1"}
-#'      \item{"cos2"}
-#'      \item{"cos3"}
-#'      \item{"linear"}
-#'      \item{"curvilinear"}
-#'      \item{"cos1linear"}
-#'      \item{"no trend"}
-#'      \item{"custom"}
-#'    }
-#' @param slope slope A numeric value specifying the slope of the trend, to be used
-#'    with trend = "linear" or trend = "cos1linear".
-#' @param amp A numeric value specifying the amplitude of the seasonal trend.
-#'    Must be between 0 and 1.
-#' @param ... optional arguments to a custom baseline function
-#' @param average_baseline A numeric value specifying the average outcome value
-#' @param cust_base_func A character string specifying a user-made custom
-#'    function for baseline trend
+#' @inheritParams continuous_exposure
+#' @param average_baseline A non-negative numeric value specifying the average outcome
+#'    value over all simulated days.
+#' @param cust_base_func A R object name specifying a user-made custom
+#'    function for baseline trend.
+#' @param ... Optional arguments to a custom baseline function
 #'
 #' @return A numeric vector of baseline outcome values
 #'
 #' @examples
 #' create_baseline(n = 5, average_baseline = 22, trend = "linear")
-#' # create_baseline(n = 5, custom_func = "custom_baseline", outcome_type = "death")
 #'
 #' @export
 #'
@@ -204,20 +196,28 @@ create_baseline <- function(n, average_baseline = NULL, trend = "no trend",
 
 #' Create a series of mean outcome values
 #'
-#' This function relates exposure to baseline outcome values with the function
-#' lambda = log(baseline) + log(relative risk)*exposure to create a series
-#' of mean outcome values with or without incorporating a seasonal trend.  The
-#' user may input a custom function to relate exposure, relative risk, and
+#' Creates a vector of expected daily outcome count by relating exposure to baseline
+#' outcome values with the function:
+#' \deqn{log(\lambda_t) = log(B_t) + log(RR)*X_t}{log(\lambda) = log(B) + log(RR)*X}
+#' where \eqn{\lambda_t}{\lambda} is the expected outcome count on day \eqn{t},
+#' \eqn{B} is the expected base outcome count on day \eqn{t} (incorporating long-term
+#' and seasonal trends, but not the influence of the exposure), \eqn{RR} is the relative
+#' risk of the outcome for a one-unit increase in exposure, and \eqn{X_t}{X} is the
+#' simulated exposure on day \eqn{t}.
+#' The user may input a custom function to relate exposure, relative risk, and
 #' baseline.
 #'
-#' @param baseline A numeric vector of baseline outcome values
-#' @param exposure A numeric vector of exposure values
-#' @param rr A numeric value specifying the relative risk
-#' @param cust_lambda_func A character string specifying a user-made custom
+#' @param baseline A non-negative numeric vector of baseline outcome values,
+#'    typically the output of \code{\link{create_baseline}}.
+#' @param exposure A numeric vector of exposure values, typically the output
+#'    of \code{\link{sim_exposure}}.
+#' @param rr A non-negative numeric value specifying the relative risk (i.e., the
+#'    relative risk per unit increase in the exposure).
+#' @param cust_lambda_func An R object name specifying a user-made custom
 #'    function for relating baseline, relative risk, and exposure
-#' @param ... optional arguments for a custom lambda function
+#' @param ... Optional arguments for a custom lambda function
 #'
-#' @return A numeric vector of mean outcome values
+#' @return A numeric vector of mean outcome values for each day in the simulation.
 #'
 #' @examples
 #' base <- create_baseline(n = 10, average_baseline = 22, trend = "linear",
@@ -244,16 +244,24 @@ create_lambda <- function(baseline, exposure, rr, cust_lambda_func = NULL, ...){
 
 #' Simulate outcome
 #'
+#' Simulates daily outcome counts for each study day based on user specifications
+#' for average outcome count, any underlying trends in expected outcome counts, and
+#' the association between exposure and outcome. This function starts from a vector of
+#' expected outcome count on each study day and simulates through a draw from a Poisson
+#' distribution based on this expected daily value. If desired, a user can also use
+#' a custom function to customize this stage of the simulation; see the vignette for
+#' \code{eesim} for more details and examples.
+#'
 #' @param cust_lambda_args A list of arguments and their values used in the
 #'    user-specified custom lambda function
 #' @param cust_base_args A list of arguments and their values used in the
 #'    user-specified custom baseline function
-#' @param cust_outdraw A character string specifying a user-created function to
-#' randomize the outcome values off of the baseline for outcome values. This
-#' function must take inputs "n" and "lambda" and output a vector of outcome
-#' values.
-#' @param cust_outdraw_args A list of arguments besides "n" and "lamba" passed
-#' to the user-created custom outcome draw function.
+#' @param cust_outdraw An R object name specifying a user-created function to
+#'    randomize the outcome values off of the baseline for outcome values. This
+#'    function must take inputs \code{n} and \code{lambda} and output a vector of outcome
+#'    values.
+#' @param cust_outdraw_args A list of arguments besides \code{n} passed
+#'    to the user-created custom outcome draw function.
 #' @param start.date A date of the format "yyyy-mm-dd" from which to begin
 #'    simulating values
 #' @inheritParams create_baseline
@@ -332,13 +340,13 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
 #' and outcome). These synthetic datasets can be used to investigate performance of a specific
 #' model or to estimate power or required sample size for a hypothetical study.
 #'
-#' @param n_reps A numeric value specifying the number of datasets to simulate (e.g.,
+#' @param n_reps An integer specifying the number of datasets to simulate (e.g.,
 #'        \code{n_reps = 1000} would simulate one thousand time series datasets with the
 #'        specified characteristics, which can be used for a power analysis or to investigate
 #'        the performance of a proposed model).
-#' @param n A numeric value specifying the number of days to simulate (e.g., \code{n = 365}
+#' @param n An integer specifying the number of days to simulate (e.g., \code{n = 365}
 #'        would simulate a dataset with a year's worth of data).
-#' @param sd A numeric value giving the standard deviation of the exposure
+#' @param sd A non-negative numeric value giving the standard deviation of the exposure
 #'        values from the exposure trend line (not the total standard deviation of
 #'        the exposure values).
 #' @param exposure_trend A character string specifying a seasonal and / or long-term trend for
@@ -347,33 +355,32 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
 #'        For trends with a seasonal component, the amplitude of the seasonal trend can be
 #'        customized using the \code{exposure\_amp} argument. For trends with a long-term
 #'        pattern, the slope of the long-term trend can be set using the \code{exposure\_slope}
-#'        argument. If using the "custom" option, you must ... .
+#'        argument.
 #'        If using the "monthly" option for a binary exposure, you must input a numeric
 #'        vector of length 12 for the \code{central} argument that gives the probability of
 #'        exposure for each month, starting in January and ending in December.
 #'        Options for continuous exposure are:
-#'        \itemize{
+#'    \itemize{
+#'      \item{"no trend": No trend, either seasonal or long-term (default).}
 #'      \item{"cos1": A seasonal trend only.}
 #'      \item{"cos2": A seasonal trend with variable amplitude across years.}
 #'      \item{"cos3": A seasonal trend with steadily decreasing amplitude over time.}
 #'      \item{"linear": A linear long-term trend with no seasonal trend.}
 #'      \item{"curvilinear": A curved long-term trend with no seasonal trend.}
 #'      \item{"cos1linear": A seasonal trend plus a linear long-term trend.}
-#'      \item{"no trend": No trend, either seasonal or long-term (default).}
-#'      \item{"custom": Uses a custom trend function input by the user.}
 #'      }
 #'       Options for binary exposure are:
 #'       \itemize{
+#'      \item{"no trend": No trend, either seasonal or long-term (default).}
 #'      \item{"cos1": A seasonal trend only.}
 #'      \item{"cos2": A seasonal trend with variable amplitude across years.}
 #'      \item{"cos3": A seasonal trend with steadily decreasing amplitude over time.}
 #'      \item{"linear": A linear long-term trend with no seasonal trend.}
 #'      \item{"monthly": Uses a user-specified probability of exposure for each month.}
-#'      \item{"no trend": No trend, either seasonal or long-term (default).}
-#'      \item{"custom": Uses a custom trend function input by the user.}
 #'    }
 #' @param exposure_slope A numeric value specifying the linear slope of the
-#'        exposure, to be used with exposure_trend = "linear" or "cos1linear".
+#'        exposure, to be used with \code{exposure_trend = "linear"} or
+#'        \code{exposure_trend = "cos1linear"}.
 #'        The default value is 1. Positive values will generate data with an
 #'        increasing expected value over the years while negative values will
 #'        generate data with decreasing expected value over the years.
@@ -385,18 +392,20 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
 #'        July). Negative values can be used to simulate a trend with lower values
 #'        at the time of year of the start of the dataset and higher values in the
 #'        opposite season.
-#' @param average_outcome A numeric value specifying the average outcome value.
+#' @param average_outcome A non-negative numeric value specifying the average
+#'        daily outcome count.
 #' @param outcome_trend A character string specifying the seasonal trend in
 #'        health outcomes.  Options are the same as for continuous exposure
 #'        data.
 #' @param outcome_slope A numeric value specifying the linear slope of the
-#'        outcome trend, to be used with outcome_trend = "linear" or
-#'        "cos1linear". The default value is 1. Positive values will generate data with an
+#'        outcome trend, to be used with \code{outcome_trend = "linear"} or
+#'        \code{outcome_trend = "cos1linear"}. The default value is 1.
+#'        Positive values will generate data with an
 #'        increasing expected value over the years while negative values will
 #'        generate data with decreasing expected value over the years.
 #' @param outcome_amp A numeric value specifying the amplitude of the outcome
 #'        trend.  Must be between -1 and 1.
-#' @param cust_exp_func A character string specifying the name of a custom
+#' @param cust_exp_func An R object name specifying the name of a custom
 #'        trend function to generate exposure data
 #' @param cust_exp_args A list of arguments and their values for the
 #'        user-specified custom exposure function.
@@ -406,9 +415,10 @@ sim_outcome <- function(exposure, average_outcome = NULL, trend = "no trend",
 #' @inheritParams sim_exposure
 #' @inheritParams sim_outcome
 #'
-#' @return A list object, in which each list element is one of the synthetic datasets
-#'    simulated under the input conditions. Each synthetic dataset includes columns for
-#'    for date, daily exposure (\code{x}), and daily outcome count.
+#' @return A list object of length \code{n_rep}, in which each list element is one of the
+#'    synthetic datasets simulated under the input conditions. Each synthetic dataset includes
+#'    columns for for date (\code{date}), daily exposure (\code{x}), and daily outcome count
+#'    (\code{outcome}).
 #'
 #' @references
 #'
@@ -466,7 +476,7 @@ create_sims <- function(n_reps, n, rr, central, average_outcome, sd = NULL, expo
 #'
 #' @param data A list of simulated data sets. Each simulated dataset must include a
 #'    column called \code{x} with daily exposure values and a column called \code{outcome} with
-#'    daily outcome values.
+#'    daily outcome values. Typically, this will be the outcome from \code{\link{create_sims}}.
 #' @param custom_model The object name of an R function that defines the code that will be used
 #'     to fit the model. This object name should not be in quotations. See Details for more.
 #' @param custom_model_args A list of arguments and their values for a custom
@@ -479,7 +489,8 @@ create_sims <- function(n_reps, n, rr, central, average_outcome, sd = NULL, expo
 #'    \code{Pr(>|t|)}, \code{2.5\%}, and \code{97.5\%}. Note that these columns are the output
 #'    from \code{summary} and \code{confint} for models fit using a \code{glm} call. You may
 #'    use the function \code{format_out} from eesim within your function to produce output
-#'    with these columns. For more details and examples, see the vignette for \code{eesim}.
+#'    with these columns if this model is fit using \code{glm} or something similar.
+#'    For more details and examples, see the vignette for \code{eesim}.
 #'
 #' @return A data frame in which each row gives the results from the model-fitting function run
 #'   on one of the simulated datasets input to the function as the \code{data} object. The returned
@@ -523,9 +534,14 @@ fit_mods <- function(data, custom_model = NULL, custom_model_args = list()){
 
 #' Format output for custom model to use in eesim
 #'
+#' Formats the output within a modeling function to be used in a call to
+#' \code{\link{eesim}} when the model is fit using \code{glm} or something
+#' similar.
+#'
 #' @param mod A model object from lm, glm, etc.
 #'
-#' @return Output with the correct column names for use as a custom model in eesim.
+#' @return Output with the correct values and column names needed for a
+#'    modeling function to pass to \code{\link{eesim}}.
 #'
 #' @examples
 #' dat <- data.frame(x=rnorm(1000, 0, 1), outcome = rnorm(1000, 5, 1))
@@ -543,7 +559,8 @@ format_out <- function(mod){
 #' Simulate data, fit models, and assess models
 #'
 #' Generates synthetic time series datasets relevant for environmental epidemiology
-#' studies. Datasets can be generated with seasonal and long-term trends in either
+#' studies and tests performance of a model on that simulated data.
+#' Datasets can be generated with seasonal and long-term trends in either
 #' exposure or outcome. Binary or continuous outcomes can be simulated or incorporated
 #' from observed datasets. The function includes extensive options for customizing each
 #' step of the simulation process; see the \code{eesim} vignette for more details and
@@ -557,25 +574,17 @@ format_out <- function(mod){
 #'
 #' @return A list object with three elements:
 #' \itemize{
-#'   \item{\code{simulated_datasets}: }{A list in which each element is a data frame with
+#'   \item{\code{simulated_datasets}: }{A list of length \code{n_reps}, in which each element is
+#'     a data frame with
 #'     one of the simulated time series datasets, created according to the specifications
 #'     set by the user.}
 #'   \item{\code{indiv_performance}: }{A dataframe with one row per simulated dataset (i.e.,
 #'     total number of rows equal to \code{n_reps}). Each row gives the results of fitting the
-#'     specified model to one of the simulated datasets and includes, for the model fit to that
-#'     synthetic dataset, the estimated \eqn{\beta} (\code{Estimate}), estimated standard
-#'     error of \eqn{\beta} (\code{Std.Error}), test statistic and p-value for a hypothesis test with the null
-#'     hypothesis \eqn{\beta = 0} (\code{t.value} and \code{p.value}), and the upper and lower
-#'     confidence intervals for the estimated \eqn{\beta} (\code{lower_ci} and \code{upper_ci}).}
+#'     specified model to one of the simulated datasets. See \code{\link{fit_mods}} for more on
+#'     this output.}
 #'   \item{\code{overall_performance}: }{A one-row dataframe with overall performance summaries
-#'     from fitting the specified model to the synthetic datasets. Values include the mean estimated
-#'     value of \eqn{beta} (\code{beta_hat}), a translation of this mean estimated \eqn{\beta} into
-#'     a relative risk (\eqn{rr_hat}), the variance across estimated \eqn{\beta}'s
-#'     (\code{var_across_betas}), ... (\code{mean_beta_var}),
-#'     ... (\code{percent_bias}), the proportion of 95\% confidence intervals that included the
-#'     true value of \eqn{\beta} (\code{coverage}),
-#'     and the proportion of model fits for which the null hypothesis was
-#'     rejected under a Type I error rate (\eqn{\alpha}) of 0.05 (\code{power}).}
+#'     from fitting the specified model to the synthetic datasets. See \code{\link{check_sims}}
+#'     for more on this output.}
 #' }
 #'
 #' @references

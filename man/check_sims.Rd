@@ -2,22 +2,37 @@
 % Please edit documentation in R/assess_performance.R
 \name{check_sims}
 \alias{check_sims}
-\title{Model Performance Assessment}
+\title{Assess model performance}
 \usage{
 check_sims(df, true_rr)
 }
 \arguments{
 \item{df}{A data frame of replicated simulations which must include a column
-titled "Estimate"}
+titled "Estimate" with the effect estimate from the fitted model.}
 
-\item{true_rr}{The true relative risk used to simulate your data}
+\item{true_rr}{The true relative risk used to simulate the data.}
 }
 \value{
-Mean beta estimate, mean relative risk estimate, variance across
-   betas, mean variance of the estimates, percent bias, coverage, and power.
+A dataframe with one row with model assessment across all simulations.
+  Includes values for:
+  \itemize{
+    \item{\code{beta_hat}: Mean of the estimated log relative risk across all simulations.}
+    \item{\code{rr_hat}: Mean value of the estimated relative risk across all simulations.}
+    \item{\code{var_across_betas}: Variance of the estimated log relative risk across all
+          simulations}
+    \item{\code{mean_beta_var}: The mean of the estimated variances of the estimated log
+          relative risks across all simulations.}
+    \item{\code{percent_bias}: The relative bias of the estimated log relative risks compared
+          to the true log relative risk.}
+    \item{\code{coverage}: Percent of simulations for which the estimated 95\% confidence
+          interval for log relative risk includes the true log relative risk.}
+    \item{\code{power}: Percent of simulations for which the null hypothesis that the log
+          relative risk equals zero is rejected based on a p-value of 0.05.}
+  }
 }
 \description{
-This function gives several measures of model performance.
+Calculates several measures of model performance, based on results of fitting
+a model to all simulated datasets.
 }
 \examples{
 sims <- create_sims(n_reps = 100, n = 1000, central = 100,
@@ -31,4 +46,9 @@ fits <- fit_mods(data = sims, custom_model = spline_mod,
                  custom_model_args = list(df_year = 1))
 check_sims(df = fits, true_rr = 1.02)
 
+}
+\seealso{
+The following functions are used to calculate these measurements:
+   \code{\link{beta_bias}}, \code{\link{beta_var}}, \code{\link{coverage_beta}},
+   \code{\link{mean_beta}}, \code{\link{power_beta}}
 }

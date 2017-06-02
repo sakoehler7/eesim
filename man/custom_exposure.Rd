@@ -14,22 +14,25 @@ exposure value.}
 \item{df}{Data frame from which to pull exposure values.}
 
 \item{metric}{A character string specifying the desired exposure metric.
-Options are:
-\itemize{
-  \item"temp"
-  \item"dptp"
-  \item"rhum"
-  \item"pm10"
-  \item"o3"}}
+   Options are:
+   \itemize{
+     \item"temp"
+     \item"dptp"
+     \item"rhum"
+     \item"pm10"
+     \item"o3"}
+(Note: These are the column names for exposure measurements in the observed data.)}
 
 \item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
 pulling exposure values. Dates in the Chicago NMMAPS data set are from
 1987-01-01 to 2000-12-31.}
 }
 \value{
-A numeric vector of exposure values
+A numeric vector of length \code{n} giving exposure values.
 }
 \description{
+Example of a custom exposure function that can be passed to \code{\link{eesim}} or
+\code{\link{power_calc}}.
 By default, this function pulls exposure data from the Chicago NMMAPS data
 set in the dlnm package.  The user may specify a different data set from
 which to pull exposure values.

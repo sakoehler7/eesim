@@ -7,17 +7,21 @@
 spline_mod(df, df_year = 7)
 }
 \arguments{
-\item{df}{A data frame with exposure and outcome data called "x" and "outcome",
+\item{df}{A data frame with columns for daily exposure and outcome called "x" and "outcome",
 respectively}
 
-\item{df_year}{A numeric value specifying the degrees of freedom per year}
+\item{df_year}{A numeric value specifying the degrees of freedom per year to
+use in the spline to control for long-term and seasonal trends in the outcome.}
 }
 \value{
-Summary of the estimated log relative risk for a 1-unit increase in
-   exposure
+A numeric vector of length six with summary measures from fitting this model
+   to simulated data.
 }
 \description{
-This function fits a GLM with splines to your data.
+Fits a model to estimate the log relative risk between an exposure and outcome
+by using a natural cubic spline to control for long-term and seasonal trends and
+assuming a quasi-Poisson distribution for the outcome. This function provides an
+example of a function that can be input to \code{\link{eesim}} or \code{\link{power_calc}}.
 }
 \examples{
 exp <- sim_exposure(n = 500, central = 100, sd = 10, trend = "cos1",

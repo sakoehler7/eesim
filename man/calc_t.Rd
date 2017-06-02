@@ -2,44 +2,45 @@
 % Please edit documentation in R/sim_exposure.R
 \name{calc_t}
 \alias{calc_t}
-\title{Create a trend variable}
+\title{Create a continuous exposure trend vector}
 \usage{
 calc_t(n, trend = "no trend", slope = 1, amp = 0.6, custom_func = NULL,
   ...)
 }
 \arguments{
-\item{n}{A numeric value specifying the number of days to simulate.}
+\item{n}{A non-negative integer specifying the number of days to simulate.}
 
 \item{trend}{A character string that specifies the desired trend function.
 Options are:
 \itemize{
-  \item{"cos1"}
-  \item{"cos2"}
-  \item{"cos3"}
-  \item{"linear"}
-  \item{"curvilinear"}
-  \item{"cos1linear"}
-  \item{"no trend"}
-}
-See the package vignette for examples of the shapes of these trends.
-Default is "no trend".}
+  \item{"no trend": No trend, either seasonal or long-term (default).}
+  \item{"cos1": A seasonal trend only.}
+  \item{"cos2": A seasonal trend with variable amplitude across years.}
+  \item{"cos3": A seasonal trend with steadily decreasing amplitude over time.}
+  \item{"linear": A linear long-term trend with no seasonal trend.}
+  \item{"curvilinear": A curved long-term trend with no seasonal trend.}
+  \item{"cos1linear": A seasonal trend plus a linear long-term trend.}
+  }
+See the package vignette for examples of the shapes of these trends.}
 
 \item{slope}{A numeric value specifying the slope of the trend, to be used
-with trend = "linear" or trend = "cos1linear".}
+with \code{trend = "linear"} or \code{trend = "cos1linear"}.}
 
 \item{amp}{A numeric value specifying the amplitude of the seasonal trend.
 Must be between -1 and 1.}
 
-\item{custom_func}{A character string specifying a customized function from
-which to create a trend variable. Must accept an argument "n".}
+\item{custom_func}{An R object specifying a customized function from
+which to create a trend variable. Must accept the arguments \code{n}
+and \code{mean}.}
 
-\item{...}{optional arguments to a custom trend function}
+\item{...}{Optional arguments to a custom trend function}
 }
 \value{
-A numeric vector used to generate data with seasonal trends.
+A numeric vector of simulated exposure values for each study day, to be
+   used to generate data with seasonal trends.
 }
 \description{
-Creates a trend variable for continuous exposures.
+Creates a trend vector for a continuous exposure.
 }
 \examples{
 calc_t(5, "cos3", amp = .5)

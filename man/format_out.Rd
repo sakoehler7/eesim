@@ -10,10 +10,13 @@ format_out(mod)
 \item{mod}{A model object from lm, glm, etc.}
 }
 \value{
-Output with the correct column names for use as a custom model in eesim.
+Output with the correct values and column names needed for a
+   modeling function to pass to \code{\link{eesim}}.
 }
 \description{
-Format output for custom model to use in eesim
+Formats the output within a modeling function to be used in a call to
+\code{\link{eesim}} when the model is fit using \code{glm} or something
+similar.
 }
 \examples{
 dat <- data.frame(x=rnorm(1000, 0, 1), outcome = rnorm(1000, 5, 1))

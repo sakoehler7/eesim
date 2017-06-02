@@ -2,26 +2,32 @@
 % Please edit documentation in R/plots.R
 \name{calendar_plot}
 \alias{calendar_plot}
-\title{Calendar Plot}
+\title{Create calendar plot}
 \usage{
 calendar_plot(df, type = "continuous", labels = NULL,
   legend_name = "Exposure")
 }
 \arguments{
-\item{df}{Data frame with one column for date with entries in the format
-"yyyy-mm-dd" and one column for the daily values of the variable.}
+\item{df}{Data frame with one column named \code{date} for date with entries in the format
+"yyyy-mm-dd" and one column for the daily values of the variable to plot.}
 
 \item{type}{Character string specifying whether the exposure is continuous or
 discrete}
 
 \item{labels}{Vector of character strings naming the levels of a discrete
-variable}
+variable to be used in the figure legend.}
 
-\item{legend_name}{Character string specifying name of variable displayed}
+\item{legend_name}{Character string specifying the title to be used in the figure
+legend.}
 }
 \description{
-This plot displays daily values of a binary or continuous variable on a
-calendar via color.
+Creates a calendar plot of a time series of continuous or discrete data. The time series
+data frame input to this function must have only two columns, one for the date and one with
+the values to plot.
+}
+\details{
+The output of this function is a \code{ggplot} object, so you can customize
+   this output object as with any \code{ggplot} object.
 }
 \examples{
 testdat <- sim_exposure(n = 1000, central = 0.1,

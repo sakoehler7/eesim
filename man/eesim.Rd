@@ -14,15 +14,16 @@ eesim(n_reps, n, rr, exposure_type, custom_model, central = NULL, sd = NULL,
   cust_outdraw = NULL, cust_outdraw_args = NULL, custom_model_args = NULL)
 }
 \arguments{
-\item{n_reps}{A numeric value specifying the number of datasets to simulate (e.g.,
+\item{n_reps}{An integer specifying the number of datasets to simulate (e.g.,
 \code{n_reps = 1000} would simulate one thousand time series datasets with the
 specified characteristics, which can be used for a power analysis or to investigate
 the performance of a proposed model).}
 
-\item{n}{A numeric value specifying the number of days to simulate (e.g., \code{n = 365}
+\item{n}{An integer specifying the number of days to simulate (e.g., \code{n = 365}
 would simulate a dataset with a year's worth of data).}
 
-\item{rr}{A numeric value specifying the relative risk}
+\item{rr}{A non-negative numeric value specifying the relative risk (i.e., the
+relative risk per unit increase in the exposure).}
 
 \item{exposure_type}{A character string specifying the type of exposure.
 Choices are "binary" or "continuous".}
@@ -33,7 +34,7 @@ to fit the model. This object name should not be in quotations. See Details for 
 \item{central}{A numeric value specifying the mean probability of exposure
 (for binary data) or the mean exposure value (for continuous data).}
 
-\item{sd}{A numeric value giving the standard deviation of the exposure
+\item{sd}{A non-negative numeric value giving the standard deviation of the exposure
 values from the exposure trend line (not the total standard deviation of
 the exposure values).}
 
@@ -43,34 +44,33 @@ the exposure values).}
     For trends with a seasonal component, the amplitude of the seasonal trend can be
     customized using the \code{exposure\_amp} argument. For trends with a long-term
     pattern, the slope of the long-term trend can be set using the \code{exposure\_slope}
-    argument. If using the "custom" option, you must ... .
+    argument.
     If using the "monthly" option for a binary exposure, you must input a numeric
     vector of length 12 for the \code{central} argument that gives the probability of
     exposure for each month, starting in January and ending in December.
     Options for continuous exposure are:
-    \itemize{
+\itemize{
+  \item{"no trend": No trend, either seasonal or long-term (default).}
   \item{"cos1": A seasonal trend only.}
   \item{"cos2": A seasonal trend with variable amplitude across years.}
   \item{"cos3": A seasonal trend with steadily decreasing amplitude over time.}
   \item{"linear": A linear long-term trend with no seasonal trend.}
   \item{"curvilinear": A curved long-term trend with no seasonal trend.}
   \item{"cos1linear": A seasonal trend plus a linear long-term trend.}
-  \item{"no trend": No trend, either seasonal or long-term (default).}
-  \item{"custom": Uses a custom trend function input by the user.}
   }
    Options for binary exposure are:
    \itemize{
+  \item{"no trend": No trend, either seasonal or long-term (default).}
   \item{"cos1": A seasonal trend only.}
   \item{"cos2": A seasonal trend with variable amplitude across years.}
   \item{"cos3": A seasonal trend with steadily decreasing amplitude over time.}
   \item{"linear": A linear long-term trend with no seasonal trend.}
   \item{"monthly": Uses a user-specified probability of exposure for each month.}
-  \item{"no trend": No trend, either seasonal or long-term (default).}
-  \item{"custom": Uses a custom trend function input by the user.}
 }}
 
 \item{exposure_slope}{A numeric value specifying the linear slope of the
-exposure, to be used with exposure_trend = "linear" or "cos1linear".
+exposure, to be used with \code{exposure_trend = "linear"} or
+\code{exposure_trend = "cos1linear"}.
 The default value is 1. Positive values will generate data with an
 increasing expected value over the years while negative values will
 generate data with decreasing expected value over the years.}
@@ -84,15 +84,17 @@ July). Negative values can be used to simulate a trend with lower values
 at the time of year of the start of the dataset and higher values in the
 opposite season.}
 
-\item{average_outcome}{A numeric value specifying the average outcome value.}
+\item{average_outcome}{A non-negative numeric value specifying the average
+daily outcome count.}
 
 \item{outcome_trend}{A character string specifying the seasonal trend in
 health outcomes.  Options are the same as for continuous exposure
 data.}
 
 \item{outcome_slope}{A numeric value specifying the linear slope of the
-outcome trend, to be used with outcome_trend = "linear" or
-"cos1linear". The default value is 1. Positive values will generate data with an
+outcome trend, to be used with \code{outcome_trend = "linear"} or
+\code{outcome_trend = "cos1linear"}. The default value is 1.
+Positive values will generate data with an
 increasing expected value over the years while negative values will
 generate data with decreasing expected value over the years.}
 
@@ -102,25 +104,25 @@ trend.  Must be between -1 and 1.}
 \item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
 simulating daily exposures}
 
-\item{cust_exp_func}{A character string specifying the name of a custom
+\item{cust_exp_func}{An R object name specifying the name of a custom
 trend function to generate exposure data}
 
 \item{cust_exp_args}{A list of arguments and their values for the
 user-specified custom exposure function.}
 
-\item{cust_expdraw}{A character string specifying a user-created function
+\item{cust_expdraw}{An R object specifying a user-created function
 which determines the distribution of random noise off of the trend line.
-This function must have inputs "n" and "prob" for a binary exposure
-function and inputs "n" and "mean" for a continuous exposure function.
+This function must have inputs \code{n} and \code{prob} for a binary exposure
+function and inputs \code{n} and \code{mean} for a continuous exposure function.
 The custom function must output a vector of simulated exposure values.}
 
-\item{cust_expdraw_args}{A list of arguments other than "n" and "prob" or
-"mean" required by the cust_expdraw function.}
+\item{cust_expdraw_args}{A list of arguments other than \code{n} required by the
+\code{cust_expdraw} function.}
 
-\item{cust_base_func}{A character string specifying a user-made custom
-function for baseline trend}
+\item{cust_base_func}{A R object name specifying a user-made custom
+function for baseline trend.}
 
-\item{cust_lambda_func}{A character string specifying a user-made custom
+\item{cust_lambda_func}{An R object name specifying a user-made custom
 function for relating baseline, relative risk, and exposure}
 
 \item{cust_base_args}{A list of arguments and their values used in the
@@ -129,12 +131,12 @@ user-specified custom baseline function}
 \item{cust_lambda_args}{A list of arguments and their values used in the
 user-specified custom lambda function}
 
-\item{cust_outdraw}{A character string specifying a user-created function to
+\item{cust_outdraw}{An R object name specifying a user-created function to
 randomize the outcome values off of the baseline for outcome values. This
-function must take inputs "n" and "lambda" and output a vector of outcome
+function must take inputs \code{n} and \code{lambda} and output a vector of outcome
 values.}
 
-\item{cust_outdraw_args}{A list of arguments besides "n" and "lamba" passed
+\item{cust_outdraw_args}{A list of arguments besides \code{n} passed
 to the user-created custom outcome draw function.}
 
 \item{custom_model_args}{A list of arguments and their values for a custom
@@ -143,30 +145,23 @@ model. These arguments are passed through to the function specified with \code{c
 \value{
 A list object with three elements:
 \itemize{
-  \item{\code{simulated_datasets}: }{A list in which each element is a data frame with
+  \item{\code{simulated_datasets}: }{A list of length \code{n_reps}, in which each element is
+    a data frame with
     one of the simulated time series datasets, created according to the specifications
     set by the user.}
   \item{\code{indiv_performance}: }{A dataframe with one row per simulated dataset (i.e.,
     total number of rows equal to \code{n_reps}). Each row gives the results of fitting the
-    specified model to one of the simulated datasets and includes, for the model fit to that
-    synthetic dataset, the estimated \eqn{\beta} (\code{Estimate}), estimated standard
-    error of \eqn{\beta} (\code{Std.Error}), test statistic and p-value for a hypothesis test with the null
-    hypothesis \eqn{\beta = 0} (\code{t.value} and \code{p.value}), and the upper and lower
-    confidence intervals for the estimated \eqn{\beta} (\code{lower_ci} and \code{upper_ci}).}
+    specified model to one of the simulated datasets. See \code{\link{fit_mods}} for more on
+    this output.}
   \item{\code{overall_performance}: }{A one-row dataframe with overall performance summaries
-    from fitting the specified model to the synthetic datasets. Values include the mean estimated
-    value of \eqn{beta} (\code{beta_hat}), a translation of this mean estimated \eqn{\beta} into
-    a relative risk (\eqn{rr_hat}), the variance across estimated \eqn{\beta}'s
-    (\code{var_across_betas}), ... (\code{mean_beta_var}),
-    ... (\code{percent_bias}), the proportion of 95\% confidence intervals that included the
-    true value of \eqn{\beta} (\code{coverage}),
-    and the proportion of model fits for which the null hypothesis was
-    rejected under a Type I error rate (\eqn{\alpha}) of 0.05 (\code{power}).}
+    from fitting the specified model to the synthetic datasets. See \code{\link{check_sims}}
+    for more on this output.}
 }
 }
 \description{
 Generates synthetic time series datasets relevant for environmental epidemiology
-studies. Datasets can be generated with seasonal and long-term trends in either
+studies and tests performance of a model on that simulated data.
+Datasets can be generated with seasonal and long-term trends in either
 exposure or outcome. Binary or continuous outcomes can be simulated or incorporated
 from observed datasets. The function includes extensive options for customizing each
 step of the simulation process; see the \code{eesim} vignette for more details and
