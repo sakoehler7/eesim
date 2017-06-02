@@ -9,7 +9,7 @@
 #' output of \code{\link{eesim}}.
 #'
 #' @param summarystats A list or data frame of summary statistics from many
-#' repetions of a simulation.  Must include columns titled \code{Estimate},
+#' repetitions of a simulation.  Must include columns titled \code{Estimate},
 #' \code{lower_ci}, and \code{upper_ci}. This could be the second object from the output of
 #' \code{\link{eesim}}, specified by using the format \code{eesim_output[[2]]}.
 #' @param true_param The true value of the relative risk used to simulate the data.
