@@ -129,12 +129,12 @@ model. These arguments are passed through to the function specified with \code{c
 Data frame with the values of the varying parameter and the estimated power
 for each. If the \code{plot} argument is set to \code{TRUE}, it also returns a power
 curve plot as a side effect. Because these estimates are based on simulations, there
-will be some random variation in estimates of power. Esetimates will be more stable
+will be some random variation in estimates of power. Estimates will be more stable
 if a higher value is used for \code{n_reps}, although this will increase the time it
 takes the function to run.
 }
 \description{
-Calculates the expected power of an enviromental epidemiology time series analysis based
+Calculates the expected power of an environmental epidemiology time series analysis based
 on simulated datasets. This function uses the simulation provided by \code{eesim} to
 simulate multiple environmental epidemiology datasets under different scenarios (e.g.,
 total days in study, size of association between exposure and outcome, or baseline

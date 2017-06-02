@@ -8,7 +8,7 @@ coverage_plot(summarystats, true_param)
 }
 \arguments{
 \item{summarystats}{A list or data frame of summary statistics from many
-repitions of a simulation.  Must include columns titled \code{Estimate},
+repetions of a simulation.  Must include columns titled \code{Estimate},
 \code{lower_ci}, and \code{upper_ci}. This could be the second object from the output of
 \code{\link{eesim}}, specified by using the format \code{eesim_output[[2]]}.}
 
@@ -16,7 +16,7 @@ repitions of a simulation.  Must include columns titled \code{Estimate},
 }
 \value{
 A plot displaying the coverage for the true value of the parameter by
-the confidence intervals resulting from each repitition of the simulation.
+the confidence intervals resulting from each repetition of the simulation.
 }
 \description{
 Plots the relative risk point estimates and their confidence

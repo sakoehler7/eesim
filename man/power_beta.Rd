@@ -16,7 +16,7 @@ A data frame with one row with the estimated power of the analysis
 }
 \description{
 Calculates the estimated power of a hypothesis test that the log relative risk
-equals 0 at a 5\% siginificance level across all simulated data.
+equals 0 at a 5\% significance level across all simulated data.
 }
 \examples{
 sims <- create_sims(n_reps = 10, n = 600, central = 100,
