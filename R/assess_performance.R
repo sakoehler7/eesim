@@ -84,7 +84,7 @@ beta_var <- function(df){
 #'
 #' @export
 beta_bias <- function(df, true_rr){
-  percent_bias <- 100 * (true_rr - mean(exp(df$Estimate))) / true_rr
+  percent_bias <- 100 * (log(true_rr) - mean(df$Estimate)) / log(true_rr)
   out <- data.frame(percent_bias)
   return(out)
 }
