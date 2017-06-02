@@ -688,7 +688,7 @@ There are three ways to customize the simulated outcome data: creating a custom 
 
 The outcome baseline ($B_t$) is comprised of the values the user expects the outcomes to have on each day of the simulated dataset without risk associated with the exposure factored in. The user may write a function to specify the trend of the baseline, then use it as an input in `sim_outcome` or `eesim`. Here is an example of creating a custom baseline function and using it in the `eesim` function:
 
-```{r}
+```{r fig.width = 5, fig.height = 2, fig.align = "center"}
 custombase <- function(n, slope, intercept){
   day <- c(1:n)
   baseline <- day * slope + intercept
@@ -698,13 +698,16 @@ custombase <- function(n, slope, intercept){
 #Example:
 custombase(n=5, slope = .3, intercept = 55)
 
-ex_sim3 <- eesim(n_reps = 3, n = 10, central = 100, sd = 10,
+ex_sim3 <- eesim(n_reps = 3, n = 1000, central = 100, sd = 10,
                 exposure_type = "continuous", exposure_trend = "cos1",
                 exposure_amp = .6, average_outcome = 22, rr = 1.01, 
                 cust_base_func = custombase,
-                cust_base_args = list(n=10, slope = .5, intercept = 12),
+                cust_base_args = list(n=1000, slope = 5, intercept = 12),
                 custom_model = spline_mod, custom_model_args = list(df_year = 2))
-ex_sim3[[1]]
+ggplot(ex_sim3$simulated_datasets[[1]], aes(x=date, y=outcome))+ geom_point() + geom_point(alpha = 0.5, size = 0.8) + 
+  theme_classic() + 
+  geom_smooth(se = FALSE, span = 0.1, method = "loess", color = "red")
+
 ```
 
 The second way of customizing the outcome simulation is to use a custom function to incorporate the added risk from the exposure when calculating the expected daily outcome count for a day, $\lambda_t$, from the inputs of exposure ($X_t$) and outcome baseline ($B_t$) for the day. Here is an example of creating a custom lambda, meaning a custom function relating relative risk and exposure to outcomes, and using it in eesim with the custom baseline function created above. The custom lambda function must input arguments `exposure`, `rr`, and `baseline` and output a vector of lambda values.  
@@ -716,12 +719,12 @@ customlambda <- function(exposure, rr, constant, baseline){
   return(lambda)
 }
 
-ex_sim4 <- eesim(n_reps = 3, n = 10, central = 100, sd = 10,
+ex_sim4 <- eesim(n_reps = 3, n = 1000, central = 100, sd = 10,
                 exposure_type = "continuous", exposure_trend = "cos1",
                 exposure_amp = .6, average_outcome = 22, rr = 1.01, 
                 cust_base_func = custombase,
-                cust_base_args = list(n=10, slope = .5, intercept = 12),
-                cust_lambda_func = customlambda, cust_lambda_args = list(constant=4),
+                cust_base_args = list(n=1000, slope = .5, intercept = 12),
+                cust_lambda_func = customlambda, cust_lambda_args = list(constant=10),
                 custom_model = spline_mod, custom_model_args = list(df_year = 2))
 ```
 
@@ -735,7 +738,14 @@ custnbinom <- function(n, lambda, prob){
   return(out)
 }
 
-
+ex_sim5 <- eesim(n_reps = 3, n = 1000, central = 100, sd = 10,
+                exposure_type = "continuous", exposure_trend = "cos1",
+                exposure_amp = .6, average_outcome = 22, rr = 1.01, 
+                cust_base_func = custombase,
+                cust_base_args = list(n=1000, slope = .5, intercept = 12),
+                cust_lambda_func = customlambda, cust_lambda_args = list(constant=10),
+                cust_outdraw = custnbinom, cust_outdraw_args = list(prob=.3), 
+                custom_model = spline_mod, custom_model_args = list(df_year = 2))
 ```
 
 ## References
