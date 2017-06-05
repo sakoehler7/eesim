@@ -2,22 +2,25 @@
 % Please edit documentation in R/assess_performance.R
 \name{coverage_beta}
 \alias{coverage_beta}
-\title{Percent Coverage of Estimated Coefficients}
+\title{Empirical coverage of confidence intervals}
 \usage{
 coverage_beta(df, true_rr)
 }
 \arguments{
 \item{df}{A data frame of replicated simulations which must include columns
-titled "lower_ci" and "upper_ci"}
+titled \code{lower_ci} and \code{upper_ci}.}
 
-\item{true_rr}{The true relative risk used to simulate your data}
+\item{true_rr}{The true relative risk used to simulate the data.}
 }
 \value{
-The percent of confidence intervals for the estimated relative risk
-   over n simulations which include the true relative risk
+A data frame with the percent of confidence intervals for the
+   estimated log relative risk over \code{n_reps} simulations which include
+   the true log relative risk.
 }
 \description{
-This function gives the percent coverage of the true coefficient.
+Calculates the percent of simulations in which the estimated 95\% confidence
+interval for the log relative risk includes the true value of the log
+relative risk.
 }
 \examples{
 sims <- create_sims(n_reps = 10, n = 600, central = 100,

@@ -2,47 +2,49 @@
 % Please edit documentation in R/sim_exposure.R
 \name{bin_t}
 \alias{bin_t}
-\title{Create a trend variable}
+\title{Create a binary exposure trend vector}
 \usage{
 bin_t(n, p, trend = "no trend", slope = 1, amp = 0.01,
   start.date = "2000-01-01", custom_func = NULL, ...)
 }
 \arguments{
-\item{n}{A numeric value specifying the number of days to simulate.}
+\item{n}{A non-negative integer specifying the number of days to simulate.}
 
-\item{p}{A numeric value giving the mean probability of exposure}
+\item{p}{A numeric value between 0 and 1 giving the mean probability of exposure
+across study days.}
 
 \item{trend}{A character string that gives the trend function to use. Options
-are:
+ are:
 \itemize{
-  \item{"cos1"}
-  \item{"cos2"}
-  \item{"cos3"}
-  \item{"linear"}
-  \item{"monthly"}
-  \item{"no trend"}
-}}
+   \item{"no trend": No trend, either seasonal or long-term (default).}
+   \item{"cos1": A seasonal trend only.}
+   \item{"cos2": A seasonal trend with variable amplitude across years.}
+   \item{"cos3": A seasonal trend with steadily decreasing amplitude over time.}
+   \item{"linear": A linear long-term trend with no seasonal trend.}
+   \item{"monthly": Uses a user-specified probability of exposure for each month.}
+ }}
 
 \item{slope}{A numeric value specifying the slope of the trend, to be used
-with trend = "linear" or trend = "cos1linear".}
+with \code{trend = "linear"} or \code{trend = "cos1linear"}.}
 
 \item{amp}{A numeric value specifying the amplitude of the seasonal trend.
 Must be between -.5 and .5.}
 
 \item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
-simulating values}
+simulating values.}
 
-\item{custom_func}{A character string specifying a customized function from
-which to create a trend variable. Must accept arguments "n" and "p".}
+\item{custom_func}{An R object specifying a customized function from
+which to create a trend variable. Must accept arguments \code{n} and
+\code{p}.}
 
-\item{...}{optional arguments to a custom trend function}
+\item{...}{Optional arguments to a custom trend function}
 }
 \value{
-A numeric vector used to generate binary exposure data with seasonal
-   trends.
+A numeric vector of daily expected probability of exposure, to be used
+   to generate binary exposure data with seasonal trends.
 }
 \description{
-Creates a trend variable for binary exposure data which is centered at p.
+Creates a trend vector for binary exposure data, centered at a probability \code{p}.
 }
 \examples{
 bin_t(n = 5, p = .3, trend = "cos1", amp = .3)

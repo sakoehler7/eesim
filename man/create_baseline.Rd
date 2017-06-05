@@ -11,41 +11,41 @@ create_baseline(n, average_baseline = NULL, trend = "no trend", slope = 1,
 \item{n}{A numeric value specifying the number of days for which to simulate
 data}
 
-\item{average_baseline}{A numeric value specifying the average outcome value}
+\item{average_baseline}{A non-negative numeric value specifying the average outcome
+value over all simulated days.}
 
-\item{trend}{outcome_trend A character string specifying the seasonal trend in
-    health outcomes.  Options are Options are:
+\item{trend}{A character string that specifies the desired trend function.
+Options are:
 \itemize{
-  \item{"cos1"}
-  \item{"cos2"}
-  \item{"cos3"}
-  \item{"linear"}
-  \item{"curvilinear"}
-  \item{"cos1linear"}
-  \item{"no trend"}
-  \item{"custom"}
-}}
+  \item{"no trend": No trend, either seasonal or long-term (default).}
+  \item{"cos1": A seasonal trend only.}
+  \item{"cos2": A seasonal trend with variable amplitude across years.}
+  \item{"cos3": A seasonal trend with steadily decreasing amplitude over time.}
+  \item{"linear": A linear long-term trend with no seasonal trend.}
+  \item{"curvilinear": A curved long-term trend with no seasonal trend.}
+  \item{"cos1linear": A seasonal trend plus a linear long-term trend.}
+  }
+See the package vignette for examples of the shapes of these trends.}
 
-\item{slope}{slope A numeric value specifying the slope of the trend, to be used
-with trend = "linear" or trend = "cos1linear".}
+\item{slope}{A numeric value specifying the slope of the trend, to be used
+with \code{trend = "linear"} or \code{trend = "cos1linear"}.}
 
 \item{amp}{A numeric value specifying the amplitude of the seasonal trend.
-Must be between 0 and 1.}
+Must be between -1 and 1.}
 
-\item{cust_base_func}{A character string specifying a user-made custom
-function for baseline trend}
+\item{cust_base_func}{A R object name specifying a user-made custom
+function for baseline trend.}
 
-\item{...}{optional arguments to a custom baseline function}
+\item{...}{Optional arguments to a custom baseline function}
 }
 \value{
 A numeric vector of baseline outcome values
 }
 \description{
-This function creates a time series of baseline outcome values and allows the
+Creates a time series of baseline outcome values. This function allows the
 user to input a custom function if desired to specify outcome trend.
 }
 \examples{
 create_baseline(n = 5, average_baseline = 22, trend = "linear")
-# create_baseline(n = 5, custom_func = "custom_baseline", outcome_type = "death")
 
 }

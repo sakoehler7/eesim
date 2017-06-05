@@ -1,19 +1,21 @@
-#' Coverage Plot
+#' Plot coverage of empirical confidence intervals
 #'
-#' This plot displays the relative risk point estimates and their confidence
-#' intervals for each repitition of the simulation in relation to the true
-#' relative risk.  It is a visualization of the coverage of the specified
+#' Plots the relative risk point estimates and their confidence
+#' intervals for model fit results for each simulation, compared to the true
+#' relative risk. This gives a visualization of the coverage of the specified
 #' method for the relative risk. The confidence intervals which do not contain
-#' the true relative risk appear in red.
+#' the true relative risk appear in red. The input to this function should be
+#' either the output of \code{\link{fit_mods}} or the second element of the
+#' output of \code{\link{eesim}}.
 #'
 #' @param summarystats A list or data frame of summary statistics from many
-#' repitions of a simulation.  Must include columns titled "Estimate",
-#' "lower_ci", and "upper_ci". This could be the first object from the output of
-#' eesim, specified by using the format "eesim_output[[1]]".
-#' @param true_param The true value of the parameter being estimated
+#' repetitions of a simulation.  Must include columns titled \code{Estimate},
+#' \code{lower_ci}, and \code{upper_ci}. This could be the second object from the output of
+#' \code{\link{eesim}}, specified by using the format \code{eesim_output[[2]]}.
+#' @param true_param The true value of the relative risk used to simulate the data.
 #'
 #' @return A plot displaying the coverage for the true value of the parameter by
-#' the confidence intervals resulting from each repitition of the simulation.
+#' the confidence intervals resulting from each repetition of the simulation.
 #'
 #' @examples
 #' ex_sim <- eesim(n_reps = 100, n = 1000, central = 100, sd = 10,
@@ -43,19 +45,24 @@ coverage_plot <- function(summarystats, true_param){
     ggplot2::scale_x_discrete(name = "", breaks = NULL)
   return(out)
 }
+
+#' Create calendar plot
 #'
-#' Calendar Plot
+#' Creates a calendar plot of a time series of continuous or discrete data. The time series
+#' data frame input to this function must have only two columns, one for the date and one with
+#' the values to plot.
 #'
-#' This plot displays daily values of a binary or continuous variable on a
-#' calendar via color.
-#'
-#' @param df Data frame with one column for date with entries in the format
-#' "yyyy-mm-dd" and one column for the daily values of the variable.
+#' @param df Data frame with one column named \code{date} for date with entries in the format
+#' "yyyy-mm-dd" and one column for the daily values of the variable to plot.
 #' @param type Character string specifying whether the exposure is continuous or
 #' discrete
 #' @param labels Vector of character strings naming the levels of a discrete
-#' variable
-#' @param legend_name Character string specifying name of variable displayed
+#' variable to be used in the figure legend.
+#' @param legend_name Character string specifying the title to be used in the figure
+#'    legend.
+#'
+#' @details The output of this function is a \code{ggplot} object, so you can customize
+#'    this output object as with any \code{ggplot} object.
 #'
 #' @examples
 #' testdat <- sim_exposure(n = 1000, central = 0.1,

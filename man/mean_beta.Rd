@@ -8,15 +8,16 @@ mean_beta(df)
 }
 \arguments{
 \item{df}{A data frame of replicated simulations which must include a column
-titled "Estimate"}
+titled "Estimate" with the effect estimate from the fitted model.}
 }
 \value{
-A data frame with the mean estimated coefficient and mean estimated
-   relative risk
+A data frame with the mean estimated log relative risk and mean estimated
+   relative risk. The mean estimated risk is based on first calculating the
+   mean log relative risk and then exponentiating this mean value.
 }
 \description{
-This function gives the mean value of the \eqn{\hat{\beta}}s and the mean
-estimated relative risk over the n simulations.
+This function gives the mean value of the estimated log relative risks (\eqn{\hat{\beta}}s)
+and the mean of the estimated relative risk values over the \code{n} simulations.
 }
 \examples{
 sims <- create_sims(n_reps=10, n=50, central = 100, sd = 10,

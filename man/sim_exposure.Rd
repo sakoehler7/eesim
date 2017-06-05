@@ -10,31 +10,29 @@ sim_exposure(n, central = NULL, sd = NULL, trend = "no trend",
   cust_expdraw_args = list())
 }
 \arguments{
-\item{n}{A numeric value specifying the number of days to simulate.}
+\item{n}{A non-negative integer specifying the number of days to simulate.}
 
 \item{central}{A numeric value specifying the mean probability of exposure
 (for binary data) or the mean exposure value (for continuous data).}
 
 \item{sd}{A numeric value giving the standard deviation of the exposure
-values from the exposure trend line (not the total standard deviation of
-the exposure values).}
+values from the exposure trend line.}
 
 \item{trend}{A character string that specifies the desired trend function.
 Options are:
 \itemize{
-  \item{"cos1"}
-  \item{"cos2"}
-  \item{"cos3"}
-  \item{"linear"}
-  \item{"curvilinear"}
-  \item{"cos1linear"}
-  \item{"no trend"}
-}
-See the package vignette for examples of the shapes of these trends.
-Default is "no trend".}
+  \item{"no trend": No trend, either seasonal or long-term (default).}
+  \item{"cos1": A seasonal trend only.}
+  \item{"cos2": A seasonal trend with variable amplitude across years.}
+  \item{"cos3": A seasonal trend with steadily decreasing amplitude over time.}
+  \item{"linear": A linear long-term trend with no seasonal trend.}
+  \item{"curvilinear": A curved long-term trend with no seasonal trend.}
+  \item{"cos1linear": A seasonal trend plus a linear long-term trend.}
+  }
+See the package vignette for examples of the shapes of these trends.}
 
 \item{slope}{A numeric value specifying the slope of the trend, to be used
-with trend = "linear" or trend = "cos1linear".}
+with \code{trend = "linear"} or \code{trend = "cos1linear"}.}
 
 \item{amp}{A numeric value specifying the amplitude of the seasonal trend.
 Must be between -1 and 1.}
@@ -45,20 +43,20 @@ Choices are "binary" or "continuous".}
 \item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
 simulating daily exposures}
 
-\item{cust_exp_func}{The name of a function to use to generate custom
+\item{cust_exp_func}{An R object specifying the function to use to generate custom
 exposure values.}
 
 \item{cust_exp_args}{A list of arguments used in the user-specified custom
 function.}
 
-\item{cust_expdraw}{A character string specifying a user-created function
+\item{cust_expdraw}{An R object specifying a user-created function
 which determines the distribution of random noise off of the trend line.
-This function must have inputs "n" and "prob" for a binary exposure
-function and inputs "n" and "mean" for a continuous exposure function.
+This function must have inputs \code{n} and \code{prob} for a binary exposure
+function and inputs \code{n} and \code{mean} for a continuous exposure function.
 The custom function must output a vector of simulated exposure values.}
 
-\item{cust_expdraw_args}{A list of arguments other than "n" and "prob" or
-"mean" required by the cust_expdraw function.}
+\item{cust_expdraw_args}{A list of arguments other than \code{n} required by the
+\code{cust_expdraw} function.}
 }
 \value{
 A data frame with two columns: date (\code{date}) and simulated

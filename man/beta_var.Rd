@@ -15,8 +15,9 @@ A data frame of the variance across all values of beta hat
    and the mean variance of the beta hats
 }
 \description{
-This function gives the variance of the point estimates of beta hat over
-the n simulations and the mean of the variances of each beta hat.
+Measures the variance of the point estimates of the estimated log relative risk
+(\eqn{\hat{beta}}{b}) over the \code{n_rep} simulations and the mean of
+the variances of each \eqn{\hat{\beta}}{b}.
 }
 \examples{
 sims <- create_sims(n_reps = 10, n = 600, central = 100,

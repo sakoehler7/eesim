@@ -7,25 +7,33 @@
 create_lambda(baseline, exposure, rr, cust_lambda_func = NULL, ...)
 }
 \arguments{
-\item{baseline}{A numeric vector of baseline outcome values}
+\item{baseline}{A non-negative numeric vector of baseline outcome values,
+typically the output of \code{\link{create_baseline}}.}
 
-\item{exposure}{A numeric vector of exposure values}
+\item{exposure}{A numeric vector of exposure values, typically the output
+of \code{\link{sim_exposure}}.}
 
-\item{rr}{A numeric value specifying the relative risk}
+\item{rr}{A non-negative numeric value specifying the relative risk (i.e., the
+relative risk per unit increase in the exposure).}
 
-\item{cust_lambda_func}{A character string specifying a user-made custom
+\item{cust_lambda_func}{An R object name specifying a user-made custom
 function for relating baseline, relative risk, and exposure}
 
-\item{...}{optional arguments for a custom lambda function}
+\item{...}{Optional arguments for a custom lambda function}
 }
 \value{
-A numeric vector of mean outcome values
+A numeric vector of mean outcome values for each day in the simulation.
 }
 \description{
-This function relates exposure to baseline outcome values with the function
-lambda = log(baseline) + log(relative risk)*exposure to create a series
-of mean outcome values with or without incorporating a seasonal trend.  The
-user may input a custom function to relate exposure, relative risk, and
+Creates a vector of expected daily outcome count by relating exposure to baseline
+outcome values with the function:
+\deqn{log(\lambda_t) = log(B_t) + log(RR)*X_t}{log(\lambda) = log(B) + log(RR)*X}
+where \eqn{\lambda_t}{\lambda} is the expected outcome count on day \eqn{t},
+\eqn{B} is the expected base outcome count on day \eqn{t} (incorporating long-term
+and seasonal trends, but not the influence of the exposure), \eqn{RR} is the relative
+risk of the outcome for a one-unit increase in exposure, and \eqn{X_t}{X} is the
+simulated exposure on day \eqn{t}.
+The user may input a custom function to relate exposure, relative risk, and
 baseline.
 }
 \examples{

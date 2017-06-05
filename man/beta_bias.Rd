@@ -8,16 +8,23 @@ beta_bias(df, true_rr)
 }
 \arguments{
 \item{df}{A data frame of replicated simulations which must include a column
-titled "Estimate"}
+titled "Estimate" with the effect estimate from the fitted model.}
 
-\item{true_rr}{The true relative risk used to simulate your data}
+\item{true_rr}{The true relative risk used to simulate the data.}
 }
 \value{
-The percent bias of the mean of the estimated coefficients over n
-   simulations
+A data frame with a single value: the percent bias of the mean of the estimated
+   coefficients over \code{n_reps} simulations.
 }
 \description{
 This function returns the relative bias of the mean of the estimated coefficients.
+}
+\details{
+This function estimates the percent bias in the estimated log relative risk
+   (\eqn{b}) as:
+\deqn{100 * \frac{\beta - \hat{\beta}}{\beta}}{100 ((\beta - b) / \beta)}
+where \eqn{\hat{\beta}}{b} is the mean of the estimated log relative risk values from all
+simulations and \eqn{\beta} is the true log relative risk used to simulate the data.
 }
 \examples{
 sims <- create_sims(n_reps = 10, n = 600, central = 100,

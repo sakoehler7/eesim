@@ -1,30 +1,31 @@
-#' Create a trend variable
+#' Create a continuous exposure trend vector
 #'
-#' Creates a trend variable for continuous exposures.
+#' Creates a trend vector for a continuous exposure.
 #'
-#' @param n A numeric value specifying the number of days to simulate.
+#' @param n A non-negative integer specifying the number of days to simulate.
 #' @param trend A character string that specifies the desired trend function.
 #'    Options are:
 #'    \itemize{
-#'      \item{"cos1"}
-#'      \item{"cos2"}
-#'      \item{"cos3"}
-#'      \item{"linear"}
-#'      \item{"curvilinear"}
-#'      \item{"cos1linear"}
-#'      \item{"no trend"}
-#'    }
+#'      \item{"no trend": No trend, either seasonal or long-term (default).}
+#'      \item{"cos1": A seasonal trend only.}
+#'      \item{"cos2": A seasonal trend with variable amplitude across years.}
+#'      \item{"cos3": A seasonal trend with steadily decreasing amplitude over time.}
+#'      \item{"linear": A linear long-term trend with no seasonal trend.}
+#'      \item{"curvilinear": A curved long-term trend with no seasonal trend.}
+#'      \item{"cos1linear": A seasonal trend plus a linear long-term trend.}
+#'      }
 #'    See the package vignette for examples of the shapes of these trends.
-#'    Default is "no trend".
 #' @param slope A numeric value specifying the slope of the trend, to be used
-#'    with trend = "linear" or trend = "cos1linear".
+#'    with \code{trend = "linear"} or \code{trend = "cos1linear"}.
 #' @param amp A numeric value specifying the amplitude of the seasonal trend.
 #'    Must be between -1 and 1.
-#' @param custom_func A character string specifying a customized function from
-#'    which to create a trend variable. Must accept an argument "n".
-#' @param ... optional arguments to a custom trend function
+#' @param custom_func An R object specifying a customized function from
+#'    which to create a trend variable. Must accept the arguments \code{n}
+#'    and \code{mean}.
+#' @param ... Optional arguments to a custom trend function
 #'
-#' @return A numeric vector used to generate data with seasonal trends.
+#' @return A numeric vector of simulated exposure values for each study day, to be
+#'    used to generate data with seasonal trends.
 #'
 #' @examples
 #' calc_t(5, "cos3", amp = .5)
@@ -60,34 +61,36 @@ calc_t <- function(n, trend = "no trend", slope=1, amp = .6, custom_func = NULL,
   return(seasont)
 }
 
-#' Create a trend variable
+#' Create a binary exposure trend vector
 #'
-#' Creates a trend variable for binary exposure data which is centered at p.
+#' Creates a trend vector for binary exposure data, centered at a probability \code{p}.
 #'
 #' @param trend A character string that gives the trend function to use. Options
 #'    are:
-#'    \itemize{
-#'      \item{"cos1"}
-#'      \item{"cos2"}
-#'      \item{"cos3"}
-#'      \item{"linear"}
-#'      \item{"monthly"}
-#'      \item{"no trend"}
+#'   \itemize{
+#'      \item{"no trend": No trend, either seasonal or long-term (default).}
+#'      \item{"cos1": A seasonal trend only.}
+#'      \item{"cos2": A seasonal trend with variable amplitude across years.}
+#'      \item{"cos3": A seasonal trend with steadily decreasing amplitude over time.}
+#'      \item{"linear": A linear long-term trend with no seasonal trend.}
+#'      \item{"monthly": Uses a user-specified probability of exposure for each month.}
 #'    }
 #'
-#' @param p A numeric value giving the mean probability of exposure
+#' @param p A numeric value between 0 and 1 giving the mean probability of exposure
+#'    across study days.
 #' @param slope A numeric value specifying the slope of the trend, to be used
-#'    with trend = "linear" or trend = "cos1linear".
+#'    with \code{trend = "linear"} or \code{trend = "cos1linear"}.
 #' @param amp A numeric value specifying the amplitude of the seasonal trend.
 #'    Must be between -.5 and .5.
 #' @param start.date A date of the format "yyyy-mm-dd" from which to begin
-#'    simulating values
-#' @param custom_func A character string specifying a customized function from
-#'    which to create a trend variable. Must accept arguments "n" and "p".
+#'    simulating values.
+#' @param custom_func An R object specifying a customized function from
+#'    which to create a trend variable. Must accept arguments \code{n} and
+#'    \code{p}.
 #' @inheritParams calc_t
 #'
-#' @return A numeric vector used to generate binary exposure data with seasonal
-#'    trends.
+#' @return A numeric vector of daily expected probability of exposure, to be used
+#'    to generate binary exposure data with seasonal trends.
 #'
 #' @examples
 #' bin_t(n = 5, p = .3, trend = "cos1", amp = .3)
@@ -141,15 +144,16 @@ bin_t <- function(n, p, trend = "no trend", slope = 1, amp = .01,
 #'
 #' @param start.date A date of the format "yyyy-mm-dd" from which to begin
 #'    simulating daily exposures
-#' @param cust_expdraw A character string specifying a user-created function
+#' @param cust_expdraw An R object name specifying a user-created function
 #'    which determines the distribution of random noise off of the trend line.
 #'    This function must have inputs "n" and "prob" and output a vector of simulated
 #'    exposure values.
-#' @param cust_expdraw_args A list of arguments other than "n" and "prob" required
-#'  by the cust_expdraw function.
+#' @param cust_expdraw_args A list of arguments other than \code{n} required
+#'  by the \code{cust_expdraw} function.
 #' @inheritParams bin_t
 #'
-#' @return A data frame with the dates and daily exposure values from n days
+#' @return A data frame with columns for the dates and daily exposure values for
+#'  \code{n} days.
 #'
 #' @examples
 #' binary_exposure(n = 5, p = 0.1, trend = "cos1", amp = .02,
@@ -180,12 +184,11 @@ binary_exposure <- function(n, p, trend = "no trend", slope, amp=.05,
 #' Simulate continuous exposure data
 #'
 #' Simulates a time series of continuous exposure values with or without a
-#' seasonal trend.
+#' seasonal and / or long-term trend.
 #'
-#' @param mu A numeric value giving the mean exposure.
+#' @param mu A numeric value giving the mean exposure across all study days.
 #' @param sd A numeric value giving the standard deviation of the exposure
-#'    values from the exposure trend line (not the total standard deviation of
-#'    the exposure values).
+#'    values from the exposure trend line.
 #' @param cust_expdraw A character string specifying a user-created function
 #'    which determines the distribution of random noise off of the trend line.
 #'    This function must have inputs "n" and "mean" and output a vector of simulated
@@ -195,7 +198,7 @@ binary_exposure <- function(n, p, trend = "no trend", slope, amp=.05,
 #' @inheritParams calc_t
 #' @inheritParams binary_exposure
 #'
-#' @return A data frame with the dates and daily exposure values from n days
+#' @return A data frame with the dates and simulated daily exposure values from \code{n} days.
 #'
 #' @examples
 #' continuous_exposure(n = 5, mu = 100, sd = 10, trend = "cos1")
@@ -264,7 +267,8 @@ std_exposure <- function(n, central, sd = NULL, trend = "no trend",
 
 #' Expected baseline health outcomes
 #'
-#' Generates expected baseline health outcomes.
+#' Generates expected baseline health outcome counts based on average outcome and
+#' desired seasonal and / or long-term trends.
 #'
 #' @param n A numeric value specifying the number of days for which to simulate
 #'    data
@@ -273,8 +277,8 @@ std_exposure <- function(n, central, sd = NULL, trend = "no trend",
 #'    for which to simulate data
 #' @inheritParams std_exposure
 #'
-#' @return A data frame with the date and expected baseline outcomes for each
-#'    day of simulated data
+#' @return A data frame with the date and expected baseline outcome count for each
+#'    day of simulated data.
 #'
 #' @examples
 #' sim_baseline(n = 5, lambda = 100, trend = "cos1")

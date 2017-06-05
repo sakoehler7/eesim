@@ -2,28 +2,30 @@
 % Please edit documentation in R/plots.R
 \name{coverage_plot}
 \alias{coverage_plot}
-\title{Coverage Plot}
+\title{Plot coverage of empirical confidence intervals}
 \usage{
 coverage_plot(summarystats, true_param)
 }
 \arguments{
 \item{summarystats}{A list or data frame of summary statistics from many
-repitions of a simulation.  Must include columns titled "Estimate",
-"lower_ci", and "upper_ci". This could be the first object from the output of
-eesim, specified by using the format "eesim_output[[1]]".}
+repetitions of a simulation.  Must include columns titled \code{Estimate},
+\code{lower_ci}, and \code{upper_ci}. This could be the second object from the output of
+\code{\link{eesim}}, specified by using the format \code{eesim_output[[2]]}.}
 
-\item{true_param}{The true value of the parameter being estimated}
+\item{true_param}{The true value of the relative risk used to simulate the data.}
 }
 \value{
 A plot displaying the coverage for the true value of the parameter by
-the confidence intervals resulting from each repitition of the simulation.
+the confidence intervals resulting from each repetition of the simulation.
 }
 \description{
-This plot displays the relative risk point estimates and their confidence
-intervals for each repitition of the simulation in relation to the true
-relative risk.  It is a visualization of the coverage of the specified
+Plots the relative risk point estimates and their confidence
+intervals for model fit results for each simulation, compared to the true
+relative risk. This gives a visualization of the coverage of the specified
 method for the relative risk. The confidence intervals which do not contain
-the true relative risk appear in red.
+the true relative risk appear in red. The input to this function should be
+either the output of \code{\link{fit_mods}} or the second element of the
+output of \code{\link{eesim}}.
 }
 \examples{
 ex_sim <- eesim(n_reps = 100, n = 1000, central = 100, sd = 10,

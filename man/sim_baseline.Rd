@@ -16,19 +16,18 @@ data}
 \item{trend}{A character string that specifies the desired trend function.
 Options are:
 \itemize{
-  \item{"cos1"}
-  \item{"cos2"}
-  \item{"cos3"}
-  \item{"linear"}
-  \item{"curvilinear"}
-  \item{"cos1linear"}
-  \item{"no trend"}
-}
-See the package vignette for examples of the shapes of these trends.
-Default is "no trend".}
+  \item{"no trend": No trend, either seasonal or long-term (default).}
+  \item{"cos1": A seasonal trend only.}
+  \item{"cos2": A seasonal trend with variable amplitude across years.}
+  \item{"cos3": A seasonal trend with steadily decreasing amplitude over time.}
+  \item{"linear": A linear long-term trend with no seasonal trend.}
+  \item{"curvilinear": A curved long-term trend with no seasonal trend.}
+  \item{"cos1linear": A seasonal trend plus a linear long-term trend.}
+  }
+See the package vignette for examples of the shapes of these trends.}
 
 \item{slope}{A numeric value specifying the slope of the trend, to be used
-with trend = "linear" or trend = "cos1linear".}
+with \code{trend = "linear"} or \code{trend = "cos1linear"}.}
 
 \item{amp}{A numeric value specifying the amplitude of the seasonal trend.
 Must be between -1 and 1.}
@@ -37,11 +36,12 @@ Must be between -1 and 1.}
 for which to simulate data}
 }
 \value{
-A data frame with the date and expected baseline outcomes for each
-   day of simulated data
+A data frame with the date and expected baseline outcome count for each
+   day of simulated data.
 }
 \description{
-Generates expected baseline health outcomes.
+Generates expected baseline health outcome counts based on average outcome and
+desired seasonal and / or long-term trends.
 }
 \examples{
 sim_baseline(n = 5, lambda = 100, trend = "cos1")

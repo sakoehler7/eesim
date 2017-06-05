@@ -14,11 +14,12 @@ exposure value.}
 \item{df}{Data frame from which to pull exposure values.}
 
 \item{outcome_type}{A character string specifying the desired health outcome metric.
-Options are:
-\itemize{
-  \item"death"
-  \item"cvd"
-  \item"resp"}}
+   Options are:
+   \itemize{
+     \item"death"
+     \item"cvd"
+     \item"resp"}
+(Note: These are the column names for outcome counts in the observed data.)}
 
 \item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
 pulling exposure values. Dates in the Chicago NMMAPS data set are from
@@ -26,12 +27,15 @@ pulling exposure values. Dates in the Chicago NMMAPS data set are from
 }
 \value{
 A data frame with one column for date and one column for baseline
-   outcome values
+   outcome values.
 }
 \description{
-By default, this function pulls smoothed data from the chicagoNMMAPS data set
-in the dlnm package.  The user may also input a different data set from which
-   to pull data.
+Example of a custom baseline function that can be passed to \code{\link{eesim}} or
+\code{\link{power_calc}}.
+By default, this function pulls smoothed data from the \code{chicagoNMMAPS} data set
+in the \code{dlnm} package.  The user may also input a different data set from which
+to pull data. The function uses a smoothed function of this observed data as the
+underlying baseline outcome trend in simulating data.
 }
 \examples{
 custom_baseline(n = 5)

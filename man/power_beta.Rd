@@ -2,19 +2,21 @@
 % Please edit documentation in R/assess_performance.R
 \name{power_beta}
 \alias{power_beta}
-\title{Power}
+\title{Estimate power}
 \usage{
 power_beta(df)
 }
 \arguments{
 \item{df}{A data frame of replicated simulations which must include columns
-titled "lower_ci" and "upper_ci"}
+titled \code{lower_ci} and \code{upper_ci}.}
 }
 \value{
-Power at the 5% significance level
+A data frame with one row with the estimated power of the analysis
+   at the 5\% significance level.
 }
 \description{
-This function gives the power of the test at a 5% siginificance level.
+Calculates the estimated power of a hypothesis test that the log relative risk
+equals 0 at a 5\% significance level across all simulated data.
 }
 \examples{
 sims <- create_sims(n_reps = 10, n = 600, central = 100,

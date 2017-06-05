@@ -11,38 +11,41 @@ sim_outcome(exposure, average_outcome = NULL, trend = "no trend",
   cust_outdraw_args = list())
 }
 \arguments{
-\item{exposure}{A numeric vector of exposure values}
+\item{exposure}{A numeric vector of exposure values, typically the output
+of \code{\link{sim_exposure}}.}
 
-\item{average_outcome}{A numeric value specifying the average outcome value.}
+\item{average_outcome}{A non-negative numeric value specifying the average
+daily outcome count.}
 
-\item{trend}{outcome_trend A character string specifying the seasonal trend in
-    health outcomes.  Options are Options are:
+\item{trend}{A character string that specifies the desired trend function.
+Options are:
 \itemize{
-  \item{"cos1"}
-  \item{"cos2"}
-  \item{"cos3"}
-  \item{"linear"}
-  \item{"curvilinear"}
-  \item{"cos1linear"}
-  \item{"no trend"}
-  \item{"custom"}
-}}
+  \item{"no trend": No trend, either seasonal or long-term (default).}
+  \item{"cos1": A seasonal trend only.}
+  \item{"cos2": A seasonal trend with variable amplitude across years.}
+  \item{"cos3": A seasonal trend with steadily decreasing amplitude over time.}
+  \item{"linear": A linear long-term trend with no seasonal trend.}
+  \item{"curvilinear": A curved long-term trend with no seasonal trend.}
+  \item{"cos1linear": A seasonal trend plus a linear long-term trend.}
+  }
+See the package vignette for examples of the shapes of these trends.}
 
-\item{slope}{slope A numeric value specifying the slope of the trend, to be used
-with trend = "linear" or trend = "cos1linear".}
+\item{slope}{A numeric value specifying the slope of the trend, to be used
+with \code{trend = "linear"} or \code{trend = "cos1linear"}.}
 
 \item{amp}{A numeric value specifying the amplitude of the seasonal trend.
-Must be between 0 and 1.}
+Must be between -1 and 1.}
 
-\item{rr}{A numeric value specifying the relative risk}
+\item{rr}{A non-negative numeric value specifying the relative risk (i.e., the
+relative risk per unit increase in the exposure).}
 
 \item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
 simulating values}
 
-\item{cust_base_func}{A character string specifying a user-made custom
-function for baseline trend}
+\item{cust_base_func}{A R object name specifying a user-made custom
+function for baseline trend.}
 
-\item{cust_lambda_func}{A character string specifying a user-made custom
+\item{cust_lambda_func}{An R object name specifying a user-made custom
 function for relating baseline, relative risk, and exposure}
 
 \item{cust_base_args}{A list of arguments and their values used in the
@@ -51,12 +54,12 @@ user-specified custom baseline function}
 \item{cust_lambda_args}{A list of arguments and their values used in the
 user-specified custom lambda function}
 
-\item{cust_outdraw}{A character string specifying a user-created function to
+\item{cust_outdraw}{An R object name specifying a user-created function to
 randomize the outcome values off of the baseline for outcome values. This
-function must take inputs "n" and "lambda" and output a vector of outcome
+function must take inputs \code{n} and \code{lambda} and output a vector of outcome
 values.}
 
-\item{cust_outdraw_args}{A list of arguments besides "n" and "lamba" passed
+\item{cust_outdraw_args}{A list of arguments besides \code{n} passed
 to the user-created custom outcome draw function.}
 }
 \value{
@@ -64,7 +67,13 @@ A dataframe with a simulated time series, with columns for
    \code{date}, \code{x} (exposure), and \code{outcome}.
 }
 \description{
-Simulate outcome
+Simulates daily outcome counts for each study day based on user specifications
+for average outcome count, any underlying trends in expected outcome counts, and
+the association between exposure and outcome. This function starts from a vector of
+expected outcome count on each study day and simulates through a draw from a Poisson
+distribution based on this expected daily value. If desired, a user can also use
+a custom function to customize this stage of the simulation; see the vignette for
+\code{eesim} for more details and examples.
 }
 \examples{
 exp <- sim_exposure(n = 5, central = 100, sd = 10, amp = .6,

@@ -13,19 +13,20 @@ power_calc(varying, values, n_reps, custom_model, central, exposure_type,
   custom_model_args = NULL, plot = FALSE)
 }
 \arguments{
-\item{varying}{A character string of the parameter to be varied.  Choices are
-"n" (which varies the number of days in each dataset of simulated data),
-"rr" (which varies the relative rate per unit increase in exposure that is used
-to simulate the data), or "average_outcome" (which varies the average value
+\item{varying}{A character string specifying the parameter to be varied.  Choices are
+\code{'n'} (which varies the number of days in each dataset of simulated data),
+\code{'rr'} (which varies the relative rate per unit increase in exposure that is used
+to simulate the data), or \code{'average_outcome'} (which varies the average value
 of the outcomes in each dataset). For whichever of these three values is not set to vary in this
 argument, the user must specify a constant value to this function through the
 \code{n}, \code{rr}, or \code{average_outcome} arguments.}
 
 \item{values}{A numeric vector with the values you would like to test for the varying
 parameters. For example, \code{values = c(1.05, 1.10, 1.15)} would produce power
-estimates for the four specified values of relative risk.}
+estimates for the four specified values of relative risk if the user has specified
+\code{varying = 'rr'}.}
 
-\item{n_reps}{A numeric value specifying the number of datasets to simulate (e.g.,
+\item{n_reps}{An integer specifying the number of datasets to simulate (e.g.,
 \code{n_reps = 1000} would simulate one thousand time series datasets with the
 specified characteristics, which can be used for a power analysis or to investigate
 the performance of a proposed model).}
@@ -39,10 +40,10 @@ to fit the model. This object name should not be in quotations. See Details for 
 \item{exposure_type}{A character string specifying the type of exposure.
 Choices are "binary" or "continuous".}
 
-\item{n}{A numeric value specifying the number of days to simulate (e.g., \code{n = 365}
+\item{n}{An integer specifying the number of days to simulate (e.g., \code{n = 365}
 would simulate a dataset with a year's worth of data).}
 
-\item{sd}{A numeric value giving the standard deviation of the exposure
+\item{sd}{A non-negative numeric value giving the standard deviation of the exposure
 values from the exposure trend line (not the total standard deviation of
 the exposure values).}
 
@@ -52,30 +53,28 @@ the exposure values).}
     For trends with a seasonal component, the amplitude of the seasonal trend can be
     customized using the \code{exposure\_amp} argument. For trends with a long-term
     pattern, the slope of the long-term trend can be set using the \code{exposure\_slope}
-    argument. If using the "custom" option, you must ... .
+    argument.
     If using the "monthly" option for a binary exposure, you must input a numeric
     vector of length 12 for the \code{central} argument that gives the probability of
     exposure for each month, starting in January and ending in December.
     Options for continuous exposure are:
-    \itemize{
+\itemize{
+  \item{"no trend": No trend, either seasonal or long-term (default).}
   \item{"cos1": A seasonal trend only.}
   \item{"cos2": A seasonal trend with variable amplitude across years.}
   \item{"cos3": A seasonal trend with steadily decreasing amplitude over time.}
   \item{"linear": A linear long-term trend with no seasonal trend.}
   \item{"curvilinear": A curved long-term trend with no seasonal trend.}
   \item{"cos1linear": A seasonal trend plus a linear long-term trend.}
-  \item{"no trend": No trend, either seasonal or long-term (default).}
-  \item{"custom": Uses a custom trend function input by the user.}
   }
    Options for binary exposure are:
    \itemize{
+  \item{"no trend": No trend, either seasonal or long-term (default).}
   \item{"cos1": A seasonal trend only.}
   \item{"cos2": A seasonal trend with variable amplitude across years.}
   \item{"cos3": A seasonal trend with steadily decreasing amplitude over time.}
   \item{"linear": A linear long-term trend with no seasonal trend.}
   \item{"monthly": Uses a user-specified probability of exposure for each month.}
-  \item{"no trend": No trend, either seasonal or long-term (default).}
-  \item{"custom": Uses a custom trend function input by the user.}
 }}
 
 \item{exposure_amp}{A numeric value specifying the amplitude of the exposure
@@ -87,7 +86,8 @@ July). Negative values can be used to simulate a trend with lower values
 at the time of year of the start of the dataset and higher values in the
 opposite season.}
 
-\item{average_outcome}{A numeric value specifying the average outcome value.}
+\item{average_outcome}{A non-negative numeric value specifying the average
+daily outcome count.}
 
 \item{outcome_trend}{A character string specifying the seasonal trend in
 health outcomes.  Options are the same as for continuous exposure
@@ -96,21 +96,22 @@ data.}
 \item{outcome_amp}{A numeric value specifying the amplitude of the outcome
 trend.  Must be between -1 and 1.}
 
-\item{rr}{A numeric value specifying the relative risk}
+\item{rr}{A non-negative numeric value specifying the relative risk (i.e., the
+relative risk per unit increase in the exposure).}
 
 \item{start.date}{A date of the format "yyyy-mm-dd" from which to begin
 simulating daily exposures}
 
-\item{cust_exp_func}{A character string specifying the name of a custom
+\item{cust_exp_func}{An R object name specifying the name of a custom
 trend function to generate exposure data}
 
 \item{cust_exp_args}{A list of arguments and their values for the
 user-specified custom exposure function.}
 
-\item{cust_base_func}{A character string specifying a user-made custom
-function for baseline trend}
+\item{cust_base_func}{A R object name specifying a user-made custom
+function for baseline trend.}
 
-\item{cust_lambda_func}{A character string specifying a user-made custom
+\item{cust_lambda_func}{An R object name specifying a user-made custom
 function for relating baseline, relative risk, and exposure}
 
 \item{cust_base_args}{A list of arguments and their values used in the
@@ -125,17 +126,20 @@ model. These arguments are passed through to the function specified with \code{c
 \item{plot}{"TRUE" or "FALSE" for whether to produce a plot}
 }
 \value{
-Data frame with the values of the varying parameter and their
-   corresponding power. If the \code{plot} argument is set to \code{TRUE},
-   it also returns a power curve plot as a side effect.
+Data frame with the values of the varying parameter and the estimated power
+for each. If the \code{plot} argument is set to \code{TRUE}, it also returns a power
+curve plot as a side effect. Because these estimates are based on simulations, there
+will be some random variation in estimates of power. Estimates will be more stable
+if a higher value is used for \code{n_reps}, although this will increase the time it
+takes the function to run.
 }
 \description{
-Calculate the expected power of an enviromental epidemiology time series study based
+Calculates the expected power of an environmental epidemiology time series analysis based
 on simulated datasets. This function uses the simulation provided by \code{eesim} to
 simulate multiple environmental epidemiology datasets under different scenarios (e.g.,
 total days in study, size of association between exposure and outcome, or baseline
 average daily count of the outcome in the study) and estimates the power of a specified
-model to detect the hypothesized association.
+analysis to detect the hypothesized association.
 }
 \examples{
 

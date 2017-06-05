@@ -6,3 +6,4 @@
 ^README-.*\.png$
 ^Legionnaires\ data$
 ^\.travis\.yml$
+^cran-comments\.md$
