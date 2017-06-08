@@ -172,30 +172,41 @@ rainprobs <-pamonthly %>% group_by(month) %>% summarise(mean1 = mean(quant95, na
 
 ### Simulated Data with Monthly Exposure Trend 
 
-Many epidemiologic data sets are of a sensitive nature and not publicly available.  We can use eesim to simulate data with a similar seasonal trend to fit and assess models.  Because rainfall in Philadelphia and New York exhibited similar montly patterns, we will use the average proportion of days each month from 2006-2017 which had rainfall in the 95th percentile.  We will specify these proportions in the "monthly" exposure trend.
-5.3 is the weekly mean Legionnaire outcome value in Pennsylvania, and we divide by 7 to get the daily mean.
+Many epidemiologic data sets are of a sensitive nature and not publicly available.  We can use eesim to simulate data with a similar seasonal trend to fit and assess models.  Because rainfall in Philadelphia and New York exhibited similar montly patterns, we will use the average proportion of days each month from 2006-2017 which had rainfall in the 95th percentile.  We will specify these proportions in the "monthly" exposure trend.  For the outcome trend we wrote a custom baseline function which is a variation of the `cos1linear` trend option, allowing the outcomes to first have a positive slope, then a negative slope, with an outlier where the slope changes. These specifications allow us to simulate data that looks roughly like the real data.
 
 ```{r, echo=F}
 
 #Means of real data:
 map(leg_cases[,2:4], mean, na.rm=T)
 #(ma=14.633, nyc=4.69, pa=5.314)
-simdat1 <- eesim(n=1095, n_reps=1, rr=1.1, exposure_type = "binary", central = c(0.048, 0.035, 0.046, 0.036, 0.035, 0.055, 0.053, 0.067, 0.070, 0.053, 0.033, 0.067), exposure_trend = "monthly", exposure_amp = .05, outcome_trend = "cos1linear", outcome_slope=2, outcome_amp=.8,  average_outcome = 5.3/7, custom_model = spline_mod)
-simdat2 <- eesim(n=2555, n_reps=1, rr=1.1, exposure_type = "binary", central = c(0.048, 0.035, 0.046, 0.036, 0.035, 0.055, 0.053, 0.067, 0.070, 0.053, 0.033, 0.067), exposure_trend = "monthly", exposure_amp = .05, outcome_trend = "cos1linear", outcome_slope=-.8, outcome_amp=.8,  average_outcome = 5.3/7, custom_model = spline_mod)
 
-#Create new month/year variable to be able to aggregate by months
-simdat1$simulated_datasets[[1]]$date <- as.Date(1:1095, origin="2006-01-01")
-simdat1$simulated_datasets[[1]]$moyr <- ymd(strtrim(simdat1$simulated_datasets[[1]]$date, width=7), truncated=3)
-simdat2$simulated_datasets[[1]]$date <- as.Date(1:2555, origin = "2009-01-01")
-simdat2$simulated_datasets[[1]]$moyr <- ymd(strtrim(simdat2$simulated_datasets[[1]]$date, width=7), truncated=3)
 
-#Combine 2 parts
-simdat <- rbind(simdat1$simulated_datasets[[1]], simdat2$simulated_datasets[[1]])
+#Custom trend for outcome:
 
-#Plot of monthly cases 
-simplot <- simdat %>% group_by(moyr) %>% summarise(sum=sum(outcome, na.rm=T)) %>% ggplot(aes(x=moyr, y=sum))+ geom_bar(stat="identity") + labs(x="Date", y="Cases", title = "Simulated Monthly Legionnaire's Cases") + ylim(0, 120)
+custbase <- function(n1, n2, slope1, slope2, amp1, amp2){
+  day1 <- c(1:n1)
+  day2 <- c(1:n2)
+  out1 <- (slope1*(day1 / n1)) * (1 + amp1 * cos(2 * pi * (day1/ 365)))
+  out2 <- (1 + slope2*(day2 / n2)) * (1 + amp2 * cos(2 * pi * (day2/ 365)))
+  out1[(n1-10):n1] <- 2*out1[(n1-10):n1]
+  out2[1:10] <- 2*out2[1:10]
+  out <- c(out1, out2)
+  return(out)
+}
 
-#plots side by side
-library(gridExtra)
-grid.arrange(realplot, simplot, ncol=1)
+simdat3 <- eesim(n=3650, n_reps=1, rr=1.1, exposure_type = "binary", central = c(0.048, 0.035, 0.046, 0.036, 0.035, 0.055, 0.053, 0.067, 0.070, 0.053, 0.033, 0.067), exposure_trend = "monthly", exposure_amp = .05, cust_base_func = custbase, cust_base_args = list(n1=1095, n2=2555, slope1=1.5, slope2=-.8, amp1=.5, amp2=.7),  average_outcome = 5.3/7, custom_model = spline_mod)
+simdat3$simulated_datasets[[1]]$moyr <- ymd(strtrim(simdat3$simulated_datasets[[1]]$date, width=7), truncated=3)
+#plot
+simplot2 <- simdat3$simulated_datasets[[1]] %>% group_by(moyr) %>% summarise(sum=sum(outcome, na.rm=T)) %>% ggplot(aes(x=moyr, y=sum))+ geom_bar(stat="identity") + labs(x="Date", y="Cases", title = "Simulated Monthly Legionnaire's Cases") + ylim(0, 120)
+
+grid.arrange(realplot, simplot2, ncol=1)
+
+```
+
+#Power calculations
+
+We can use our simulated data to perform power calculations. For the Legionnaire's disease example, we may want to study how many cases we must see monthly to have adequate power.  
+
+```{r}
+power_calc(varying="average_outcome", values = c())
 ```
