@@ -125,7 +125,7 @@ leg_cases$yr <- year(leg_cases$week_end_date)
 leg_cases$moyr <- ymd(strtrim(leg_cases$week_end_date, width=7), truncated=3)
 
 #Plot of monthly cases for Pennsylvania
-leg_cases[,c(1,4,8,9, 10)] %>% group_by(moyr) %>% summarise(sum=sum(penn, na.rm=T)) %>% ggplot(aes(x=moyr, y=sum))+ geom_bar(stat="identity") + labs(x="Date", y="Cases", title = "Monthly Legionnaire's Cases for Pennsylvania")
+realplot <- leg_cases[,c(1,4,8,9, 10)] %>% group_by(moyr) %>% summarise(sum=sum(penn, na.rm=T)) %>% ggplot(aes(x=moyr, y=sum))+ geom_bar(stat="identity") + labs(x="Date", y="Cases", title = "Monthly Legionnaire's Cases for Pennsylvania")
 
 ```
 
@@ -176,14 +176,26 @@ Many epidemiologic data sets are of a sensitive nature and not publicly availabl
 5.3 is the weekly mean Legionnaire outcome value in Pennsylvania, and we divide by 7 to get the daily mean.
 
 ```{r, echo=F}
+
 #Means of real data:
 map(leg_cases[,2:4], mean, na.rm=T)
 #(ma=14.633, nyc=4.69, pa=5.314)
-simdat <- eesim(n=3650, n_reps=1, rr=1.1, exposure_type = "binary", central = c(0.048, 0.035, 0.046, 0.036, 0.035, 0.055, 0.053, 0.067, 0.070, 0.053, 0.033, 0.067), exposure_trend = "monthly", outcome_trend="cos1", average_outcome = 5.3/7, custom_model = spline_mod)
+simdat1 <- eesim(n=1095, n_reps=1, rr=1.1, exposure_type = "binary", central = c(0.048, 0.035, 0.046, 0.036, 0.035, 0.055, 0.053, 0.067, 0.070, 0.053, 0.033, 0.067), exposure_trend = "monthly", exposure_amp = .05, outcome_trend = "cos1linear", outcome_slope=2, outcome_amp=.8,  average_outcome = 5.3/7, custom_model = spline_mod)
+simdat2 <- eesim(n=2555, n_reps=1, rr=1.1, exposure_type = "binary", central = c(0.048, 0.035, 0.046, 0.036, 0.035, 0.055, 0.053, 0.067, 0.070, 0.053, 0.033, 0.067), exposure_trend = "monthly", exposure_amp = .05, outcome_trend = "cos1linear", outcome_slope=-.8, outcome_amp=.8,  average_outcome = 5.3/7, custom_model = spline_mod)
 
 #Create new month/year variable to be able to aggregate by months
-simdat$simulated_datasets[[1]]$moyr <- ymd(strtrim(simdat$simulated_datasets[[1]]$date, width=7), truncated=3)
+simdat1$simulated_datasets[[1]]$date <- as.Date(1:1095, origin="2006-01-01")
+simdat1$simulated_datasets[[1]]$moyr <- ymd(strtrim(simdat1$simulated_datasets[[1]]$date, width=7), truncated=3)
+simdat2$simulated_datasets[[1]]$date <- as.Date(1:2555, origin = "2009-01-01")
+simdat2$simulated_datasets[[1]]$moyr <- ymd(strtrim(simdat2$simulated_datasets[[1]]$date, width=7), truncated=3)
+
+#Combine 2 parts
+simdat <- rbind(simdat1$simulated_datasets[[1]], simdat2$simulated_datasets[[1]])
 
 #Plot of monthly cases 
-simdat$simulated_datasets[[1]] %>% group_by(moyr) %>% summarise(sum=sum(outcome, na.rm=T)) %>% ggplot(aes(x=moyr, y=sum))+ geom_bar(stat="identity") + labs(x="Date", y="Cases", title = "Simulated Monthly Legionnaire's Cases")
+simplot <- simdat %>% group_by(moyr) %>% summarise(sum=sum(outcome, na.rm=T)) %>% ggplot(aes(x=moyr, y=sum))+ geom_bar(stat="identity") + labs(x="Date", y="Cases", title = "Simulated Monthly Legionnaire's Cases") + ylim(0, 120)
+
+#plots side by side
+library(gridExtra)
+grid.arrange(realplot, simplot, ncol=1)
 ```

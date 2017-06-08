@@ -96,7 +96,7 @@ calc_t <- function(n, trend = "no trend", slope=1, amp = .6, custom_func = NULL,
 #' bin_t(n = 5, p = .3, trend = "cos1", amp = .3)
 #'
 #' @export
-bin_t <- function(n, p, trend = "no trend", slope = 1, amp = .01,
+bin_t <- function(n, p, trend = "no trend", slope = 1, amp = .05,
                   start.date = "2000-01-01", custom_func = NULL,...){
   day <- c(1:n)
   start.date <- as.Date(start.date)
