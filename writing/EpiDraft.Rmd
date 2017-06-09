@@ -208,5 +208,5 @@ grid.arrange(realplot, simplot2, ncol=1)
 We can use our simulated data to perform power calculations. For the Legionnaire's disease example, we may want to study how many cases we must see monthly to have adequate power.  
 
 ```{r}
-power_calc(varying="average_outcome", values = c())
+power_calc(varying="average_outcome", values = c(.5, .75, 1, 2, 5), n=3650, n_reps=1, rr=1.1, exposure_type = "binary", central = c(0.048, 0.035, 0.046, 0.036, 0.035, 0.055, 0.053, 0.067, 0.070, 0.053, 0.033, 0.067), exposure_trend = "monthly", exposure_amp = .05, cust_base_func = custbase, cust_base_args = list(n1=1095, n2=2555, slope1=1.5, slope2=-.8, amp1=.5, amp2=.7),  custom_model = spline_mod, plot=TRUE)
 ```
