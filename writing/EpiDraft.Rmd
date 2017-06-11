@@ -61,7 +61,7 @@ Finally, the `eesim` output gives the coverage and power of the model.
 
 Simulation studies can be used to determine effective sample size or power when planning or proposing future research studies. This method can be particularly useful in cases where modeling of the study data will be particularly complex and when the strong assumptions of classical, analytical power analysis are questionable [@Bellan2015; @Johnson2015; @Burton2009; @Alfons2010; @Beaujean2014; @Schoemann2014]. Simulation studies can often be used to generate power analyses under a more realistic set of assumptions [@Burton2009; @Beaujean2014].
 
-In `eesim`, the function `power_calc` can be used to investigate the effects of various sample sizes or relative risks on power. This function requires arguments including the parameter to be varied (sample size or relative risk), the desired values of that parameter, and lists of the same arguments as used in the `eesim` function. The `power_calc` function outputs a table of the values of the varied parameter along with their corresponding power. 
+In `eesim`, the function `power_calc` can be used to investigate the effects of various sample sizes, relative risks, or average outcome values on power. This function requires arguments including the parameter to be varied (sample size, relative risk, or average outcome), the desired values of that parameter, and lists of the same arguments as used in the `eesim` function. The `power_calc` function outputs a table of the values of the varied parameter along with their corresponding power. 
 Here is an example of using `power_calc` to test power for different sample sizes:
 
 ```{r}
@@ -208,5 +208,5 @@ grid.arrange(realplot, simplot2, ncol=1)
 We can use our simulated data to perform power calculations. For the Legionnaire's disease example, we may want to study how many cases we must see monthly to have adequate power.  
 
 ```{r}
-power_calc(varying="average_outcome", values = c(.5, .75, 1, 2, 5), n=3650, n_reps=1, rr=1.1, exposure_type = "binary", central = c(0.048, 0.035, 0.046, 0.036, 0.035, 0.055, 0.053, 0.067, 0.070, 0.053, 0.033, 0.067), exposure_trend = "monthly", exposure_amp = .05, cust_base_func = custbase, cust_base_args = list(n1=1095, n2=2555, slope1=1.5, slope2=-.8, amp1=.5, amp2=.7),  custom_model = spline_mod, plot=TRUE)
+power_calc(varying="average_outcome", values = c(.5, .75, 1, 2, 5), n=3650, n_reps=10, rr=1.1, exposure_type = "binary", central = c(0.048, 0.035, 0.046, 0.036, 0.035, 0.055, 0.053, 0.067, 0.070, 0.053, 0.033, 0.067), exposure_trend = "monthly", exposure_amp = .05, cust_base_func = custbase, cust_base_args = list(n1=1095, n2=2555, slope1=1.5, slope2=-.8, amp1=.5, amp2=.7),  custom_model = spline_mod, plot=TRUE)
 ```
